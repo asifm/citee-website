@@ -1,3 +1,4 @@
+[![Stories in Ready](https://badge.waffle.io/asifm/CITee-Website.png?label=ready&title=Ready)](https://waffle.io/asifm/CITee-Website?utm_source=badge)
 # CIT.ee Website
 Source files for the [CIT.ee project website](http://citee.darden.virginia.edu/) (currently serving old files from [this repo](https://github.com/asifm/ecosystems-website)). This repo will go live after all the content from old repo is ported.
 
