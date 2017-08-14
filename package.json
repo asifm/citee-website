@@ -1,8 +1,8 @@
 {
-  "name": "vuetify-innuxt",
+  "name": "citee-website",
   "version": "1.0.0",
-  "description": "Nuxt.js project",
-  "author": "asif <asif.mehedi@live.com>",
+  "description": "Source files of CIT.ee project website",
+  "author": "Asif Mehedi <asif.mehedi@live.com>",
   "private": true,
   "scripts": {
     "dev": "nuxt",

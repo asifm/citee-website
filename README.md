@@ -1,22 +1,20 @@
-# vuetify-innuxt
+# CIT.ee Website
+Source files for the [CIT.ee project website](http://citee.darden.virginia.edu/) (currently serving old files from [this repo](https://github.com/asifm/ecosystems-website)). This repo will go live after all the content from old repo is ported.
 
-> Nuxt.js project
+CIT.ee is a research initiative of the Darden School of Business, University of Virginia. The objective of the project is to explore the drivers and effects of entrepreneurial ecosystems in American cities.
 
-## Build Setup
+Main categories of content:
+- Data visualization
+- Data analysis
+- Research resources and tools
+- Case stories
+- Blog
+## Contributors
+- Asif Mehedi
+## Technologies Used
+Many excellent open-source technologies are used. To the creator communities behind, thank you! Particularly notable ones: 
+- [vue](https://vuejs.org/)
+- [d3](https://d3js.org/)
+- [vuetify](https://vuetifyjs.com/)
+- [nuxt](https://nuxtjs.org/)
 
-``` bash
-# install dependencies
-$ npm install # Or yarn install
-
-# serve with hot reload at localhost:3000
-$ npm run dev
-
-# build for production and launch server
-$ npm run build
-$ npm start
-
-# generate static project
-$ npm run generate
-```
-
-For detailed explanation on how things work, checkout the [Nuxt.js docs](https://github.com/nuxt/nuxt.js).
