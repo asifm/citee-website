@@ -10,7 +10,7 @@ Main categories of content:
 - Case stories
 - Blog
 
-See [roadmap](https://github.com/asifm/citee-website/wiki/Roadmap)
+See [roadmap](https://github.com/asifm/citee-website/wiki/Roadmap).
 
 ## Contributors
 - Asif Mehedi
