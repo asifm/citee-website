@@ -9,8 +9,12 @@ Main categories of content:
 - Research resources and tools
 - Case stories
 - Blog
+
+See [roadmap](https://github.com/asifm/citee-website/wiki/Roadmap)
+
 ## Contributors
 - Asif Mehedi
+
 ## Technologies Used
 Many excellent open-source technologies are used. To the creator communities behind, thank you! Particularly notable ones: 
 - [vue](https://vuejs.org/)
