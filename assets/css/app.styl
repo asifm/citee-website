@@ -1,26 +1,26 @@
 /** Stylus Styles */
 @import '../../node_modules/vuetify/src/stylus/settings/_colors'
- 
-$theme := {
-  // DardenBlue
-  secondary: #002F6C
-  text--secondary: #002F6C
 
+$theme := {
   // DardenOrange
   primary: #E57200
-  text--primary: #E57200
+  // DardenBlue
+  secondary: #002F6C
+  // text--secondary: #002F6C
 
-  // Darden other colors
+//   text--primary: #E57200
+
+//   // Darden other colors
   accent: #eaaa00
   accent-1: #a8ad00
   accent-2: #a2aaad
   accent-3: #5b7f95
   accent-4: #c5b9ac
-  text--accent: #eaaa00
-  text--accent-1: #a8ad00
-  text--accent-2: #a2aaad
-  text--accent-3: #5b7f95
-  text--accent-4: #c5b9ac
+//   text--accent: #eaaa00
+//   text--accent-1: #a8ad00
+//   text--accent-2: #a2aaad
+//   text--accent-3: #5b7f95
+//   text--accent-4: #c5b9ac
 
   info: $blue.base
   warning: $amber.base
@@ -28,6 +28,28 @@ $theme := {
   success: $green.base
 }
 
+// // Darden's web body font in new brand guidelines is Caslon.
+// // Caslon should be set at 21px (with line-height 1.3) for readability
+// // Header font is Calvert 
 
+//  @font-face
+//    font-family Caslon
+//    font-style normal
+//    src url(../../static/font/AdobeCaslonPro-Regular.woff2)
+
+// //  @font-face
+// //    font-family Caslon
+// //    font-style italic
+// //    src url(../../static/font/AdobeCaslonPro-Italic.woff2)
+
+// //  @font-face
+// //    font-family CalvertMT
+// //    src url(../../static/font/CalvertMT.woff)
+
+
+// Override typography variables
+$body-font-family := Open Sans
+// $body-font-family := Caslon
+// $font-size-root := 14px
+// $line-height-root := 1.3
 @import '../../node_modules/vuetify/src/stylus/main'
-

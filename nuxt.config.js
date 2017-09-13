@@ -25,7 +25,7 @@ module.exports = {
       lang: 'styl',
     },
     {
-      src: './static/css/custom.scss',
+      src: './assets/css/custom.scss',
       lang: 'scss',
     },
   ],
@@ -33,7 +33,7 @@ module.exports = {
   ** Headers of the page
   */
   head: {
-    title: 'CIT.ee | Darden School',
+    title: 'CIT.ee | Darden',
     meta: [
       { charset: 'utf-8' },
       {
@@ -56,7 +56,7 @@ module.exports = {
         rel: 'stylesheet',
         type: 'text/css',
         href:
-          'https://fonts.googleapis.com/css?family=Nixie+One:300,400,500,700|Open+Sans:300,400,500,700|Roboto:300,400,500,700|Material+Icons',
+          'https://fonts.googleapis.com/css?family=Open+Sans:300,400,500,700|Roboto:300,400,500,700|Carrois+Gothic|Material+Icons',
       },
     ],
   },
@@ -68,6 +68,8 @@ module.exports = {
   ** Build configuration
   */
   build: {
+    // experimental, turn off if doesn't work
+    // dll: true,
     /*
     ** Run ESLINT on save
     */
