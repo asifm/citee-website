@@ -12,3 +12,6 @@ dist
 
 # Workplace settings
 .vscode
+
+# webpack dll (experimental)
+.cache
