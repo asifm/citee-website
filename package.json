@@ -1,9 +1,12 @@
 {
   "name": "citee-website",
   "version": "1.0.0",
-  "description": "Source files of CIT.ee project website",
+  "description": "Source files of CITee project website",
   "author": "Asif Mehedi <asif.mehedi@live.com>",
   "private": true,
+  "quokka": {
+    "babel": true
+  },
   "scripts": {
     "dev": "nuxt",
     "dev-debug": "node --inspect .nuxt/server.js",
@@ -11,14 +14,12 @@
     "start": "nuxt start",
     "generate": "nuxt generate",
     "lint": "eslint --ext .js,.vue --ignore-path .gitignore .",
-    "precommit": "npm run lint",
-    "test": "jasmine"
+    "precommit": "npm run lint"
   },
   "dependencies": {
     "@nuxtjs/markdownit": "^1.1.0",
     "@nuxtjs/markdownit-loader": "^1.1.1",
     "axios": "^0.16.2",
-    "babel-plugin-add-module-exports": "^0.2.1",
     "d3": "^4.10.0",
     "lodash": "^4.17.4",
     "markdown-it-abbr": "^1.0.4",
@@ -29,12 +30,13 @@
     "markdown-it-front-matter": "^0.1.2",
     "nuxt": "^1.0.0-rc3",
     "scrollmagic": "^2.0.5",
-    "vue": "latest",
+    "vue": "^2.4.4",
     "vuetify": "^0.14.8"
   },
   "devDependencies": {
     "ava": "^0.22.0",
     "babel-eslint": "^7.2.3",
+    "babel-plugin-add-module-exports": "^0.2.1",
     "eslint": "^4.3.0",
     "eslint-config-airbnb-base": "latest",
     "eslint-config-standard": "^10.2.1",
