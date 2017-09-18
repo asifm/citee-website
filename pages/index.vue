@@ -5,33 +5,37 @@
         transition(name="fade" appear)
           div(v-if="show")
             img(src="~/assets/img/citee-logo-white.svg").ma-3.dropshadow.opacity-6
-        h4.pa-3.secondary.primary--text.elevation-12.opacity-9 Cities Innovating Tomorrow's Entrepreneurial Ecosystems
-    v-layout(row wrap).pa-0.justify-center
-      v-flex(xs12 sm5 md3 lg2).pa-3
-        v-card.py-3.elevation-24.grey.lighten-3.opacity-7
-          v-icon.display-4.blue-grey--text mdi-chart-bar
-          h6 Visualizations
-      v-flex(xs12 sm5 md3 lg2).pa-3
-        v-card.py-3.elevation-24.grey.lighten-3.opacity-7
-          v-icon.display-4.blue-grey--text mdi-map
-          h6 Case Studies
-      v-flex(xs12 sm5 md3 lg2).pa-3
-        v-card.py-3.elevation-24.grey.lighten-3.opacity-7
-          v-icon.display-4.blue-grey--text mdi-database
-          h6 Resources
-      v-flex(xs12 sm5 md3 lg2).pa-3
-        v-card.py-3.elevation-24.grey.lighten-3.opacity-7
-          v-icon.display-4.blue-grey--text mdi-book-open
-          h6 Blog
-    
+            h4.pa-3.secondary.primary--text.elevation-12.opacity-9 Cities Innovating Tomorrow's Entrepreneurial Ecosystems
+    transition(name="fade" appear)
+      v-layout(row wrap v-if="show").pa-0.justify-center
+        v-flex(xs12 sm5 md3 lg2).pa-3
+          v-card.py-3.elevation-24.grey.lighten-3.opacity-7
+            v-icon.display-4.blue-grey--text mdi-chart-bar
+            h6 Visualizations
+        v-flex(xs12 sm5 md3 lg2).pa-3
+          v-card.py-3.elevation-24.grey.lighten-3.opacity-7
+            v-icon.display-4.blue-grey--text mdi-map
+            h6 Case Studies
+        v-flex(xs12 sm5 md3 lg2).pa-3
+          v-card.py-3.elevation-24.grey.lighten-3.opacity-7
+            v-icon.display-4.blue-grey--text mdi-database
+            h6 Resources
+        v-flex(xs12 sm5 md3 lg2).pa-3
+          v-card.py-3.elevation-24.grey.lighten-3.opacity-7
+            v-icon.display-4.blue-grey--text mdi-book-open
+            h6 Blog
+          
 </template>
 
 <script>
 export default {
   data() {
     return {
-      show: true,
+      show: false,
     };
+  },
+  mounted() {
+    this.show = true;
   },
 };
 </script>
@@ -40,7 +44,7 @@ export default {
 <style lang="scss" scoped>
 .fade-enter-active,
 .fade-leave-active {
-  transition: opacity 5s ease-out;
+  transition: opacity 2s ease-out;
 }
 
 fade-enter-to {
