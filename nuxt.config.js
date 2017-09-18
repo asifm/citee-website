@@ -58,6 +58,11 @@ module.exports = {
         href:
           'https://fonts.googleapis.com/css?family=Open+Sans:300,400,500,700|Roboto:300,400,500,700|Carrois+Gothic|Material+Icons',
       },
+      {
+        rel: 'stylesheet',
+        type: 'text/css',
+        href: '/font/mdi/css/materialdesignicons.min.css',
+      },
     ],
   },
   /*
