@@ -8,10 +8,9 @@
     //-page content
     nuxt
     //- Footer
-    v-container(fluid).secondary.footer-about.pa-5.elevation-3
-      v-layout(row wrap).grey--text.text--lighten-1
-        //- v-flex(sm5 offset-sm1 md4 offset-md1)
-        v-flex(sm5 md4 offset-md2)
+    v-container(fluid).secondary.footer-about.pa-5
+      v-layout(row wrap).grey--text.text--lighten-3.justify-center
+        v-flex(sm5 md4)
           h5.white--text ABOUT DARDEN SCHOOL OF BUSINESS
           p The University of Virginia Darden School of Business delivers the world’s best business education experience to prepare entrepreneurial, global and responsible leaders through its MBA, Ph.D. and Executive Education programs. Darden’s top-ranked faculty is renowned for teaching excellence and advances practical business knowledge through research. Darden was established in 1955 at the University of Virginia, a top public university founded by Thomas Jefferson in 1819 in Charlottesville, Virginia.
           v-btn.btn--outline.ml-0.primary
@@ -26,7 +25,6 @@
             a(href="mailto:Darden@virginia.edu") Darden@virginia.edu
           br
         
-        //- v-flex(sm5 offset-sm1 md4 offset-md1)
         v-flex(sm5 md4 offset-sm1)
           h5.white--text ABOUT BATTEN INSTITUTE 
           p  The Batten Institute for Entrepreneurship and Innovation at the Darden School of Business improves the world by creating knowledge about the transformative power of entrepreneurship and innovation and by cultivating principled, entrepreneurial leaders. The Institute's research initiative advances knowledge that addresses real-world challenges and shapes Darden's curriculum, and its educational offerings are ranked top 10 in the world. The Batten Institute was established by the vision and philanthropy of UVA alumnus Frank Batten Sr.
