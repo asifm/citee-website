@@ -2,7 +2,8 @@
   v-app
     //- top bar
     v-toolbar.elevation-3
-      img(src="~/assets/img/darden_rgb-02.png" height="60px")
+      //- img(src="~/assets/img/darden_rgb-02.png" height="60px")
+      img(src="~/assets/img/darden-logo.png")#darden-logo
       v-spacer
       img(src="~/assets/img/citee-logo-02.svg" height="50px")
     //-page content
@@ -40,3 +41,10 @@
             a(href="mailto:Batten@darden.virginia.edu") Batten@darden.virginia.edu
       p.white--text.pt-5.text-sm-center © 2017 BY THE RECTOR AND VISITORS OF THE UNIVERSITY OF VIRGINIA
 </template>
+
+<style lang="scss" scoped>
+#darden-logo {
+  max-width: 250px;
+  display: block;
+}
+</style>
