@@ -28,10 +28,10 @@
     "markdown-it-deflist": "^2.0.3",
     "markdown-it-footnote": "^3.0.1",
     "markdown-it-front-matter": "^0.1.2",
-    "nuxt": "^1.0.0-rc3",
+    "nuxt": "git+https://github.com/nuxt/nuxt.js.git#dev",
     "scrollmagic": "^2.0.5",
-    "vue": "^2.4.4",
-    "vuetify": "^0.14.8"
+    "vue": "^2.5.2",
+    "vuetify": "^0.16.7"
   },
   "devDependencies": {
     "ava": "^0.22.0",
