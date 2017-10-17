@@ -2,7 +2,6 @@
   v-app
     //- top bar
     v-toolbar.elevation-3
-      //- img(src="~/assets/img/darden_rgb-02.png" height="60px")
       img(src="~/assets/img/darden-logo.png")#darden-logo
       v-spacer
       img(src="~/assets/img/citee-logo-02.svg" height="50px")
