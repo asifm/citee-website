@@ -56,7 +56,7 @@ module.exports = {
         rel: 'stylesheet',
         type: 'text/css',
         href:
-          'https://fonts.googleapis.com/css?family=Open+Sans:300,400,500,700|Roboto:300,400,500,700|Carrois+Gothic|Material+Icons',
+          'https://fonts.googleapis.com/css?family=Open+Sans:300,400,500,700|Libre+Franklin:300,500,700|Material+Icons',
       },
       {
         rel: 'stylesheet',
@@ -79,7 +79,7 @@ module.exports = {
     ** Run ESLINT on save
     */
     extend(config, ctx) {
-      if (ctx.dev && ctx.isClient) {
+      if (ctx.isDev && ctx.isClient) {
         config.module.rules.push({
           enforce: 'pre',
           test: /\.(js|vue)$/,

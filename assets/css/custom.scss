@@ -6,20 +6,10 @@ h3,
 h4,
 h5,
 h6 {
-  font-family: CalvertMT;
-  // font-family: 'Carrois Gothic';
-}
-
-.footer-about {
-  // font-size: 0.9em;
-  a {
-    text-decoration: none;
-    // border-bottom: thin solid rgba(229, 111, 0, 0.69);
-    color: #ccc;
-    &:hover {
-      border-bottom: thick solid rgba(229, 111, 0, 0.23);
-    }
-  }
+  font-family: 'Libre Franklin';
+  font-weight: 500;
+  line-height: 1.4em;
+  text-transform: uppercase;
 }
 
 .opacity-1 {

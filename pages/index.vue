@@ -3,7 +3,7 @@
     v-layout.justify-center
       v-flex(xs12 sm8 md5 lg4).pa-0
         img(src="~/assets/img/citee-logo-white.svg").ma-3.dropshadow.opacity-6
-        h4.pa-3.primary--text.elevation-12#text-bg Cities Innovating Tomorrow's Entrepreneurial Ecosystems
+        h2.pa-3.white--text.elevation-12#text-bg Cities Innovating Tomorrow's Entrepreneurial Ecosystems
     transition(name="fade" appear)
       v-layout(row wrap v-if="show").pa-0.justify-center
         v-flex(xs12 sm5 md3 lg2).pa-3
@@ -46,7 +46,7 @@ export default {
 }
 
 fade-enter-to {
-  opacity: 1
+  opacity: 1;
 }
 
 .fade-enter,
@@ -65,18 +65,21 @@ fade-enter-to {
   // filter: sepia(.4);
   img {
     width: 300px;
-  } // text under logo
-  h4 {
-    font-weight: bold; // text-transform: uppercase;
+  }
+  // text under logo
+  h2 {
+    // font-weight: light;
+    text-transform: uppercase;
     letter-spacing: 0.1em;
-  } // cards
+  }
+  // cards
   h6 {
     font-weight: bold;
     text-transform: uppercase;
   }
   .dropshadow {
     -webkit-filter: drop-shadow(0 7px 8px rgba(0, 0, 0, 0.1));
-    filter: drop-shadow( 0 17px 8px rgba(0, 0, 0, 1));
+    filter: drop-shadow(0 17px 8px rgba(0, 0, 0, 1));
     /* Same syntax as box-shadow */
   }
   #text-bg {
