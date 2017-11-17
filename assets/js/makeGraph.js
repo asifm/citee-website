@@ -11,9 +11,9 @@ const fillscale = d3
 const randomRedValue = Math.round(Math.random() * 255);
 
 export const dummy = 34;
-export function makeGraph() {
+export function makeGraph(svgParentElement) {
   const canvas = d3
-    .select('#canvas')
+    .select(svgParentElement)
     .attr('width', '1000px')
     .attr('height', '1000px');
 
