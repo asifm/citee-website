@@ -1,5 +1,5 @@
 module.exports = {
-  plugins: ['~plugins/vuetify.js'],
+  plugins: ['~plugins/vuetify.js', { src: '~plugins/vue2-leaflet.js', ssr: false }],
 
   modules: ['@nuxtjs/markdownit'],
 
@@ -63,6 +63,11 @@ module.exports = {
         type: 'text/css',
         href: '/font/mdi/css/materialdesignicons.min.css',
       },
+      {
+        rel: 'stylesheet',
+        type: 'text/css',
+        href: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.2.0/leaflet.css',
+      },
     ],
   },
   /*
@@ -88,6 +93,6 @@ module.exports = {
         });
       }
     },
-    vendor: ['vuetify'],
+    vendor: ['vuetify', 'vue2-leaflet'],
   },
 };
