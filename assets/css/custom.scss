@@ -1,12 +1,20 @@
 // https://brand.darden.virginia.edu/color/
 
+// It might be good to go over fonts styles with you, but to help you set them up now you can implement this code in the head of your HTML:
+// <script src="https://use.typekit.net/meb4tnc.js"></script>
+// <script>try{Typekit.load({ async: true });}catch(e){}</script>
+
+// You’ll want to go through your styles in CSS and change it to say “font-family: “franklin-gothic-urw”, arial, sans-serif;”. You’ll mostly use Franklin Gothic for headings, navigation and any other similar forms of text. When it comes to using a serif font, we have decided to use Georgia which doesn’t need any special code. Most cases for using Georgia are in the paragraph text.
+
 h1,
 h2,
 h3,
 h4,
 h5,
 h6 {
-  font-family: 'Libre Franklin';
+  // Change to f-g-u after localhost gets added to typekit kit
+  // font-family: 'franklin-gothic-urw';
+  font-family: Libre Franklin;
   font-weight: 500;
   line-height: 1.4em;
   text-transform: uppercase;
@@ -38,4 +46,13 @@ h6 {
 }
 .opacity-9 {
   opacity: 0.9;
+}
+
+button,
+input,
+textarea,
+select,
+option {
+  font-family: Libre Franklin;
+  font-size: 0.7em !important;
 }
