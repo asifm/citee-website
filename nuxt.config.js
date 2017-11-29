@@ -1,5 +1,10 @@
 module.exports = {
-  plugins: ['~plugins/vuetify.js', { src: '~plugins/vue2-leaflet.js', ssr: false }],
+  plugins: [
+    '~plugins/vuetify.js',
+    { src: '~plugins/vue2-leaflet.js', ssr: false },
+    // Waiting for Tyla to add localhost to allowed domains in adobe typekit kit
+    // { src: '~plugins/typekit.js', ssr: false },
+  ],
 
   modules: ['@nuxtjs/markdownit'],
 
@@ -46,6 +51,9 @@ module.exports = {
         content: 'CIT.ee: a Darden School Research Project',
       },
     ],
+    script: [
+      // { src: 'https://use.typekit.net/meb4tnc.js' },
+    ],
     link: [
       {
         rel: 'icon',
@@ -66,7 +74,8 @@ module.exports = {
       {
         rel: 'stylesheet',
         type: 'text/css',
-        href: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.2.0/leaflet.css',
+        href:
+          'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.2.0/leaflet.css',
       },
     ],
   },
