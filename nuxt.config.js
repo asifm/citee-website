@@ -63,6 +63,11 @@ module.exports = {
       {
         rel: 'stylesheet',
         type: 'text/css',
+        href: '/css/vue2-animate.min.css',
+      },
+      {
+        rel: 'stylesheet',
+        type: 'text/css',
         href:
           'https://fonts.googleapis.com/css?family=Open+Sans:300,400,500,700|Libre+Franklin:300,500,700|Material+Icons',
       },
@@ -74,8 +79,7 @@ module.exports = {
       {
         rel: 'stylesheet',
         type: 'text/css',
-        href:
-          'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.2.0/leaflet.css',
+        href: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.2.0/leaflet.css',
       },
     ],
   },
@@ -102,6 +106,7 @@ module.exports = {
         });
       }
     },
-    vendor: ['vuetify', 'vue2-leaflet'],
+    // add external packages here so that they're loaded only once
+    vendor: ['axios', 'vuetify', 'vue2-leaflet', 'leaflet'],
   },
 };

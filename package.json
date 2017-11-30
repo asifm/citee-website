@@ -21,6 +21,7 @@
     "@nuxtjs/markdownit-loader": "^1.1.1",
     "axios": "^0.17.1",
     "d3": "^4.12.0",
+    "leaflet": "^1.2.0",
     "lodash": "^4.17.4",
     "markdown-it-abbr": "^1.0.4",
     "markdown-it-attrs": "^1.0.0",
@@ -33,6 +34,7 @@
     "vue": "^2.5.9",
     "vue-server-renderer": "^2.5.9",
     "vue-template-compiler": "^2.5.9",
+    "vue2-animate": "^1.0.4",
     "vue2-leaflet": "0.0.57",
     "vuetify": "^0.17.3"
   },
