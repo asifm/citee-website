@@ -1,5 +1,7 @@
 <template lang="pug">
-v-container(fluid).grey.lighten-2
+v-container(fluid)
+  v-toolbar(dark).secondary
+    h1.pb-3.pt-3  In aliquip ad sint officia culpa in labore nisi
   v-layout(row wrap)#top-row
     v-flex(d-flex md2).pa-2
       v-card.pa-3.card--raised.grey.lighten-4
@@ -35,8 +37,8 @@ v-container(fluid).grey.lighten-2
             v-card.pl-3.pr-3.pt-3.pb-1.ma-1
               //- latlong input
               //- v-icon.orange--text mdi-view-grid
-              v-text-field(label="Longitude" v-model="lon"  @keyup.enter="renderGeoData()" type="number" id="lon")
-              v-text-field(label="Latitude" v-model="lat" @keyup.enter="renderGeoData()" type="number")
+              v-text-field(label="Longitude" v-model="lon"  @keyup.enter.native="renderGeoTiles" type="number" id="lon")
+              v-text-field(label="Latitude" v-model="lat" @keyup.enter="renderGeoTiles" type="number")
 
 
     v-flex(d-flex md2).pa-2
@@ -132,14 +134,14 @@ export default {
     };
   },
   methods: {
-    renderGeodata() {
+    renderGeoTiles() {
       // clear all value first
       this.geoMainArr.forEach((elem) => {
         elem.value = '';
         elem.geoid = '';
       });
       this.apiResultsObj = {};
-
+      this.noDataMsg = '';
       // flag for v-if
       this.loadingAjaxData = true;
 
@@ -171,12 +173,16 @@ export default {
 
     renderGeoFromAddress() {
       // imported function
+      if (this.address.length < 30) {
+        this.noDataMsg = 'Not enough information. Results may not be correct.';
+      }
       getGeoFromAddress(this.address)
         .then((response) => {
+          console.log(response.data);
           [this.lon, this.lat] = response.data.features[0].center;
           // To ask the user: Is this the place you're looking for? If not, provide more details.
           this.fullAddress = response.data.features[0].place_name;
-          this.renderGeodata();
+          this.renderGeoTiles();
         })
         .catch(e => console.log('Error', e));
     },
@@ -192,8 +198,7 @@ export default {
             // To ask the user: Is this the place you're looking for? If not, provide more details.
             this.fullAddress = response.data.features[0].place_name;
             console.log(this.fullAddress);
-            this.renderGeodata();
-            this.noDataMsg = '';
+            this.renderGeoTiles();
           } else {
             this.noDataMsg = 'Perhaps not a valid ZIP code.';
           }
@@ -209,7 +214,7 @@ export default {
     renderGeoFromMap(e) {
       this.lat = e.latlng.lat;
       this.lon = e.latlng.lng;
-      this.renderGeodata();
+      this.renderGeoTiles();
       // console.log(this.$refs.drawMap.$refs.map.mapObject.getZoom());
     },
   },
