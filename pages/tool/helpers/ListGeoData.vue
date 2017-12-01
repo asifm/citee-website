@@ -7,12 +7,15 @@ v-card(hover).mr-2.mb-2.pa-2#geodata-card
     :key="elem.code"
     ).pa-0
     v-divider
-    v-list-tile(:class=" elem.value ? 'blue-grey darken-3' : 'blue-grey lighten-1' " hover)
+    v-list-tile(:class=" elem.value ? 'grey darken-3' : 'grey darken-1' " hover)
       v-tooltip(top)
         v-list-tile-content(slot="activator")
-          v-list-tile-sub-title.mb-0 {{ elem.name }}
-          v-list-tile-title(:class = "{ 'cbsa': elem.code === '310' }").ma-0 {{ elem.value }}
-        span.tooltip {{ elem.value }}
+          v-list-tile-sub-title.mb-0 {{ elem.name }} &nbsp;&nbsp;&nbsp;
+            span.geoid {{ elem.geoid }}
+          v-list-tile-title(:class = "{ 'cbsa': elem.code === '310' }").ma-0 {{ elem.value }} 
+        span.tooltip {{ elem.value }} 
+          br 
+        span.tooltip Identifying Code: {{ elem.geoid }}
 </template>
 <script>
 export default {
@@ -48,6 +51,12 @@ export default {
 .tooltip {
   font-family: Open Sans;
   // background-color: whitesmoke;
+}
+.geoid {
+  // font-family: Georgia, 'Times New Roman', Times, serif;
+  // font-size: 0.9em;
+  // color: lightsteelblue;
+  // font-style: oblique;
 }
 </style>
 
