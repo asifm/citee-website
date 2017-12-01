@@ -1,7 +1,9 @@
 <template lang="pug">
 v-container(fluid)
   v-toolbar(dark).secondary
-    h1.pb-3.pt-3  In aliquip ad sint officia culpa in labore nisi
+    v-icon map
+    v-toolbar-title  In aliquip ad sint officia culpa in labore nisi
+    //- v-spacer
   v-layout(row wrap)#top-row
     v-flex(d-flex md2).pa-2
       v-card.pa-3.card--raised.grey.lighten-4
@@ -41,18 +43,18 @@ v-container(fluid)
               v-text-field(label="Latitude" v-model="lat" @keyup.enter="renderGeoTiles" type="number")
 
 
-    v-flex(d-flex md2).pa-2
-      v-card.pa-3.card--raised
-        v-select(placeholder="Select variable")
-        v-select(placeholder="Select Options")
     v-flex(d-flex md5).pa-2
       v-card.pa-3.card--raised
         p.caption User will select variable. Data on the variable will be shown here (related to the geos) - preferably in a graph. Also possible: Some interesting facts about the location using wikidata. Lorem tempor cupidatat nulla laborum ut pariatur laboris tempor sit. Tempor nisi aute reprehenderit aute in exercitation est. 
+    v-flex(d-flex md2).pa-2
+      v-card.pa-3.card--raised
+        v-select(placeholder="Select variable" :items="variablesArr" v-model="variableSelected" autocomplete)
+        v-select(placeholder="Select geo-level to show data on map" :items="geoNamesArr" v-model="geoSelected" autocomplete)
     
   v-layout(row wrap)
     //- map
     v-flex(md6 sm12).pa-2
-      v-card(hover).pa-1.secondary.elevation-24
+      v-card(hover).pa-1.secondary.elevation-0
         no-ssr
           draw-map(
             :zoom-val="zoom" 
@@ -66,6 +68,8 @@ v-container(fluid)
     transition(name="fadeLeft")
       v-flex(md6 v-if="!loadingAjaxData").pa-2
         //- Geodata
+        v-toolbar(dark).pb-1.indigo.darken-1.elevation-24
+          v-toolbar-title Laborum minim pariatur nisi dolor
         v-layout
           v-flex(md6)
             list-geo-data(:geoData="geoMainArr" :beginIndex=0 :endIndex=3)
@@ -116,9 +120,31 @@ const geoMainArr = [
   { code: '970', name: 'School District (Unified)' },
 ];
 
+const variablesArr = [
+  'Median age',
+  'Aggregate annual income',
+  'Labor force participation',
+  'Self-employed in own incorporated business',
+  'Income above poverty line',
+  'Per capita annual income',
+  'Broadband access',
+  'Population',
+  'Annual growth rate (2001-15)',
+  'Annual growth rate (2010-15)',
+  'Inequality: GINI coefficient',
+  'Number of Fortune 1000 companies per 1M population',
+  'Number of Inc 5000 companies per 1M population',
+  'Number of patents since 2000 per 10K population',
+  'Number of restaurants per 10K population',
+];
+
 export default {
   data() {
     return {
+      // move to separate component
+      variablesArr,
+      variableSelected: '',
+      geoSelected: '',
       loadingAjaxData: true,
       // centroid of contiguous US as a default
       lon: -98.35,
@@ -128,6 +154,7 @@ export default {
       zipcode: '',
       geoMainArr,
       geoCodesArr: geoMainArr.map(elem => elem.code),
+      geoNamesArr: geoMainArr.map(elem => elem.name),
       apiResultsObj: {},
       noDataMsg: '',
       zoom: 4,
