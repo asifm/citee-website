@@ -3,9 +3,6 @@
     v-map(
       id="map" 
       ref="map"
-      @l-zoomend="zoomMoveHandler" 
-      @l-moveend="zoomMoveHandler" 
-      @l-dblclick="zoomMoveHandler" 
       @l-click="clickHandler" 
       :zoom="zoomVal" 
       :center="centerVal" 
@@ -13,18 +10,24 @@
       :minZoom="mapboxOptions.minZoom" 
       )
       v-tilelayer(:url="url" :attribution="mapboxOptions.attribution")
-        v-marker(:lat-lng="centerVal")
+      v-marker(:lat-lng="centerVal")
+
+      //- @l-zoomend="zoomMoveHandler" 
+      //- @l-moveend="zoomMoveHandler" 
+      //- @l-dblclick="zoomMoveHandler"
+
 </template>
 
 <script>
 const mapboxOptions = {
   // accessToken:
-  //   'pk.eyJ1IjoiYXNpZm0iLCJhIjoiNmJkZmNhNmUwZWI4YmMwMTM2Y2Y4NjQ4NjM0Nzg1MWEifQ.SntXBB_ZwOFBy5GbtmbeZg',,
+  // 'pk.eyJ1IjoiYXNpZm0iLCJhIjoiNmJkZmNhNmUwZWI4YmMwMTM2Y2Y4NjQ4NjM0Nzg1MWEifQ.SntXBB_ZwOFBy5GbtmbeZg',,
   accessToken:
     'pk.eyJ1IjoiY2Vuc3VzcmVwb3J0ZXIiLCJhIjoiQV9hS01rQSJ9.wtsn0FwmAdRV7cckopFKkA',
   type: 'mapbox.light',
-  attribution:
-    'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="http://mapbox.com">Mapbox</a>',
+  attribution: `Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, 
+    <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, 
+    Imagery © <a href="http://mapbox.com">Mapbox</a>`,
   maxZoom: 12,
   minZoom: 4,
 };

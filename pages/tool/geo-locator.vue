@@ -4,7 +4,7 @@ v-container(fluid).grey.lighten-2
     v-flex(d-flex md2).pa-2
       v-card.pa-3.card--raised.grey.lighten-4
         p.caption Input a <strong>ZIP Code</strong> or a (partial) <strong>address</strong> or the <strong>longitude-latitude</strong> of a location.
-        p.caption Then click button <strong>Show Data</strong>
+        p.caption Then press <strong>Enter</strong>.
         p.caption The location must be within the United States of America.
         v-btn(@click="resetZoomCenter()").btn-small Reset Map
         
@@ -15,16 +15,28 @@ v-container(fluid).grey.lighten-2
             v-card.pl-3.pr-3.pt-3.pb-1.ma-1
               //- Address input
               v-icon.orange--text.display-1 search
-              v-text-field(label="ZIP Code" placeholder="5-digit code" v-model="zipcode" type="number")
-              v-text-field(label="Address" rows=2 multi-line v-model="address" @keyup.enter="renderAll()" placeholder="Need not be complete")
-              v-btn.btn-small.primary Submit
-              v-btn.btn-small.primary Clear 
+              v-text-field(
+                label="ZIP Code" 
+                placeholder="Must be a valid US ZIP code" 
+                type="number"
+                v-model="zipcode" 
+                @keyup.enter="renderGeoFromZip"
+                )
+              v-text-field(
+                label="Address"
+                placeholder="Need not be complete"
+                rows=2 
+                multi-line 
+                v-model="address" 
+                @keyup.enter="renderGeoFromAddress()" 
+                )
+              v-alert(v-show="noDataMsg !== ''").secondary {{ noDataMsg }}
           v-flex(d-flex lg4)
             v-card.pl-3.pr-3.pt-3.pb-1.ma-1
               //- latlong input
               //- v-icon.orange--text mdi-view-grid
-              v-text-field(label="Longitude" v-model="lon"  @keyup.enter="renderAll()" type="number" id="lon")
-              v-text-field(label="Latitude" v-model="lat" @keyup.enter="renderAll()" type="number")
+              v-text-field(label="Longitude" v-model="lon"  @keyup.enter="renderGeoData()" type="number" id="lon")
+              v-text-field(label="Latitude" v-model="lat" @keyup.enter="renderGeoData()" type="number")
 
 
     v-flex(d-flex md2).pa-2
@@ -43,11 +55,11 @@ v-container(fluid).grey.lighten-2
           draw-map(
             :zoom-val="zoom" 
             :center-val="center" 
-            
-            :click-handler="getLonLat" 
-            :zoom-move-handler="getZoomCenter"
+            :marker-val="marker"
+            :click-handler="renderGeoFromMap" 
             ref="drawMap")
 
+    //- :zoom-move-handler="getZoomCenter"
     //- Using lib. For list of transitions: https://github.com/asika32764/vue2-animate
     transition(name="fadeLeft")
       v-flex(md6 v-if="!loadingAjaxData").pa-2
@@ -71,6 +83,7 @@ import listGeoData from './helpers/ListGeoData.vue';
 import {
   getGeoFromLonLat,
   getGeoFromAddress,
+  getGeoFromZip,
 } from '../../assets/js/geoLocator';
 
 // TODO: Add definition to each geo in the array
@@ -114,7 +127,7 @@ export default {
       geoMainArr,
       geoCodesArr: geoMainArr.map(elem => elem.code),
       apiResultsObj: {},
-
+      noDataMsg: '',
       zoom: 4,
     };
   },
@@ -123,12 +136,14 @@ export default {
       // clear all value first
       this.geoMainArr.forEach((elem) => {
         elem.value = '';
+        elem.geoid = '';
       });
       this.apiResultsObj = {};
 
       // flag for v-if
       this.loadingAjaxData = true;
 
+      // imported function
       getGeoFromLonLat(this.lon, this.lat, this.geoCodesArr.toString())
         .then((response) => {
           const { results } = response.data;
@@ -146,52 +161,54 @@ export default {
                 : '';
           });
           this.loadingAjaxData = false;
+
+          this.zipcode = '';
+          this.address = '';
+          this.zoom = 6;
         })
         .catch(e => console.log('Error', e));
     },
 
     renderGeoFromAddress() {
+      // imported function
       getGeoFromAddress(this.address)
         .then((response) => {
           [this.lon, this.lat] = response.data.features[0].center;
+          // To ask the user: Is this the place you're looking for? If not, provide more details.
           this.fullAddress = response.data.features[0].place_name;
+          this.renderGeodata();
         })
         .catch(e => console.log('Error', e));
     },
-    renderAll() {
-      if (
-        // If not numbers or not coerceable to numbers
-        // TODO: Probably can omit this check, now that input type is number
-        !Number.isFinite(parseFloat(this.lon)) ||
-        !Number.isFinite(parseFloat(this.lat)) ||
-        // If empty
-        !this.lon ||
-        !this.lat
-      ) {
-        return null;
-      }
 
-      this.renderGeodata();
-      this.renderGeoFromAddress();
+    renderGeoFromZip() {
+      // imported function
+      getGeoFromZip(this.zipcode)
+        .then((response) => {
+          // TODO: check zip is in the returned address
+          console.log(response.data);
+          if (response.data.features[0].place_type[0] === 'postcode') {
+            [this.lon, this.lat] = response.data.features[0].center;
+            // To ask the user: Is this the place you're looking for? If not, provide more details.
+            this.fullAddress = response.data.features[0].place_name;
+            console.log(this.fullAddress);
+            this.renderGeodata();
+            this.noDataMsg = '';
+          } else {
+            this.noDataMsg = 'Perhaps not a valid ZIP code.';
+          }
+        })
+        .catch(e => console.log('Error', e));
+    },
 
-      return null;
-    },
-    getZoomCenter() {
-      this.zoom = this.$refs.drawMap.$refs.map.mapObject.getZoom();
-      // this.lat = this.$refs.drawMap.$refs.map.mapObject.getCenter().lat;
-      // this.lon = this.$refs.drawMap.$refs.map.mapObject.getCenter().lng;
-      this.msg = this.geoMainArr.filter(elem => 'value' in Object.keys(elem));
-      // console.log(this.center);
-    },
     resetZoomCenter() {
       this.zoom = 4;
       this.lat = 39.5;
       this.lon = -98.35;
     },
-    getLonLat(e) {
+    renderGeoFromMap(e) {
       this.lat = e.latlng.lat;
       this.lon = e.latlng.lng;
-      // this.center = [this.lat, this.lon];
       this.renderGeodata();
       // console.log(this.$refs.drawMap.$refs.map.mapObject.getZoom());
     },
@@ -200,12 +217,14 @@ export default {
     center() {
       return [this.lat, this.lon];
     },
+    marker() {
+      return this.center;
+    },
   },
   components: {
     'draw-map': drawMap,
     'list-geo-data': listGeoData,
   },
-  filters: {},
 };
 </script>
 
@@ -223,17 +242,15 @@ export default {
 // [x] TODO: Highlight non-empty geo data
 // [x] TODO: Organize the display by categories of geo data
 // [x] TODO: Add FIPS code to geo data shown
-// TODO: Use button  instead of keyup.enter
-// TODO: Get data based on zip code (append "Zip Code" to code)
+// [x] TODO: Get data based on zip code (append "Zip Code" to code)
 // TODO: Reduce number of decimals in lot lan inputs
 // TODO: Hover on map to show name of place in floating card
 // TODO: Get wikidata id from mapbox and show interesting data. Example: https://www.wikidata.org/wiki/Q1509
 // TODO: Get controls on map, such as toolbars https://vuetifyjs.com/components/toolbars#example-6 and leaflet controls
+// TODO: Show some kind of data on the map for MSAs or other geo levels selectable by user. Population or other selectable variables
 
 
-
-// FIXME: Latlon gets reacted by map data
-// FIXME: Address input shows correct output after next keyup
+// [x] FIXME: Latlon gets reacted by map data
+// [x] FIXME: Address input shows correct output after next keyup
 // FIXME: geodata not being decoded as unicode (spanish names not working) 
-// FIXME: Empty input boxes
 // FIXME: Text geo gets chopped off if too long. Use tooltip to show full text
