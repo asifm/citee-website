@@ -11,11 +11,7 @@
       )
       v-tilelayer(:url="url" :attribution="mapboxOptions.attribution")
       v-marker(:lat-lng="centerVal")
-
-      //- @l-zoomend="zoomMoveHandler" 
-      //- @l-moveend="zoomMoveHandler" 
-      //- @l-dblclick="zoomMoveHandler"
-
+   
 </template>
 
 <script>

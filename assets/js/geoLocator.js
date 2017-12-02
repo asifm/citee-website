@@ -12,7 +12,9 @@ const mapboxToken = 'pk.eyJ1IjoiY2Vuc3VzcmVwb3J0ZXIiLCJhIjoiQV9hS01rQSJ9.wtsn0Fw
 // const mapboxToken =
 // 'pk.eyJ1IjoiYXNpZm0iLCJhIjoiNmJkZmNhNmUwZWI4YmMwMTM2Y2Y4NjQ4NjM0Nzg1MWEifQ.SntXBB_ZwOFBy5GbtmbeZg';
 
-async function getGeoFromAddress(address) {
+async function getGeoFromAddress(addressQuery, onlyZip) {
+  const address = onlyZip === true ? `Zip code ${addressQuery}` : addressQuery;
+
   const endpoint = `https://api.tiles.mapbox.com/v4/geocode/mapbox.places/${
     address
   }.json?access_token=${mapboxToken}&country=us`;
@@ -20,14 +22,4 @@ async function getGeoFromAddress(address) {
   return response;
 }
 
-async function getGeoFromZip(zip) {
-  const zipAddress = `Zip Code ${zip}`;
-
-  const endpoint = `https://api.tiles.mapbox.com/v4/geocode/mapbox.places/${
-    zipAddress
-  }.json?access_token=${mapboxToken}&country=us`;
-  const response = await axios.get(endpoint);
-  return response;
-}
-
-export { getGeoFromLonLat, getGeoFromAddress, getGeoFromZip };
+export { getGeoFromLonLat, getGeoFromAddress };
