@@ -23,6 +23,7 @@ v-container(fluid)
                 label="ZIP Code" 
                 placeholder="Must be a valid US ZIP code" 
                 type="number"
+                id="zipcode"
                 v-model="zipcode" 
                 @keyup.enter="renderGeoFromAddress(zipcode, true)"
                 )
@@ -30,17 +31,19 @@ v-container(fluid)
                 label="Address"
                 placeholder="Need not be complete"
                 rows=2 
+                id="address"
                 multi-line 
                 v-model="address" 
                 @keyup.enter="renderGeoFromAddress(address, false)" 
                 )
-              v-alert(v-show="dataErrorMsg !== ''").secondary {{ dataErrorMsg }}
+              transition(name="fadeDownBig")
+                v-alert(v-show="dataErrorMsg !== ''").secondary {{ dataErrorMsg }}
           v-flex(d-flex lg4)
             v-card.pl-3.pr-3.pt-3.pb-1.ma-1
               //- latlong input
               //- v-icon.orange--text mdi-view-grid
               v-text-field(label="Longitude" v-model="lon"  @keyup.enter.native="renderGeoTiles" type="number" id="lon")
-              v-text-field(label="Latitude" v-model="lat" @keyup.enter="renderGeoTiles" type="number")
+              v-text-field(label="Latitude" v-model="lat" @keyup.enter="renderGeoTiles" type="number" id="lat")
 
     v-flex(d-flex md5).pa-2
       v-card.pa-3.card--raised
@@ -62,10 +65,9 @@ v-container(fluid)
             :click-handler="renderGeoFromMap" 
             ref="drawMap")
 
-    //- :zoom-move-handler="getZoomCenter"
     //- Using lib. For list of transitions: https://github.com/asika32764/vue2-animate
     transition(name="fadeRight")
-      v-flex(md6 v-if="!loadingAjaxData").pa-2
+      v-flex(md6 v-if="renderData").pa-2
         //- Geodata
         v-toolbar(dark).pb-1.indigo.darken-1.elevation-24
           v-toolbar-title Laborum minim pariatur nisi dolor
@@ -85,10 +87,7 @@ v-container(fluid)
 // child component
 import drawMap from '../../components/DrawMap.vue';
 import listGeoData from '../../components/ListGeoData.vue';
-import {
-  getGeoFromLonLat,
-  getGeoFromAddress,
-} from '../../assets/js/geoLocator';
+import { getGeoFromLonLat, getGeoFromAddress } from '../../assets/js/geoLocator';
 
 // TODO: Add definition to each geo in the array
 // TODO: On hover show definition
@@ -143,7 +142,7 @@ export default {
       variablesArr,
       variableSelected: '',
       geoSelected: '',
-      loadingAjaxData: true,
+      renderData: false,
       // centroid of contiguous US as a default
       lon: -98.35,
       lat: 39.5,
@@ -160,16 +159,19 @@ export default {
     };
   },
   methods: {
-    renderGeoTiles() {
-      // clear all value first
+    clearResults() {
+      // clear returned results
       this.geoMainArr.forEach((elem) => {
         elem.value = '';
         elem.geoid = '';
       });
       this.apiResultsObj = {};
-      this.dataErrorMsg = '';
+      this.renderData = false;
+    },
+    renderGeoTiles() {
+      this.clearResults();
       // flag for v-if
-      this.loadingAjaxData = true;
+      // this.renderData = true;
 
       // imported function
       getGeoFromLonLat(this.lon, this.lat, this.geoCodesArr.toString())
@@ -177,68 +179,57 @@ export default {
           const { results } = response.data;
           this.geoMainArr.forEach((elem) => {
             const correspondingElemAPI = results.filter(apiElem => apiElem.sumlevel === elem.code);
-            elem.value =
-              correspondingElemAPI.length > 0
-                ? correspondingElemAPI[0].full_name
-                : '';
+            elem.value = correspondingElemAPI.length > 0 ? correspondingElemAPI[0].full_name : '';
             elem.geoid =
-              correspondingElemAPI.length > 0 &&
-              correspondingElemAPI[0].sumlevel !== '860'
+              correspondingElemAPI.length > 0 && correspondingElemAPI[0].sumlevel !== '860'
                 ? correspondingElemAPI[0].full_geoid.slice(7)
                 : '';
+            this.renderData = true;
+            // Empty textboxes and set zoom to default after returning results
+            this.zipcode = '';
+            this.address = '';
+            this.zoom = 6;
+            setTimeout(() => {
+              this.zoom = 4;
+            }, 3000);
           });
-          this.loadingAjaxData = false;
-
-          // Empty textboxes and set zoom to default after returning results
-          this.zipcode = '';
-          this.address = '';
-          this.zoom = 6;
         })
         .catch(e => console.log('Error', e));
     },
 
     renderGeoFromAddress(addressQuery, onlyZip = false) {
-      // imported function
+      this.renderData = false;
+      this.dataErrorMsg = '';
       if (this.address.length < 30 && onlyZip === false) {
-        this.dataErrorMsg = 'Results likely incorrect. Provide more details.';
+        this.dataErrorMsg = 'Too few details. Results likely incorrect.';
       }
+      // imported function
       getGeoFromAddress(addressQuery, onlyZip)
         .then((response) => {
-          // check zip is in the returned address
+          // check result is a postcode
           if (
+            // If address is only the zip code
             onlyZip === true &&
-            response.data.features[0].place_type[0] !== 'postcode'
+            (response.data.features[0].place_type[0] !== 'postcode' ||
+              // This is a common return address when zip code fails
+              response.data.features[0].place_name[0] ===
+                'Zip Code Pl, West Palm Beach, Florida 33409, United States')
           ) {
             this.dataErrorMsg = 'Perhaps not a valid ZIP code.';
+            console.log('if triggered', this.dataErrorMsg);
+            // Don't render data and remove previously rendered data
+            this.renderData = false;
+            return;
           }
-          // console.log(response.data);
+          console.log(response.data.features[0].place_type[0]);
           [this.lon, this.lat] = response.data.features[0].center;
-          // To ask the user: Is this the place you're looking for? If not, provide more details.
           this.fullAddress = response.data.features[0].place_name;
           console.log(this.fullAddress);
+          // this.renderData = true;
           this.renderGeoTiles();
         })
         .catch(e => console.log('Error', e));
     },
-
-    // renderGeoFromZip() {
-    //   // imported function
-    //   getGeoFromZip(this.zipcode)
-    //     .then((response) => {
-    //       // TODO: check zip is in the returned address
-    //       console.log(response.data);
-    //       if (response.data.features[0].place_type[0] === 'postcode') {
-    //         [this.lon, this.lat] = response.data.features[0].center;
-    //         // To ask the user: Is this the place you're looking for? If not, provide more details.
-    //         this.fullAddress = response.data.features[0].place_name;
-    //         console.log(this.fullAddress);
-    //         this.renderGeoTiles();
-    //       } else {
-    //         this.dataErrorMsg = 'Perhaps not a valid ZIP code.';
-    //       }
-    //     })
-    //     .catch(e => console.log('Error', e));
-    // },
 
     resetZoomCenter() {
       this.zoom = 4;
