@@ -6,14 +6,13 @@ v-container(fluid)
     //- v-spacer
   v-layout(row wrap)#top-row
     v-flex(d-flex md2).pa-2
-      v-card.pa-3.card--raised.grey.lighten-4
-        p.caption Input a <strong>ZIP Code</strong> or a (partial) <strong>address</strong> or the <strong>longitude-latitude</strong> of a location.
-        p.caption Then press <strong>Enter</strong>.
-        p.caption The location must be within the United States of America.
+      v-card.pa-3.card--raised.grey.lighten-3
+        p.card__text Input a <strong>ZIP Code</strong> or a (partial) <strong>address</strong> or the <strong>longitude-latitude</strong> of a location.
+        p.card__text Then press <strong>Enter</strong>.
         v-btn(@click="resetZoomCenter()").btn-small Reset Map
         
     v-flex(d-flex md3).pa-2
-      v-card.pa-1.card--raised.grey.lighten-4
+      v-card.pa-1.card--raised.grey.lighten-3
         v-layout(wrap)
           v-flex(d-flex lg8)
             v-card.pl-3.pr-3.pt-3.pb-1.ma-1
@@ -36,20 +35,23 @@ v-container(fluid)
                 v-model="address" 
                 @keyup.enter="renderGeoFromAddress(address, false)" 
                 )
-              transition(name="fadeDownBig")
+              transition(name="zoomUp")
                 v-alert(v-show="dataErrorMsg !== ''").secondary {{ dataErrorMsg }}
+        
           v-flex(d-flex lg4)
             v-card.pl-3.pr-3.pt-3.pb-1.ma-1
               //- latlong input
-              //- v-icon.orange--text mdi-view-grid
-              v-text-field(label="Longitude" v-model="lon"  @keyup.enter.native="renderGeoTiles" type="number" id="lon")
-              v-text-field(label="Latitude" v-model="lat" @keyup.enter="renderGeoTiles" type="number" id="lat")
+              transition(name="fadeUp")
+                div(v-show="renderData")
+                  v-text-field(label="Longitude" v-model="lon"  @keyup.enter.native="renderGeoTiles" type="number" id="lon")
+                  v-text-field(label="Latitude" v-model="lat" @keyup.enter="renderGeoTiles" type="number" id="lat")
 
     v-flex(d-flex md5).pa-2
-      v-card.pa-3.card--raised
-        p.caption User will select variable. Data on the variable will be shown here (related to the geos) - preferably in a graph. Also possible: Some interesting facts about the location using wikidata. Lorem tempor cupidatat nulla laborum ut pariatur laboris tempor sit. Tempor nisi aute reprehenderit aute in exercitation est. 
+      v-card.pa-3.card--raised.grey.lighten-3
+        p.card__text User will select variable. Data on the variable will be shown here (related to the geos) - preferably in a graph. Also possible: Some interesting facts about the location using wikidata. Lorem tempor cupidatat nulla laborum ut pariatur laboris tempor sit. Tempor nisi aute reprehenderit aute in exercitation est. 
+    
     v-flex(d-flex md2).pa-2
-      v-card.pa-3.card--raised
+      v-card.pa-3.card--raised.grey.lighten-3
         v-select(placeholder="Select variable" :items="variablesArr" v-model="variableSelected" autocomplete)
         v-select(placeholder="Select geo-level to show data on map" :items="geoNamesArr" v-model="geoSelected" append-icon="map" autocomplete)
     
@@ -66,21 +68,17 @@ v-container(fluid)
             ref="drawMap")
 
     //- Using lib. For list of transitions: https://github.com/asika32764/vue2-animate
-    transition(name="fadeRight")
+    transition(name="bounceUp")
       v-flex(md6 v-if="renderData").pa-2
         //- Geodata
-        v-toolbar(dark).pb-1.indigo.darken-1.elevation-24
+        v-toolbar.pb-1.grey.lighten-4
           v-toolbar-title Laborum minim pariatur nisi dolor
         v-layout
           v-flex(md6)
-            list-geo-data(:geoData="geoMainArr" :beginIndex=0 :endIndex=3)
-            list-geo-data(:geoData="geoMainArr" :beginIndex=3 :endIndex=6)
-            list-geo-data(:geoData="geoMainArr" :beginIndex=6 :endIndex=9)
+            //- because v-for index starts at 1
+            list-geo-data(:geoData="geoMainArr" v-for="n in 3" :beginIndex="(n - 1) * 3" :endIndex="(n - 1) * 3 + 3" :key="n")
           v-flex(md6)
-            list-geo-data(:geoData="geoMainArr" :beginIndex=9 :endIndex=12)
-            list-geo-data(:geoData="geoMainArr" :beginIndex=12 :endIndex=15)
-            list-geo-data(:geoData="geoMainArr" :beginIndex=15 :endIndex=18)
-                
+            list-geo-data(:geoData="geoMainArr" v-for="n in 3" :beginIndex="(n + 2) * 3" :endIndex="(n + 2) * 3 + 3" :key="n")                
 </template>
 
 <script>
@@ -170,8 +168,6 @@ export default {
     },
     renderGeoTiles() {
       this.clearResults();
-      // flag for v-if
-      // this.renderData = true;
 
       // imported function
       getGeoFromLonLat(this.lon, this.lat, this.geoCodesArr.toString())
@@ -206,6 +202,7 @@ export default {
       // imported function
       getGeoFromAddress(addressQuery, onlyZip)
         .then((response) => {
+          console.log(response.data);
           // check result is a postcode
           if (
             // If address is only the zip code
@@ -261,6 +258,9 @@ export default {
 
 <style lang="scss" scoped>
 #top-row {
-  line-height: 1.1em;
+  // line-height: 1.1em;
+}
+.list__tile--highlighted {
+  font-family: Open Sans;
 }
 </style>
