@@ -239,7 +239,6 @@ function drawCircles(
   const tooltip = d3
     .select('body')
     .append('div')
-    .attr('class', 'card card--raised')
     .style('position', 'absolute')
     .style('z-index', '10')
     .style('visibility', 'hidden')
@@ -247,7 +246,7 @@ function drawCircles(
     .style('padding', '10px')
     .style('line-height', '18px')
     .style('border-radius', '3px')
-    .attr('class', 'tooltip box viz-shadow');
+    .attr('class', 'tooltip-viz card elevation-24');
 
   circles.on('mouseover', (d) => {
     tooltip

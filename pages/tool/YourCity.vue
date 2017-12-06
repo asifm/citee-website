@@ -71,8 +71,6 @@ v-container(fluid)
     transition(name="bounceUp")
       v-flex(md6 v-if="renderData").pa-2
         //- Geodata
-        v-toolbar.pb-1.grey.lighten-4
-          v-toolbar-title Laborum minim pariatur nisi dolor
         v-layout
           v-flex(md6)
             //- because v-for index starts at 1
@@ -85,7 +83,10 @@ v-container(fluid)
 // child component
 import drawMap from '../../components/DrawMap.vue';
 import listGeoData from '../../components/ListGeoData.vue';
-import { getGeoFromLonLat, getGeoFromAddress } from '../../assets/js/geoLocator';
+import {
+  getGeoFromLonLat,
+  getGeoFromAddress,
+} from '../../assets/js/geoLocator';
 
 // TODO: Add definition to each geo in the array
 // TODO: On hover show definition
@@ -175,9 +176,13 @@ export default {
           const { results } = response.data;
           this.geoMainArr.forEach((elem) => {
             const correspondingElemAPI = results.filter(apiElem => apiElem.sumlevel === elem.code);
-            elem.value = correspondingElemAPI.length > 0 ? correspondingElemAPI[0].full_name : '';
+            elem.value =
+              correspondingElemAPI.length > 0
+                ? correspondingElemAPI[0].full_name
+                : '';
             elem.geoid =
-              correspondingElemAPI.length > 0 && correspondingElemAPI[0].sumlevel !== '860'
+              correspondingElemAPI.length > 0 &&
+              correspondingElemAPI[0].sumlevel !== '860'
                 ? correspondingElemAPI[0].full_geoid.slice(7)
                 : '';
             this.renderData = true;
