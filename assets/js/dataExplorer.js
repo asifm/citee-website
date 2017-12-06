@@ -1,4 +1,5 @@
 import * as d3 from 'd3';
+// import * as d3ScaleChromatic from 'd3-scale-chromatic';
 import * as axios from 'axios';
 
 /**
@@ -8,43 +9,42 @@ import * as axios from 'axios';
  * @returns {object} a row of data with numbers as numbers, not strings
  */
 function processData(d) {
+  console.log('being processed');
   return {
-    business_starts_2014_per10K: +d.business_starts_2014_per10K,
-    business_exits_2014_per10K: +d.business_exits_2014_per10K,
     cagr01to15: +d.cagr01to15,
     cagr10to15: +d.cagr10to15,
     cbsa15: d.cbsa15,
     cbsaname15: d.cbsaname15,
     census_region: d.census_region,
-    employed: +d.employed_count,
     fips_state: d.fips_state,
     fortune1000_count: +d.fortune1000_count,
     gini: +d.gini,
-    gini_moe: +d.gini_moe,
     gmp_billion_usd: +d.gmp_billion_usd,
-    gmp_per_cap_usd: +d.gmp_per_cap_usd,
     inc5000_count: +d.inc5000_count,
-    jobs_created_2014_per1K: +d.jobs_created_2014_per1K,
-    labor_force_count: +d.labor_force_count,
     lat: +d.lat,
-    long: +d.long,
+    lon: +d.lon,
     patents_count: +d.patents_count,
-    patents_count_top_class: +d.patents_count_top_class,
     patents_per10K: +d.patents_per10K,
-    population14: +d.pop14,
     restaurants_count: +d.restaurants_count,
     restaurants_per10K: +d.restaurants_per10K,
-    unicorns_count: +d.unicorns_count,
-    unemployment_percent: +d.unemployment_percent / 100,
-    unemployed_count: +d.unemployed_count,
-    unicorns_per1M: +d.unicorns_per1M,
     inc5000_per1M: +d.inc5000_per1M,
     fortune1000_per1M: +d.fortune1000_per1M,
-    top_patent_class_percent: +d.top_patent_class_percent,
-    women_in_workforce_percent: +d.women_in_workforce_percent,
-    top_patent_class: d.top_patent_class,
     state_abbr: d.state_abbr,
     state_name: d.state_name,
+    pop_acs16: +d.pop_acs16,
+    median_age: +d.median_age,
+    in_migration_from_diff_msa: +d.in_migration_from_diff_msa,
+    per_capita_income: +d.per_capita_income,
+    aggr_income_billion: +d.aggr_income_billion,
+    percent_in_labor_force: +d.percent_in_labor_force,
+    percent_employed: +d.percent_employed,
+    income_above_poverty_line: +d.income_above_poverty_line,
+    households_not_receiving_food_stamp_snap: +d.households_not_receiving_food_stamp_snap,
+    bachelors_degree_or_higher: +d.bachelors_degree_or_higher,
+    internet_subscription: +d.internet_subscription,
+    broadband_subscription: +d.broadband_subscription,
+    research_universities: +d.research_universities,
+    male_female_ratio: +d.male_female_ratio,
   };
 }
 
@@ -57,6 +57,7 @@ function processData(d) {
 async function getParsedData(filepath) {
   const response = await axios.get(filepath);
   const parsedData = d3.csvParse(response.data);
+  console.log(parsedData);
   return parsedData;
 }
 
@@ -73,17 +74,16 @@ function drawSvgScatter(container, width, height, margin) {
 }
 
 // TODO: add linear scale
-// TODO: Add color scale
 // TODO: Add map circle radius scale
 function createScales(width, height, data, xVar, yVar, radiusVar, colorVar) {
   // TODO: negative values have been filtered out. Otherwise logscales won't work. Find a solution.
+  // Possible solution: Convert negative values to zero first; separately note this for user
   const radiusScale = d3.scaleSqrt().range([3, 20]);
   const xScale = d3.scaleLog().range([25, width - 25]);
   const yScale = d3.scaleLog().range([height - 25, 25]);
   const colorScale = d3.scaleLog().range([d3.rgb('#FFD500'), d3.rgb('#007AFF')]);
-  // const colorScale = d3.scaleLog(d3.interpolatePlasma);
+  // const colorScale = d3.scaleSequential(d3ScaleChromatic.interpolateYlGn);
 
-  d3.scaleLinear().range(['red', 'blue']);
   // Scale based on the range of the data
   const minX = d3.min(data, d => d[xVar] || Infinity);
   const minY = d3.min(data, d => d[yVar] || Infinity);
@@ -113,13 +113,13 @@ function setTicks(xScale, yScale, xAxis, yAxis) {
   // for sideeffect; no return
   // Set ticks format based on largest value (use current domains to get the value)
   if (xScale.domain()[1] < 100) {
-    xAxis.ticks(5, '0.2f');
+    xAxis.ticks(5, '0.1f');
   } else {
     xAxis.ticks(5, '0.2s');
   }
 
   if (yScale.domain()[1] < 100) {
-    yAxis.ticks(5, '0.2f');
+    yAxis.ticks(5, '0.1f');
   } else {
     yAxis.ticks(5, '0.2s');
   }
@@ -137,8 +137,8 @@ function drawAxes(svg, width, height, margin, xVarText, yVarText, xScale, yScale
     .style('font-family', 'Open Sans')
     .style('font-size', '0.8em')
     .style('stroke-opacity', 1)
-    .style('stroke-width', '3.5px');
-  // .attr('class', 'axis axis--x');
+    .style('stroke-width', '1.5px')
+    .attr('class', 'axis axis--x');
 
   // Add the y Axis
   svg
@@ -147,8 +147,8 @@ function drawAxes(svg, width, height, margin, xVarText, yVarText, xScale, yScale
     .style('font-family', 'Open Sans')
     .style('font-size', '0.8em')
     .style('stroke-opacity', 1)
-    .style('stroke-width', '3.5px');
-  // .attr('class', 'axis axis--y');
+    .style('stroke-width', '1.5px')
+    .attr('class', 'axis axis--y');
 
   // text label for the x axis
   svg
@@ -158,7 +158,7 @@ function drawAxes(svg, width, height, margin, xVarText, yVarText, xScale, yScale
     .attr('dy', '-55px')
     .style('font-size', '1.3em')
     .style('text-anchor', 'middle')
-    .style('font-family', 'Open Sans')
+    .style('font-family', 'Libre Franklin')
     .text(xVarText);
 
   // text label for the y axis
@@ -170,7 +170,7 @@ function drawAxes(svg, width, height, margin, xVarText, yVarText, xScale, yScale
     .attr('dy', '55px')
     .style('font-size', '1.3em')
     .style('text-anchor', 'middle')
-    .style('font-family', 'Open Sans')
+    .style('font-family', 'Libre Franklin')
     .text(yVarText);
 
   // add the X gridlines
@@ -193,6 +193,10 @@ function drawAxes(svg, width, height, margin, xVarText, yVarText, xScale, yScale
       .axisLeft(yScale)
       .tickSize(-width)
       .tickFormat(''));
+
+  d3.selectAll('.axis>.tick>text').each(function makeTickBigger(d, i) {
+    d3.select(this).style('font-size', '1.5em');
+  });
 
   return [xAxis, yAxis];
 }
@@ -229,12 +233,16 @@ function drawCircles(
     .attr('class', 'dot')
     .attr('cx', d => xScale(d[xVar]))
     .attr('cy', d => yScale(d[yVar]))
-    .attr('r', d => radiusScale(d[radiusVar]))
     .attr('fill', d => colorScale(d[colorVar]))
     .attr('opacity', '0.4')
     .attr('stroke-width', '0.5')
-    .attr('stroke', 'black');
-  // .append('g');
+    .attr('stroke', 'black')
+    .attr('r', 0);
+
+  circles
+    .transition()
+    .duration(200)
+    .attr('r', d => radiusScale(d[radiusVar]));
 
   const tooltip = d3
     .select('body')
@@ -242,17 +250,13 @@ function drawCircles(
     .style('position', 'absolute')
     .style('z-index', '10')
     .style('visibility', 'hidden')
-    .style('font-size', '14px')
-    .style('padding', '10px')
-    .style('line-height', '18px')
-    .style('border-radius', '3px')
-    .attr('class', 'tooltip-viz card elevation-24');
+    .attr('class', 'card elevation-24 pa-4 tooltip-viz');
 
   circles.on('mouseover', (d) => {
     tooltip
       .html('')
       .style('visibility', 'visible')
-      .html(() => `<h4>${d.cbsaname15}</h4>
+      .html(() => `<h3>${d.cbsaname15}</h3>
                   <br><strong>${d3.format(xFormat)(d[xVar])}</strong> ${xVarText}
                   <br><strong>${d3.format(yFormat)(d[yVar])}</strong> ${yVarText}
                   <br><strong>${d3.format(radiusFormat)(d[radiusVar])}</strong> ${radiusVarText}
@@ -284,39 +288,54 @@ default: default var for x axis, y axis, etc.
 const metaDataArr = [
   {
     name: 'cagr01to15',
-    text: 'Annual Growth Rate 2001–15',
+    text: 'Annual Growth 2001–15 (%)',
     type: 'number',
-    format: ',.1%',
+    format: ',.1p',
     include: true,
   },
   {
     name: 'cagr10to15',
-    text: 'Annual Growth Rate 2010–15',
+    text: 'Annual Growth 2010–15 (%)',
     type: 'number',
-    format: ',.1%',
+    format: ',.1p',
     include: true,
     default: 'mapRadius',
+  },
+  {
+    name: 'median_age',
+    text: 'Median age',
+    type: 'number',
+    format: ',.0f',
+    include: true,
   },
   {
     name: 'business_starts_2014_per10K',
     text: 'Business starts in 2014 per 10K people',
     type: 'number',
     format: ',.0f',
-    include: true,
+    include: false,
   },
   {
     name: 'gmp_billion_usd',
-    text: 'Gross Metropolitan Product (Bn USD)',
+    text: 'Gross Metro Product (Billion USD)',
+    type: 'number',
+    format: ',.0f',
+    include: true,
+    default: 'radius',
+  },
+  {
+    name: 'per_capita_income',
+    text: 'Per capita income',
     type: 'number',
     format: ',.0f',
     include: true,
   },
   {
-    name: 'gmp_per_cap_usd',
-    text: 'Gross Metropolitan Product per Capita (USD)',
+    name: 'aggr_income_billion',
+    text: 'Aggregate income (billion USD)',
     type: 'number',
     format: ',.0f',
-    include: false,
+    include: true,
   },
   {
     name: 'gini',
@@ -324,14 +343,103 @@ const metaDataArr = [
     type: 'number',
     format: '.2f',
     include: true,
+    default: 'color',
+  },
+  {
+    name: 'income_above_poverty_line',
+    text: 'Income above poverty line (%)',
+    format: ',.1p',
+    type: 'number',
+    include: true,
+  },
+  {
+    name: 'households_not_receiving_food_stamp_snap',
+    text: 'Households not receiving food stamps/SNAP (%)',
+    type: 'number',
+    format: ',.1p',
+    include: true,
+  },
+  {
+    name: 'patents_count',
+    text: 'Total patents',
+    type: 'number',
+    format: ',.0f',
+    include: true,
+  },
+  {
+    name: 'patents_per10K',
+    text: 'Patents per 10K people',
+    type: 'number',
+    format: ',.0f',
+    include: true,
+    default: 'yAxis',
+  },
+  {
+    name: 'research_universities',
+    text: 'Number of research universities',
+    type: 'number',
+    format: ',.0f',
+    include: true,
+  },
+  {
+    name: 'bachelors_degree_or_higher',
+    text: "Bachelor's degree or higher (%)",
+    type: 'number',
+    format: ',.1p',
+    include: true,
+  },
+  {
+    name: 'internet subscription',
+    text: 'Households with an internet subscription (%)',
+    type: 'number',
+    format: ',.1p',
+    include: true,
+  },
+  {
+    name: 'broadband_subscription',
+    text: 'Households with broadband subscription (%)',
+    type: 'number',
+    format: ',.1p',
+    include: true,
+  },
+
+  {
+    name: 'restaurants_per10K',
+    text: 'Restaurants per 10K people',
+    type: 'number',
+    format: ',.0f',
+    include: true,
+    default: 'xAxis',
+  },
+  {
+    name: 'in_migration_from_diff_msa',
+    text: 'Moved in from different MSA (%)',
+    type: 'number',
+    format: ',.1p',
+    include: true,
+  },
+
+  {
+    name: 'percent_in_labor_force',
+    text: 'In labor force (%)',
+    type: 'number',
+    format: ',.1p',
+    include: true,
+  },
+
+  {
+    name: 'percent_employed',
+    text: 'employed (%)',
+    type: 'number',
+    format: ',.1p',
+    include: true,
   },
   {
     name: 'jobs_created_2014_per1K',
     text: 'Jobs created in 2014 per 1K people',
     type: 'number',
     format: ',.0f',
-    include: true,
-    default: 'color',
+    include: false,
   },
   {
     name: 'fortune1000_count',
@@ -362,29 +470,6 @@ const metaDataArr = [
     include: true,
   },
   {
-    name: 'patents_count',
-    text: 'Total patents',
-    type: 'number',
-    format: ',.0f',
-    include: true,
-  },
-  {
-    name: 'patents_per10K',
-    text: 'Patents per 10K people',
-    type: 'number',
-    format: ',.0f',
-    include: true,
-    default: 'yAxis',
-  },
-  {
-    name: 'restaurants_per10K',
-    text: 'Restaurants per 10K people',
-    type: 'number',
-    format: ',.0f',
-    include: true,
-    default: 'xAxis',
-  },
-  {
     name: 'unicorns_count',
     text: 'Unicorns',
     type: 'number',
@@ -403,7 +488,7 @@ const metaDataArr = [
     text: 'Population',
     type: 'number',
     format: ',.0f',
-    include: true,
+    include: false,
   },
   {
     name: 'unemployed_count',
@@ -416,18 +501,39 @@ const metaDataArr = [
     name: 'unemployment_percent',
     text: 'Unemployment Rate (Feb 2017)',
     type: 'number',
-    format: ',.1%',
-    include: true,
-    default: 'radius',
+    format: ',.1p',
+    include: false,
   },
   {
     name: 'women_in_workforce_percent',
     text: 'Women in Workforce (%)',
     type: 'number',
-    format: ',.0%',
+    format: ',.1p',
     include: false,
   },
+  {
+    name: 'pop_acs16',
+    text: 'Population (2016)',
+    type: 'number',
+    format: ',.0f',
+    include: true,
+  },
+
+  {
+    name: 'male_female_ratio',
+    text: 'Male to female ratio',
+    type: 'number',
+    format: ',.2f',
+    include: true,
+  },
 ];
+
+// metaDataArr.map(elem => {
+//   if (elem.type === 'number') {
+//     varsObj[elem.name] = elem.
+//   }
+// })
+
 export {
   getParsedData,
   processData,

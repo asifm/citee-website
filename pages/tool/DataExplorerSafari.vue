@@ -9,12 +9,7 @@ v-container(fluid)
     v-flex(lg7 md12).pa-3
       v-card.pa-2.card--raised.elevation-10
         svg#svg-scatter
-          filter#dropshadow
-            feGaussianBlur(in="SourceAlpha" stdDeviation="10")
-            feOffset(dx="0", dy="0")
-            feMerge
-              feMergeNode
-              feMergeNode(in="SourceGraphic")
+          
    
     v-flex(lg3 md6).pa-3
       v-layout(row wrap)
