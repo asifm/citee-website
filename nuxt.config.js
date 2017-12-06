@@ -2,6 +2,7 @@ module.exports = {
   plugins: [
     '~plugins/vuetify.js',
     '~plugins/vee-validate.js',
+    // '~plugins/d3.js',
     { src: '~plugins/vue2-leaflet.js', ssr: false },
     // Waiting for Tyla to add localhost to allowed domains in adobe typekit kit
     // { src: '~plugins/typekit.js', ssr: false },
@@ -108,6 +109,6 @@ module.exports = {
       }
     },
     // add external packages here so that they're loaded only once
-    vendor: ['axios', 'vuetify', 'vue2-leaflet', 'leaflet', 'vee-validate'],
+    vendor: ['axios', 'vuetify', 'vue2-leaflet', 'leaflet', 'vee-validate', 'd3'],
   },
 };
