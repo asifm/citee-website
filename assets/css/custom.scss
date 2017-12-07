@@ -5,21 +5,6 @@
 // <script>try{Typekit.load({ async: true });}catch(e){}</script>
 
 // You’ll want to go through your styles in CSS and change it to say “font-family: “franklin-gothic-urw”, arial, sans-serif;”. You’ll mostly use Franklin Gothic for headings, navigation and any other similar forms of text. When it comes to using a serif font, we have decided to use Georgia which doesn’t need any special code. Most cases for using Georgia are in the paragraph text.
-
-h1,
-h2,
-h3,
-h4,
-h5,
-h6 {
-  // Change to f-g-u after localhost gets added to typekit kit
-  // font-family: 'franklin-gothic-urw';
-  font-family: Libre Franklin;
-  font-weight: 500;
-  line-height: 1.4em;
-  text-transform: uppercase;
-}
-
 .opacity-1 {
   opacity: 0.1;
 }
@@ -48,28 +33,36 @@ h6 {
   opacity: 0.9;
 }
 
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: 'franklin-gothic-urw';
+  font-weight: 800;
+  line-height: 1.4em;
+  text-transform: uppercase;
+}
+
+p {
+  font-family: Georgia, 'Times New Roman', Times, serif;
+  font-size: 18px;
+}
+
 button,
 input,
 textarea,
 select,
 option {
-  // font-family: Libre Franklin;
+  font-family: franklin-gothic-urw;
   // font-size: 0.7em !important;
 }
 
-// graphs
-
-// .viz-shadow {
-//   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 2px 5px 10px rgba(0, 0, 0, 0.24);
-//   // box-shadow: 0 3px 3px rgba(0, 0, 0, 0.12), 0 25px 25px rgba(0, 0, 0, 0.24);
-//   // transition: all 0.3s cubic-bezier(.25, .8, .25, 1);
-//   // &:hover {
-//   //     box-shadow: 0 3px 3px rgba(0, 0, 0, 0.25), 0 5px 5px rgba(0, 0, 0, 0.22);
-// }
-
-// .tooltip conflicts with vuetify class
+// d3 graphs
+// carefuL: classname .tooltip conflicts with vuetify class
 .tooltip-viz {
-  font-family: LIbre Franklin;
+  font-family: franklin-gothic-urw;
   background-color: whitesmoke;
   line-height: 1.3em !important;
 }
