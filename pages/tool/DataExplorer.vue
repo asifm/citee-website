@@ -1,120 +1,116 @@
 <template lang="pug">
-v-container(fluid)
-  v-toolbar.secondary(dark)
-    v-toolbar-title 
-      h4 Metro Data Explorer
 
-  //- top row for controls; alternatively, controls on the side of the scatter plot in a single column
-  v-layout(row wrap).pa-3
-    v-flex(lg7 md12).pa-3
-      v-card.pa-2.card--raised.elevation-10
-        svg#svg-scatter
-          filter#dropshadow
-            feGaussianBlur(in="SourceAlpha" stdDeviation="10")
-            feOffset(dx="0", dy="0")
-            feMerge
-              feMergeNode
-              feMergeNode(in="SourceGraphic")
-   
-    v-flex(lg3 md6).pa-3
+  v-container(fluid).pa-0
+    v-card.pa-0.orange.opacity-8
       v-layout(row wrap)
-        v-flex(lg12)
-          //- select x and y variables
-          v-card.pa-4.grey.lighten-4.card--raised
-            v-chip(label).bigchip.amber.lighten-3.elevation-1 X Axis
-            v-select(
-              autocomplete
-              dense
-              :items="varsArr"
-              v-model="xVar"
-              item-value="name"
-              item-text="text"
-              @select="renderScatter()"
-              ).mb-3
+        v-flex(lg3 xs6).pa-3
+          v-btn.lime X Axis
+          v-select(
+            autocomplete
+            dense
+            :items="varsArr"
+            v-model="xVar"
+            item-value="name"
+            item-text="text"
+            @select="renderScatter()"
+            ).text--white
 
-            v-chip(label).bigchip.orange.lighten-3.elevation-1 Y Axis
-            v-select(
-              autocomplete
-              dense
-              :items="varsArr"
-              v-model="yVar"
-              item-value="name"
-              item-text="text"
-              @select="renderScatter()"
-              ).mb-3
-
-            v-chip(label).bigchip.lime.lighten-3.elevation-1 Circle Radius
-            v-select(
-              autocomplete
-              dense
-              :items="varsArr"
-              v-model="radiusVar"
-              item-value="name"
-              item-text="text"
-              @select="renderScatter()"
-              ).mb-3
-
-            v-chip(label).bigchip.yellow.lighten-3.elevation-1 Circle Color
-            span.caption &nbsp; yellow → low | blue → high
-            v-select(
-              autocomplete
-              dense
-              :items="varsArr"
-              v-model="colorVar"
-              item-value="name"
-              item-text="text"
-              @select="renderScatter()"
-              ).mb-3
-
-            //- TODO map
-            //- v-chip(label).bigchip.red.lighten-2.elevation-3 Circle Radius on Map
-            //- v-select(
-            //-   autocomplete
-            //-   dense
-            //-   :items="varsArr"
-            //-   v-model="mapRadiusVar"
-            //-   item-value="name"
-            //-   item-text="text"
-            //-   @select="renderScatter()"
-            //-   )
-              
-        //- v-flex(lg12)
-          v-card.pa-4.card--raised
-            //- use log scale
-            //- TODO population range selection
-            //- v-slider(label="Metro population range")
-
-            v-select(
-              label="Select metro"
-              autocomplete
-              clearable
-              chips
-              dense
-              :items="metrosArr"
-              v-model="selectedMetrosArr"
-              )
-            v-select(
-              label="Select state"
-              autocomplete
-              clearable
-              chips
-              dense
-              :items="statesArr"
-              v-model="selectedStatesArr"
-              )
+        v-flex(lg3 xs6).pa-3
+          v-btn.lime Y Axis
+          v-select(
+                autocomplete
+                dense
+                :items="varsArr"
+                v-model="yVar"
+                item-value="name"
+                item-text="text"
+                @select="renderScatter()"
+                )
+      
+        v-flex(lg3 xs6).pa-3
+          v-btn.lime Radius
+          v-select(
+                autocomplete
+                dense
+                :items="varsArr"
+                v-model="radiusVar"
+                item-value="name"
+                item-text="text"
+                @select="renderScatter()"
+                )
+      
+        v-flex(lg3 xs6).pa-3
+          v-btn.lime Color
+          v-select(
+                autocomplete
+                dense
+                :items="varsArr"
+                v-model="colorVar"
+                item-value="name"
+                item-text="text"
+                @select="renderScatter()"
+                )
+        
   
+    v-layout(row wrap).pa-0
+      v-flex(lg7 md12).pa-0
+        v-card.pa-2.card--raised.elevation-24.indigo.darken-4
+          svg#svg-scatter
+            //- TODO: apply the filter to circles and lines only. not on text
+            //- create a separate svg element for this purpose
+            filter#dropshadow
+              feGaussianBlur(in="SourceAlpha" stdDeviation="10")
+              feOffset(dx="0", dy="0")
+              feMerge
+                feMergeNode
+                feMergeNode(in="SourceGraphic")
+    
+      
+                
+          //- v-flex(lg12)
+            v-card.pa-4.card--raised
+              //- use log scale
+              //- TODO population range selection
+              //- v-slider(label="Metro population range")
 
-  v-layout
-    //- map
-    v-flex(lg6)
-    //- top and bottom metros
-    v-flex(lg6)
-      v-layout
-        //- top 5
-        v-flex(lg6)
-        //- bottom 5
-        v-flex(lg6)
+              v-select(
+                label="Select metro"
+                autocomplete
+                clearable
+                chips
+                dense
+                :items="metrosArr"
+                v-model="selectedMetrosArr"
+                )
+              v-select(
+                label="Select state"
+                autocomplete
+                clearable
+                chips
+                dense
+                :items="statesArr"
+                v-model="selectedStatesArr"
+                )
+    
 
+    v-layout
+      //- map
+      v-flex(lg12).pa-4
+        v-data-table(
+            must-sort
+            :rows-per-page-items=[10, 20, 50, {text: "All", value: -1}]
+            rows-per-page-text="Select number of metros to show"
+            :headers="headers"
+            :items="pData")
+      
+          template(slot="items" slot-scope="props")
+            td {{ props.item.cbsaname15 }}
+            td(class="text-xs-right") {{ props.item[xVar] }}
+            td(class="text-xs-right") {{ props.item[yVar] }}
+            td(class="text-xs-right") {{ props.item[radiusVar] }}
+            td(class="text-xs-right") {{ props.item[colorVar] }}
+        
+    
 </template>
 
 <script>
@@ -131,7 +127,7 @@ import {
   drawMap,
   drawMapCircles,
   createTooltips,
-  createDetailData,
+  createZoomBrush,
 } from '../../assets/js/dataExplorer';
 
 const varsArr = metaDataArr.filter(elem => elem.include);
@@ -139,10 +135,13 @@ const varsArr = metaDataArr.filter(elem => elem.include);
 export default {
   data() {
     return {
+      headers: [],
+
       // TODO: Combine all similar attributs into an object for
       // easy passing of data
       svgScatterContainer: '#svg-scatter',
       svgScatter: null,
+      circlesG: null,
       width: 800,
       height: 800,
       margin: {
@@ -205,7 +204,6 @@ export default {
       );
 
       createTooltips();
-      createDetailData();
     },
 
     renderScatter() {
@@ -214,12 +212,14 @@ export default {
 
       // Keep only data where all values for the selected variables are positive.
       // Otherwise logscales won't work. Find a solution.
-      this.pData = this.pData.filter(d =>
+      this.pData = this.pData.filter(
+        d =>
           d[this.xVar] > 0 &&
           d[this.yVar] > 0 &&
           d[this.radiusVar] > 0 &&
           d[this.colorVar] > 0 &&
-          d[this.mapRadiusVar] > 0);
+          d[this.mapRadiusVar] > 0
+      );
       [
         this.xScale,
         this.yScale,
@@ -271,6 +271,18 @@ export default {
         this.colorFormat,
         this.mapRadiusFormat
       );
+      this.headers = [
+        {
+          text: 'Metro',
+          align: 'left',
+          sortable: false,
+          value: 'cbsaname15',
+        },
+        { text: this.xVarText, value: this.xVar },
+        { text: this.yVarText, value: this.yVar },
+        { text: this.radiusVarText, value: this.radiusVar },
+        { text: this.colorVarText, value: this.colorVar },
+      ];
     },
     renderMap() {
       drawMap();
@@ -279,42 +291,59 @@ export default {
   },
   watch: {
     xVar() {
-      this.xVarText = this.varsArr.filter(elem => elem.name === this.xVar)[0].text;
-      this.xFormat = this.varsArr.filter(elem => elem.name === this.xVar)[0].format;
+      this.xVarText = this.varsArr.filter(
+        elem => elem.name === this.xVar
+      )[0].text;
+      this.xFormat = this.varsArr.filter(
+        elem => elem.name === this.xVar
+      )[0].format;
     },
     yVar() {
-      this.yVarText = this.varsArr.filter(elem => elem.name === this.yVar)[0].text;
-      this.yFormat = this.varsArr.filter(elem => elem.name === this.yVar)[0].format;
+      this.yVarText = this.varsArr.filter(
+        elem => elem.name === this.yVar
+      )[0].text;
+      this.yFormat = this.varsArr.filter(
+        elem => elem.name === this.yVar
+      )[0].format;
     },
     radiusVar() {
-      this.radiusVarText = this.varsArr.filter(elem => elem.name === this.radiusVar)[0].text;
-      this.radiusFormat = this.varsArr.filter(elem => elem.name === this.radiusVar)[0].format;
+      this.radiusVarText = this.varsArr.filter(
+        elem => elem.name === this.radiusVar
+      )[0].text;
+      this.radiusFormat = this.varsArr.filter(
+        elem => elem.name === this.radiusVar
+      )[0].format;
     },
     colorVar() {
-      this.colorVarText = this.varsArr.filter(elem => elem.name === this.colorVar)[0].text;
-      this.colorFormat = this.varsArr.filter(elem => elem.name === this.colorVar)[0].format;
+      this.colorVarText = this.varsArr.filter(
+        elem => elem.name === this.colorVar
+      )[0].text;
+      this.colorFormat = this.varsArr.filter(
+        elem => elem.name === this.colorVar
+      )[0].format;
     },
     mapRadiusVar() {
-      this.mapRadiusVarText = this.varsArr.filter(elem => elem.name === this.mapRadiusVar)[0].text;
-      this.mapRadiusFormat = this.varsArr.filter(elem => elem.name === this.mapRadiusVar)[0].format;
+      this.mapRadiusVarText = this.varsArr.filter(
+        elem => elem.name === this.mapRadiusVar
+      )[0].text;
+      this.mapRadiusFormat = this.varsArr.filter(
+        elem => elem.name === this.mapRadiusVar
+      )[0].format;
     },
   },
   mounted() {
-    getParsedData(this.filepath).then((data) => {
+    getParsedData(this.filepath).then(data => {
       this.pData = data.map(elem => processData(elem));
-      console.log('from mounted', this.pData);
       this.metrosArr = this.pData.map(elem => elem.cbsaname15);
       this.statesArr = this.pData.map(elem => elem.state_name);
       this.renderSetup();
       this.renderScatter();
+      createZoomBrush();
     });
   },
 };
 </script>
 
 <style lang="scss" scoped>
-.bigchip {
-  font-size: 1.1em;
-  // font-weight: bold;
-}
+
 </style>
