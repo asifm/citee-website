@@ -2,10 +2,7 @@ module.exports = {
   plugins: [
     '~plugins/vuetify.js',
     '~plugins/vee-validate.js',
-    // '~plugins/d3.js',
     { src: '~plugins/vue2-leaflet.js', ssr: false },
-    // Waiting for Tyla to add localhost to allowed domains in adobe typekit kit
-    // { src: '~plugins/typekit.js', ssr: false },
   ],
 
   modules: ['@nuxtjs/markdownit'],
@@ -54,8 +51,11 @@ module.exports = {
       },
     ],
     script: [
-      // { src: 'https://use.typekit.net/meb4tnc.js' },
+      { src: 'https://use.typekit.net/pbg0kfs.js' },
+      { innerHTML: 'try { Typekit.load({ async: true }); } catch (e) {}' },
     ],
+    // Needed if innerhtml for script contains quotations which shouldn't be escaped
+    __dangerouslyDisableSanitizers: ['script'],
     link: [
       {
         rel: 'icon',
@@ -109,6 +109,7 @@ module.exports = {
       }
     },
     // add external packages here so that they're loaded only once
+    // Is it needed only for vue plugins, or all packages?
     vendor: ['axios', 'vuetify', 'vue2-leaflet', 'leaflet', 'vee-validate', 'd3'],
   },
 };

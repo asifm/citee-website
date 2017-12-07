@@ -9,7 +9,6 @@ import * as axios from 'axios';
  * @returns {object} a row of data with numbers as numbers, not strings
  */
 function processData(d) {
-  console.log('being processed');
   return {
     cagr01to15: +d.cagr01to15,
     cagr10to15: +d.cagr10to15,
@@ -45,6 +44,8 @@ function processData(d) {
     broadband_subscription: +d.broadband_subscription,
     research_universities: +d.research_universities,
     male_female_ratio: +d.male_female_ratio,
+    unicorns_count: +d.unicorns_count,
+    unicorns_per1M: +d.unicorns_per1M,
   };
 }
 
@@ -57,7 +58,6 @@ function processData(d) {
 async function getParsedData(filepath) {
   const response = await axios.get(filepath);
   const parsedData = d3.csvParse(response.data);
-  console.log(parsedData);
   return parsedData;
 }
 
@@ -66,10 +66,8 @@ function drawSvgScatter(container, width, height, margin) {
     .select(container)
     .attr('width', width + margin.left + margin.right)
     .attr('height', height + margin.top + margin.bottom)
-    .style('filter', 'url(#dropshadow)')
     .append('g')
     .attr('transform', `translate(${margin.left}, ${margin.top})`);
-
   return svg;
 }
 
@@ -103,6 +101,8 @@ function createScales(width, height, data, xVar, yVar, radiusVar, colorVar) {
   return [xScale, yScale, radiusScale, colorScale];
 }
 
+function createZoomBrush() {}
+
 /* @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
     Axis, ticks, texts
     Draw before drawing circles so circles are on top; makes hover experience better
@@ -134,8 +134,9 @@ function drawAxes(svg, width, height, margin, xVarText, yVarText, xScale, yScale
     .append('g')
     .attr('transform', `translate(0,${height})`)
     .call(xAxis)
-    .style('font-family', 'Open Sans')
-    .style('font-size', '0.8em')
+    .style('font-family', 'Libre Franklin')
+    .style('font-size', '0.7em')
+    .style('stroke', '#aaa')
     .style('stroke-opacity', 1)
     .style('stroke-width', '1.5px')
     .attr('class', 'axis axis--x');
@@ -144,8 +145,9 @@ function drawAxes(svg, width, height, margin, xVarText, yVarText, xScale, yScale
   svg
     .append('g')
     .call(yAxis)
-    .style('font-family', 'Open Sans')
-    .style('font-size', '0.8em')
+    .style('font-family', 'Libre Franklin')
+    .style('font-size', '0.7em')
+    .style('stroke', '#aaa')
     .style('stroke-opacity', 1)
     .style('stroke-width', '1.5px')
     .attr('class', 'axis axis--y');
@@ -155,8 +157,9 @@ function drawAxes(svg, width, height, margin, xVarText, yVarText, xScale, yScale
     .append('text')
     .attr('x', width / 2)
     .attr('y', height + margin.bottom)
-    .attr('dy', '-55px')
-    .style('font-size', '1.3em')
+    .attr('dy', '-50px')
+    .style('fill', 'white')
+    .style('font-size', '1.5em')
     .style('text-anchor', 'middle')
     .style('font-family', 'Libre Franklin')
     .text(xVarText);
@@ -167,8 +170,9 @@ function drawAxes(svg, width, height, margin, xVarText, yVarText, xScale, yScale
     .attr('transform', 'rotate(-90)')
     .attr('y', -margin.left)
     .attr('x', -height / 2)
-    .attr('dy', '55px')
-    .style('font-size', '1.3em')
+    .attr('dy', '50px')
+    .style('fill', 'white')
+    .style('font-size', '1.5em')
     .style('text-anchor', 'middle')
     .style('font-family', 'Libre Franklin')
     .text(yVarText);
@@ -275,7 +279,6 @@ function drawCircles(
 function drawMap() {}
 function drawMapCircles() {}
 function createTooltips() {}
-function createDetailData() {}
 
 /*
 name: name of the varialbe
@@ -292,6 +295,7 @@ const metaDataArr = [
     type: 'number',
     format: ',.1p',
     include: true,
+    default: 'mapRadius',
   },
   {
     name: 'cagr10to15',
@@ -299,7 +303,6 @@ const metaDataArr = [
     type: 'number',
     format: ',.1p',
     include: true,
-    default: 'mapRadius',
   },
   {
     name: 'median_age',
@@ -474,14 +477,14 @@ const metaDataArr = [
     text: 'Unicorns',
     type: 'number',
     format: ',.0f',
-    include: false,
+    include: true,
   },
   {
     name: 'unicorns_per1M',
     text: 'Unicorns per 1M people',
     type: 'number',
     format: ',.0f',
-    include: false,
+    include: true,
   },
   {
     name: 'population14',
@@ -545,5 +548,8 @@ export {
   drawMap,
   drawMapCircles,
   createTooltips,
-  createDetailData,
+  createZoomBrush,
 };
+
+// TODO: Fix bug -- when subset selected, doesn't go back to full set after new variable is selected
+// TODO: Negative values exclude items. Treat them as zero.
