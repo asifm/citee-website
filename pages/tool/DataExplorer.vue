@@ -150,13 +150,16 @@ const defaultVars = {
   for which reactivity is not needed
 ************************** */
 
+// Separately declared as need to refer
+// from within scatterParams object
 const width = 700;
 const height = 700;
+
 // All params related to scatter chart
 const scatterParams = {
-  svg: null,
-  svgG: null,
-  svgGFilter: null,
+  // svg: null,
+  // svgG: null,
+  // svgGFilter: null,
   containerId: '#scatter',
   width,
   height,
@@ -172,7 +175,7 @@ const scatterParams = {
   yScaleType: 'log',
   yScaleRange: [height - 25, 25],
   radiusScaleType: 'sqrt',
-  radiusScaleRange: [3, 20],
+  radiusScaleRange: [4, 15],
   colorScaleType: 'log',
   colorScaleRange: ['#FFD500', '#007AFF'],
 
@@ -228,8 +231,6 @@ export default {
     renderScatter() {
       // Remove all elements from parent svgG
       scatterParams.svgG.selectAll('*').remove();
-      scatterParams.radiusScale = null;
-      console.log(this.currentVars.radius);
 
       [this.dataToGraph, this.dataToNotGraph] = separatePosNeg(
         this.allData,
@@ -258,22 +259,24 @@ export default {
 
       drawGridlines(scatterParams);
 
+      // TODO: sort data before drawing circles: big to small
       const circles = drawCircles(
         scatterParams,
         this.dataToGraph,
         this.currentVars
       );
+
+      createTooltips(circles, this.currentVars, this.varsMetaArr);
     }
   },
   mounted() {
     const filepath = '/data/data_explorer_12_6_17.csv';
     parseData(filepath).get(data => {
-      // this.allData = data;
       this.allData = numberify(data, varsMetaArr);
-      console.log(this.allData);
+
       this.metrosArr = this.allData.map(elem => elem.cbsaname15);
       this.statesArr = this.allData.map(elem => elem.state_name);
-
+      console.log(this.allData);
       // Run renderSetup this first time only, on mount
       this.renderSetup();
       // Run renderScatter and renderMap on mount and
@@ -281,6 +284,11 @@ export default {
       this.renderScatter();
       // this.renderMap();
     });
+  },
+  filters: {
+    shortenMetroName(metroName) {
+      return metroName.substr(0, metroName.length - 11);
+    }
   }
 };
 </script>

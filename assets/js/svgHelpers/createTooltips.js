@@ -1,8 +1,22 @@
 import { format } from 'd3-format';
 import { select, event as d3Event } from 'd3-selection';
-import 'd3-selection-multi';
 
-export function createTooltips(circles, varsMetaArr) {
+export function createTooltips(circles, currentVars, varsMetaArr) {
+  const {
+    x, y, radius, color,
+  } = currentVars;
+
+  const xFormat = varsMetaArr.filter(elem => elem.name === x)[0].format;
+  const yFormat = varsMetaArr.filter(elem => elem.name === y)[0].format;
+  const radiusFormat = varsMetaArr.filter(elem => elem.name === radius)[0]
+    .format;
+  const colorFormat = varsMetaArr.filter(elem => elem.name === color)[0].format;
+
+  const xText = varsMetaArr.filter(elem => elem.name === x)[0].text;
+  const yText = varsMetaArr.filter(elem => elem.name === y)[0].text;
+  const radiusText = varsMetaArr.filter(elem => elem.name === radius)[0].text;
+  const colorText = varsMetaArr.filter(elem => elem.name === color)[0].text;
+
   const tooltip = select('body')
     .append('div')
     .style('position', 'absolute')
@@ -10,20 +24,23 @@ export function createTooltips(circles, varsMetaArr) {
     .style('visibility', 'hidden')
     .attr('class', 'card elevation-24 pa-4 tooltip-viz');
 
+  function shortenMetroName(metroName) {
+    return metroName.substr(0, metroName.length - 11);
+  }
+
   circles.on('mouseover', (d) => {
     tooltip
       .html('')
       .style('visibility', 'visible')
-      .html(() => `<h3>${d.cbsaname15}</h3>
-              <br><strong>${format(xFormat)(d[xVar])}</strong> ${xVarText}
-              <br><strong>${format(yFormat)(d[yVar])}</strong> ${yVarText}
-              <br><strong>${format(radiusFormat)(d[radiusVar])}</strong> ${
-  radiusVarText
+      .html(() => `<h3>${shortenMetroName(d.cbsaname15)}</h3>
+              <br><strong>${format(xFormat)(d[x])}</strong> ${xText}
+              <br><strong>${format(yFormat)(d[y])}</strong> ${yText}
+              <br><strong>${format(radiusFormat)(d[radius])}</strong> ${
+  radiusText
 }
-              <br><strong>${format(colorFormat)(d[colorVar])}</strong> ${
-  colorVarText
-}
-              <br><strong>${format(mapRadiusFormat)(d[mapRadiusVar])}</strong> ${mapRadiusVarText}`);
+              <br><strong>${format(colorFormat)(d[color])}</strong> ${
+  colorText
+}`);
   });
 
   circles.on('mousemove', () =>
