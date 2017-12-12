@@ -1,7 +1,5 @@
 import { scaleLog, scaleLinear, scaleSqrt, scaleSequential } from 'd3-scale';
 import { min, max } from 'd3-array';
-import { rgb } from 'd3-color';
-import * as _ from 'lodash';
 
 /**
  *
@@ -11,8 +9,6 @@ import * as _ from 'lodash';
  * @returns {Function[]}
  */
 export function createScales(svgParams, data, currentVars) {
-  // TODO: add linear scale
-
   /*
   TODO: negative functions have been filtered out.
   Otherwise logscales won't work. Find a solution.
@@ -20,8 +16,17 @@ export function createScales(svgParams, data, currentVars) {
   separately note this for user
   Or just show them separately in a table
  */
-  const { width, height, scales } = svgParams;
-
+  const {
+    xScaleType,
+    xScaleRange,
+    yScaleType,
+    yScaleRange,
+    radiusScaleType,
+    radiusScaleRange,
+    colorScaleType,
+    colorScaleRange,
+  } = svgParams;
+  console.log(svgParams);
   /* TODO: Make it more general. Don't make assumptions
   about how many and what vars.
   Get more parameters from invoking function,
@@ -29,16 +34,8 @@ export function createScales(svgParams, data, currentVars) {
 
   const {
     x, y, radius, color,
-  } = _.reduce(
-    currentVars,
-    (result, value, key) => {
-      result[key] = value.name;
-      return result;
-    },
-    {},
-  );
+  } = currentVars;
 
-  console.log(x, y, radius, color);
   const scaleTypes = {
     log: scaleLog,
     linear: scaleLinear,
@@ -46,13 +43,10 @@ export function createScales(svgParams, data, currentVars) {
     sequential: scaleSequential,
   };
 
-  scales.x.function = scaleTypes[scales.x.type]().range([25, width - 25]);
-  scales.y.function = scaleTypes[scales.y.type]().range([height - 25, 25]);
-  scales.radius.function = scaleTypes[scales.radius.type]().range([3, 20]);
-  scales.color.function = scaleTypes[scales.color.type]().range([
-    rgb(scales.color.lowEnd),
-    rgb(scales.color.highEnd),
-  ]);
+  const xScale = scaleTypes[xScaleType]().range(xScaleRange);
+  const yScale = scaleTypes[yScaleType]().range(yScaleRange);
+  const radiusScale = scaleTypes[radiusScaleType]().range(radiusScaleRange);
+  const colorScale = scaleTypes[colorScaleType]().range(colorScaleRange);
 
   // Set input domains based on min and max
   // Get the smallest non-zero number as min
@@ -66,15 +60,10 @@ export function createScales(svgParams, data, currentVars) {
   const maxRadius = max(data, d => d[radius]);
   const maxColor = max(data, d => d[color]);
 
-  scales.x.function.domain([minX, maxX]);
-  scales.y.function.domain([minY, maxY]);
-  scales.radius.function.domain([minRadius, maxRadius]);
-  scales.color.function.domain([minColor, maxColor]);
+  xScale.domain([minX, maxX]);
+  yScale.domain([minY, maxY]);
+  radiusScale.domain([minRadius, maxRadius]);
+  colorScale.domain([minColor, maxColor]);
 
-  return [
-    scales.x.function,
-    scales.y.function,
-    scales.radius.function,
-    scales.color.function,
-  ];
+  return [xScale, yScale, radiusScale, colorScale];
 }

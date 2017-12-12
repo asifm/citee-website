@@ -13,23 +13,14 @@ import * as _ from 'lodash';
 export function drawCircles(svgParams, data, currentVars) {
   const {
     x, y, radius, color,
-  } = _.reduce(
-    currentVars,
-    (result, value, key) => {
-      result[key] = value.name;
-      return result;
-    },
-    {},
-  );
-  const xScale = svgParams.scales.x.function;
-  const yScale = svgParams.scales.y.function;
-  const radiusScale = svgParams.scales.radius.function;
-  const colorScale = svgParams.scales.color.function;
+  } = currentVars;
 
-  console.dir(svgParams);
+  const {
+    xScale, yScale, radiusScale, colorScale,
+  } = svgParams;
 
-  const circles = svgParams.svgSvgFilter
-
+  console.log(xScale, yScale);
+  const circles = svgParams.svgG
     .selectAll('.dot')
     .data(data)
     .enter()

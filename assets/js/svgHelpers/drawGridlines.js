@@ -3,10 +3,8 @@ import { select, selectAll } from 'd3-selection';
 
 export function drawGridlines(svgParams) {
   const {
-    width, height, scales, svgG,
+    width, height, xScale, yScale, svgG,
   } = svgParams;
-  const xScale = scales.x.function;
-  const yScale = scales.y.function;
   // add the X gridlines
   svgG
     .append('g')

@@ -6,16 +6,16 @@ import { setTicks } from './setTicks';
 // that makes hover experience better
 export function drawAxes(svgG, svgParams, varsMetaObj, currentVars) {
   const {
-    width, height, margin, scales,
+    width, height, margin, xScale, yScale,
   } = svgParams;
   const { x, y } = currentVars;
 
-  const xAxis = axisBottom(scales.x.function);
-  const yAxis = axisLeft(scales.y.function);
+  const xAxis = axisBottom(xScale);
+  const yAxis = axisLeft(yScale);
 
   // const xScale = scales.x.function;
   // const yScale = scales.y.function;
-  setTicks(scales, xAxis, yAxis);
+  setTicks(xScale, yScale, xAxis, yAxis);
 
   // Add the x Axis
   svgG

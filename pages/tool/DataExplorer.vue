@@ -9,7 +9,7 @@
             autocomplete
             dense
             :items="varsMetaArr"
-            v-model="xVar"
+            v-model="currentVars.x"
             item-value="name"
             item-text="text"
             @select="renderScatter()"
@@ -21,7 +21,7 @@
                 autocomplete
                 dense
                 :items="varsMetaArr"
-                v-model="yVar"
+                v-model="currentVars.y"
                 item-value="name"
                 item-text="text"
                 @select="renderScatter()"
@@ -33,7 +33,7 @@
                 autocomplete
                 dense
                 :items="varsMetaArr"
-                v-model="radiusVar"
+                v-model="currentVars.radius"
                 item-value="name"
                 item-text="text"
                 @select="renderScatter()"
@@ -44,9 +44,9 @@
           v-select(
                 autocomplete
                 dense
-                :items="varsMetaObj"
+                :items="varsMetaArr"
                 v-model="currentVars.color"
-                item-value=""
+                item-value="name"
                 item-text="text"
                 @select="renderScatter()"
                 )
@@ -102,14 +102,14 @@
             :rows-per-page-items=[10, 20, 50, {text: "All", value: -1}]
             rows-per-page-text="Select number of metros to show"
             :headers="tableHeaders"
-            :items="pData")
+            :items="allData")
       
           template(slot="items" slot-scope="props")
             td {{ props.item.cbsaname15 }}
-            td(class="text-xs-right") {{ props.item[xVar] }}
-            td(class="text-xs-right") {{ props.item[yVar] }}
-            td(class="text-xs-right") {{ props.item[radiusVar] }}
-            td(class="text-xs-right") {{ props.item[colorVar] }}
+            td(class="text-xs-right") {{ props.item[currentVars.x] }}
+            td(class="text-xs-right") {{ props.item[currentVars.y] }}
+            td(class="text-xs-right") {{ props.item[currentVars.radius] }}
+            td(class="text-xs-right") {{ props.item[currentVars.color] }}
         
     
 </template>
@@ -123,7 +123,7 @@
 import { parseData } from '../../assets/js/dataHelpers/parseData';
 import { numberify } from '../../assets/js/dataHelpers/numberify';
 // This contains meta data about vars to use for chart parameters
-import { varsMetaAllObj } from '../../assets/js/dataHelpers/dataExplorerMetaData';
+import { varsMetaAllArr } from '../../assets/js/dataHelpers/dataExplorerMetaData';
 
 import { drawSvg } from '../../assets/js/svgHelpers/drawSvg';
 import { createScales } from '../../assets/js/svgHelpers/createScales';
@@ -136,11 +136,7 @@ import { separatePosNeg } from '../../assets/js/dataHelpers/separatePosNeg';
 /* +++++++++ import ends +++++++++ */
 
 // Choose only the vars marked with 'include'
-const varsMetaObj = {};
-// object.entries: array of array. Inner array index 0 is key and 1 is value
-Object.entries(varsMetaAllObj).map(elems => {
-  elems[1].include ? (varsMetaObj[elems[0]] = elems[1]) : {};
-});
+const varsMetaArr = varsMetaAllArr.filter(elem => elem.include);
 
 const defaultVars = {
   x: 'income_above_poverty_line',
@@ -154,40 +150,32 @@ const defaultVars = {
   for which reactivity is not needed
 ************************** */
 
+const width = 700;
+const height = 700;
 // All params related to scatter chart
 const scatterParams = {
   svg: null,
   svgG: null,
   svgGFilter: null,
   containerId: '#scatter',
-  width: 700,
-  height: 700,
+  width,
+  height,
   margin: {
     top: 10,
     right: 10,
     bottom: 100,
     left: 100
   },
-  scales: {
-    x: {
-      function: Function,
-      type: 'log'
-    },
-    y: {
-      function: Function,
-      type: 'log'
-    },
-    radius: {
-      function: Function,
-      type: 'sqrt'
-    },
-    color: {
-      function: Function,
-      type: 'log',
-      lowEnd: '#FFD500',
-      highEnd: '#007AFF'
-    }
-  },
+
+  xScaleType: 'log',
+  xScaleRange: [25, width - 25],
+  yScaleType: 'log',
+  yScaleRange: [height - 25, 25],
+  radiusScaleType: 'log',
+  radiusScaleRange: [3, 20],
+  colorScaleType: 'log',
+  colorScaleRange: ['#FFD500', '#007AFF'],
+
   xAxis: Function,
   yAxis: Function
 };
@@ -203,29 +191,14 @@ export default {
 
       // vars that are included in this viz;
       // marked by 'include' in main (here imported) file
-      varsMetaObj,
+      varsMetaArr,
 
       // currently selected variable names; inited with defaults
-      // @type {Object.<string, number>}
-
       currentVars: {
-        x: {
-          name: defaultVars['x'],
-          text: varsMetaObj[defaultVars['x']].text
-        },
-        y: {
-          name: defaultVars['y'],
-          text: varsMetaObj[defaultVars['y']].text
-        },
-        radius: {
-          name: defaultVars['radius'],
-          text: varsMetaObj[defaultVars['radius']].text
-        },
-        color: {
-          name: defaultVars['color'],
-          text: varsMetaObj[defaultVars['color']].text
-        }
-        // TODO: // mapRadius // mapColor
+        x: defaultVars['x'],
+        y: defaultVars['y'],
+        radius: defaultVars['radius'],
+        color: defaultVars['color']
       },
 
       // allData => parsed and processed data without any filtering
@@ -240,12 +213,12 @@ export default {
       statesArr: [],
 
       selectedMetrosArr: [],
-      selectedStatesArr: [],
+      selectedStatesArr: []
 
-      // Arr of variable names
-      varsNamesArr: Object.keys(varsMetaObj),
-      // Text representation of variable names; to use for external users
-      varsTextArr: Object.keys(varsMetaObj).map(elem => varsMetaObj[elem].text)
+      // // Arr of variable names
+      // varsNamesArr: varsMetaArr.map(elem => elem.name),
+      // // Text representation of variable names; what users see
+      // varsTextArr: varsMetaArr.map(elem => elem.text)
     };
   },
   methods: {
@@ -265,20 +238,25 @@ export default {
         this.currentVars
       );
       [
-        scatterParams.scales.x.function,
-        scatterParams.scales.y.function,
-        scatterParams.scales.radius.function,
-        scatterParams.scales.color.function
+        scatterParams.xScale,
+        scatterParams.yScale,
+        scatterParams.radiusScale,
+        scatterParams.colorScale
       ] = createScales(scatterParams, this.dataToGraph, this.currentVars);
 
-      const [xAxis, yAxis] = drawAxes(
+      [scatterParams.xAxis, scatterParams.yAxis] = drawAxes(
         scatterParams.svgG,
         scatterParams,
-        this.varsMetaObj,
+        this.varsMetaArr,
         this.currentVars
       );
 
-      setTicks(scatterParams.scales, xAxis, yAxis);
+      setTicks(
+        scatterParams.xScale,
+        scatterParams.yScale,
+        scatterParams.xAxis,
+        scatterParams.yAxis
+      );
 
       drawGridlines(scatterParams);
 
@@ -290,11 +268,9 @@ export default {
     }
   },
   mounted() {
-    console.log(this.currentVars);
-
     const filepath = '/data/data_explorer_12_6_17.csv';
     parseData(filepath).get(data => {
-      this.allData = numberify(data, varsMetaObj);
+      this.allData = numberify(data, varsMetaArr);
       this.metrosArr = this.allData.map(elem => elem.cbsaname15);
       this.statesArr = this.allData.map(elem => elem.state_name);
 

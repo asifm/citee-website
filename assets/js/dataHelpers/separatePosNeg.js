@@ -1,5 +1,5 @@
 export function separatePosNeg(dataArr, currentVars) {
-  const vars = Object.entries(currentVars).map(elems => elems[1].name);
+  const vars = Object.values(currentVars);
 
   const positive = dataArr.filter(elemData =>
     // elemdata is positive for each variable
