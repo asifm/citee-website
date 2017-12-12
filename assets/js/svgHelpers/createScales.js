@@ -26,11 +26,6 @@ export function createScales(svgParams, data, currentVars) {
     colorScaleType,
     colorScaleRange,
   } = svgParams;
-  console.log(svgParams);
-  /* TODO: Make it more general. Don't make assumptions
-  about how many and what vars.
-  Get more parameters from invoking function,
-  rather than fixing here. */
 
   const {
     x, y, radius, color,

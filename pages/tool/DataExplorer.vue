@@ -171,7 +171,7 @@ const scatterParams = {
   xScaleRange: [25, width - 25],
   yScaleType: 'log',
   yScaleRange: [height - 25, 25],
-  radiusScaleType: 'log',
+  radiusScaleType: 'sqrt',
   radiusScaleRange: [3, 20],
   colorScaleType: 'log',
   colorScaleRange: ['#FFD500', '#007AFF'],
@@ -189,10 +189,6 @@ export default {
       // similar to scatter params, contain map params in an object
       mapParams: {},
 
-      // vars that are included in this viz;
-      // marked by 'include' in main (here imported) file
-      varsMetaArr,
-
       // currently selected variable names; inited with defaults
       currentVars: {
         x: defaultVars['x'],
@@ -200,7 +196,7 @@ export default {
         radius: defaultVars['radius'],
         color: defaultVars['color']
       },
-
+      varsMetaArr,
       // allData => parsed and processed data without any filtering
       // but only for the "include"-marked variables
       allData: [],
@@ -232,6 +228,8 @@ export default {
     renderScatter() {
       // Remove all elements from parent svgG
       scatterParams.svgG.selectAll('*').remove();
+      scatterParams.radiusScale = null;
+      console.log(this.currentVars.radius);
 
       [this.dataToGraph, this.dataToNotGraph] = separatePosNeg(
         this.allData,
@@ -270,7 +268,9 @@ export default {
   mounted() {
     const filepath = '/data/data_explorer_12_6_17.csv';
     parseData(filepath).get(data => {
+      // this.allData = data;
       this.allData = numberify(data, varsMetaArr);
+      console.log(this.allData);
       this.metrosArr = this.allData.map(elem => elem.cbsaname15);
       this.statesArr = this.allData.map(elem => elem.state_name);
 
@@ -290,149 +290,3 @@ export default {
 </style>
 
 
-// // For code that'll run only once, at the beginning (on mount)
-    // renderSetup() {
-    /* select all metros and states on mount for display
-    TODO: figure out a way to select all
-    without showing more than 3 or 5;
-    for now, not allowing multiple selection */
-    //   // TODO: change name of drawSvgScatter function
-    //   this.svgElement = drawSvgElement(
-    //     this.svgElementContainer,
-    //     this.width,
-    //     this.height,
-    //     this.margin
-    //   );
-    //   createTooltips();
-    // },
-    // // Will run every time a new variable is selected, or
-    // // a parameter for the graph changes (such as scale type)
-    // renderScatter() {
-    //   // First remove everything before rendering
-    //   this.svgElement.selectAll('*').remove();
-    //   // Keep only data where all values for
-    //   // the selected variables are positive.
-    //   // TODO: logscales don't work for negative or zero. Find a solution.
-    //   this.currentData = this.allData.filter(
-    //     d =>
-    //       d[this.xVar] > 0 &&
-    //       d[this.yVar] > 0 &&
-    //       d[this.radiusVar] > 0 &&
-    //       d[this.colorVar] > 0 &&
-    //       d[this.mapRadiusVar] > 0
-    //   );
-    //   this.dataToNotGraph = this.allData.filter(
-    //     d =>
-    //       d[this.xVar] <= 0 &&
-    //       d[this.yVar] <= 0 &&
-    //       d[this.radiusVar] <= 0 &&
-    //       d[this.colorVar] <= 0 &&
-    //       d[this.mapRadiusVar] <= 0
-    //   );
-    //   [
-    //     this.xScale,
-    //     this.yScale,
-    //     this.radiusScale,
-    //     this.colorScale,
-    //   ] = createScales(
-    //     this.width,
-    //     this.height,
-    //     this.pData,
-    //     this.xVar,
-    //     this.yVar,
-    //     this.radiusVar,
-    //     this.colorVar
-    //   );
-    //   [this.xAxis, this.yAxis] = drawAxes(
-    //     this.svgElement,
-    //     this.width,
-    //     this.height,
-    //     this.margin,
-    //     this.xVarText,
-    //     this.yVarText,
-    //     this.xScale,
-    //     this.yScale
-    //   );
-    //   drawCircles(
-    //     this.svgElement,
-    //     this.pData,
-    //     this.xVar,
-    //     this.yVar,
-    //     this.radiusVar,
-    //     this.colorVar,
-    //     this.mapRadiusVar,
-    //     this.xScale,
-    //     this.yScale,
-    //     this.radiusScale,
-    //     this.colorScale,
-    //     this.mapRadiusScale,
-    //     this.xVarText,
-    //     this.yVarText,
-    //     this.radiusVarText,
-    //     this.colorVarText,
-    //     this.mapRadiusVarText,
-    //     this.xFormat,
-    //     this.yFormat,
-    //     this.radiusFormat,
-    //     this.colorFormat,
-    //     this.mapRadiusFormat
-    //   );
-    //   this.tableHeaders = [
-    //     {
-    //       text: 'Metro',
-    //       align: 'left',
-    //       sortable: false,
-    //       value: 'cbsaname15',
-    //     },
-    //     { text: this.xVarText, value: this.xVar },
-    //     { text: this.yVarText, value: this.yVar },
-    //     { text: this.radiusVarText, value: this.radiusVar },
-    //     { text: this.colorVarText, value: this.colorVar },
-    //   ];
-    // },
-    // renderMap() {
-    //   drawMap();
-    //   drawMapCircles();
-    // },
-  },
-  watch: {
-    // xVar() {
-    //   this.xVarText = this.varsMetaArr.filter(
-    //     elem => elem.name === this.xVar
-    //   )[0].text;
-    //   this.xFormat = this.varsMetaArr.filter(
-    //     elem => elem.name === this.xVar
-    //   )[0].format;
-    // },
-    // yVar() {
-    //   this.yVarText = this.varsMetaArr.filter(
-    //     elem => elem.name === this.yVar
-    //   )[0].text;
-    //   this.yFormat = this.varsMetaArr.filter(
-    //     elem => elem.name === this.yVar
-    //   )[0].format;
-    // },
-    // radiusVar() {
-    //   this.radiusVarText = this.varsMetaArr.filter(
-    //     elem => elem.name === this.radiusVar
-    //   )[0].text;
-    //   this.radiusFormat = this.varsMetaArr.filter(
-    //     elem => elem.name === this.radiusVar
-    //   )[0].format;
-    // },
-    // colorVar() {
-    //   this.colorVarText = this.varsMetaArr.filter(
-    //     elem => elem.name === this.colorVar
-    //   )[0].text;
-    //   this.colorFormat = this.varsMetaArr.filter(
-    //     elem => elem.name === this.colorVar
-    //   )[0].format;
-    // },
-    // mapRadiusVar() {
-    //   this.mapRadiusVarText = this.varsMetaArr.filter(
-    //     elem => elem.name === this.mapRadiusVar
-    //   )[0].text;
-    //   this.mapRadiusFormat = this.varsMetaArr.filter(
-    //     elem => elem.name === this.mapRadiusVar
-    //   )[0].format;
-    // },

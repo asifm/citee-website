@@ -11,15 +11,14 @@ export function numberify(data, varsMetaArr) {
   // deep clone data so that original data remains untouched
   const clonedData = _.cloneDeep(data);
   // Loop through each element of the data array
-  const numberifiedData = clonedData.map((elemData) => {
+  const numberifiedData = clonedData.map(elemData =>
     // Loop through each variable
-    varsMetaArr.map((elemVar) => {
-      // Check if var is of number type
-      elemData[elemVar] =
-        elemVar.type === 'number' ? +elemData[elemVar] : elemData[elemVar];
-      return elemData;
-    });
-    return elemData;
-  });
+    varsMetaArr.reduce((result, current) => {
+      result[current.name] =
+        current.type === 'number'
+          ? +elemData[current.name]
+          : elemData[current.name];
+      return result;
+    }, {}));
   return numberifiedData;
 }

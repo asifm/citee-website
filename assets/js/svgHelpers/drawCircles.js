@@ -19,7 +19,6 @@ export function drawCircles(svgParams, data, currentVars) {
     xScale, yScale, radiusScale, colorScale,
   } = svgParams;
 
-  console.log(xScale, yScale);
   const circles = svgParams.svgG
     .selectAll('.dot')
     .data(data)
