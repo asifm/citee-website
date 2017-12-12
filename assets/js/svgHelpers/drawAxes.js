@@ -22,23 +22,13 @@ export function drawAxes(svgG, svgParams, varsMetaObj, currentVars) {
     .append('g')
     .attr('transform', `translate(0,${height})`)
     .call(xAxis)
-    .style('font-family', 'franklin-gothic-urw')
-    .style('font-size', '1.2em')
-    .style('fill', '#000')
-    .style('stroke-opacity', 1)
-    .style('stroke-width', '1px');
-  // .attr('class', 'axis axis--x');
+    .attr('class', 'axis axis--x');
 
   // Add the y Axis
   svgG
     .append('g')
     .call(yAxis)
-    .style('font-family', 'franklin-gothic-urw')
-    .style('font-size', '1.2em')
-    .style('fill', '#000')
-    .style('stroke-opacity', 1)
-    .style('stroke-width', '1px');
-  // .attr('class', 'axis axis--y');
+    .attr('class', 'axis axis--y');
 
   // text label for the x axis
   svgG
@@ -49,7 +39,7 @@ export function drawAxes(svgG, svgParams, varsMetaObj, currentVars) {
     .style('font-size', '2em')
     .style('text-anchor', 'middle')
     .style('font-family', 'franklin-gothic-urw')
-    .text(varsMetaObj[x].text);
+    .text(x.text);
 
   // text label for the y axis
   svgG
@@ -61,7 +51,7 @@ export function drawAxes(svgG, svgParams, varsMetaObj, currentVars) {
     .style('font-size', '2em')
     .style('text-anchor', 'middle')
     .style('font-family', 'franklin-gothic-urw')
-    .text(varsMetaObj[y].text);
+    .text(y.text);
 
   return [xAxis, yAxis];
 }

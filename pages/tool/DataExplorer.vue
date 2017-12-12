@@ -44,9 +44,9 @@
           v-select(
                 autocomplete
                 dense
-                :items="varsMetaArr"
-                v-model="colorVar"
-                item-value="name"
+                :items="varsMetaObj"
+                v-model="currentVars.color"
+                item-value=""
                 item-text="text"
                 @select="renderScatter()"
                 )
@@ -58,13 +58,14 @@
           div#scatter
             //- TODO: apply the filter to circles and lines only. not on text
             //- create a separate svg element for this purpose
-            filter#dropshadow
-              feGaussianBlur(in="SourceAlpha" stdDeviation="10")
-              feOffset(dx="0", dy="0")
-              feMerge
-                feMergeNode
-                feMergeNode(in="SourceGraphic")
-    
+            defs
+              filter#dropshadow
+                feGaussianBlur(in="SourceAlpha" stdDeviation="10")
+                feOffset(dx="0", dy="0")
+                feMerge
+                  feMergeNode
+                  feMergeNode(in="SourceGraphic")
+      
       
                 
           //- v-flex(lg12)
@@ -128,9 +129,9 @@ import { drawSvg } from '../../assets/js/svgHelpers/drawSvg';
 import { createScales } from '../../assets/js/svgHelpers/createScales';
 import { setTicks } from '../../assets/js/svgHelpers/setTicks';
 import { drawAxes } from '../../assets/js/svgHelpers/drawAxes';
+import { drawGridlines } from '../../assets/js/svgHelpers/drawGridlines';
 import { drawCircles } from '../../assets/js/svgHelpers/drawCircles';
 import { createTooltips } from '../../assets/js/svgHelpers/createTooltips';
-
 import { separatePosNeg } from '../../assets/js/dataHelpers/separatePosNeg';
 /* +++++++++ import ends +++++++++ */
 
@@ -148,50 +149,55 @@ const defaultVars = {
   color: 'per_capita_income'
 };
 
+/* **************************
+  section: Options/parameters
+  for which reactivity is not needed
+************************** */
+
+// All params related to scatter chart
+const scatterParams = {
+  svg: null,
+  svgG: null,
+  svgGFilter: null,
+  containerId: '#scatter',
+  width: 700,
+  height: 700,
+  margin: {
+    top: 10,
+    right: 10,
+    bottom: 100,
+    left: 100
+  },
+  scales: {
+    x: {
+      function: Function,
+      type: 'log'
+    },
+    y: {
+      function: Function,
+      type: 'log'
+    },
+    radius: {
+      function: Function,
+      type: 'sqrt'
+    },
+    color: {
+      function: Function,
+      type: 'log',
+      lowEnd: '#FFD500',
+      highEnd: '#007AFF'
+    }
+  },
+  xAxis: Function,
+  yAxis: Function
+};
+/* +++++++++ Parameters end +++++++++ */
+
 export default {
   data() {
     return {
       tableHeaders: [],
-      // All params related to scatter chart
-      scatterParams: {
-        // svg: null,
-        // svgG: null,
-        // svgGFilter: null,
-        // SVG elems perhaps not needed in vue data,
-        // but maybe useful for resizing etc.
-        containerId: '#scatter',
-        width: 700,
-        height: 700,
-        margin: {
-          top: 10,
-          right: 10,
-          bottom: 100,
-          left: 100
-        },
 
-        scales: {
-          x: {
-            function: Function,
-            type: 'log'
-          },
-          y: {
-            function: Function,
-            type: 'log'
-          },
-          radius: {
-            function: Function,
-            type: 'sqrt'
-          },
-          color: {
-            function: Function,
-            type: 'log',
-            lowEnd: '#FFD500',
-            highEnd: '#007AFF'
-          }
-        }
-        // xAxis: Function,
-        // yAxis: Function
-      },
       // similar to scatter params, contain map params in an object
       mapParams: {},
 
@@ -203,12 +209,23 @@ export default {
       // @type {Object.<string, number>}
 
       currentVars: {
-        x: defaultVars['x'],
-        y: defaultVars['y'],
-        radius: defaultVars['radius'],
-        color: defaultVars['color']
-        // mapRadius: defaultVars.mapRadius
-        // mapColor: defaultVars.mapColor
+        x: {
+          name: defaultVars['x'],
+          text: varsMetaObj[defaultVars['x']].text
+        },
+        y: {
+          name: defaultVars['y'],
+          text: varsMetaObj[defaultVars['y']].text
+        },
+        radius: {
+          name: defaultVars['radius'],
+          text: varsMetaObj[defaultVars['radius']].text
+        },
+        color: {
+          name: defaultVars['color'],
+          text: varsMetaObj[defaultVars['color']].text
+        }
+        // TODO: // mapRadius // mapColor
       },
 
       // allData => parsed and processed data without any filtering
@@ -234,41 +251,47 @@ export default {
   methods: {
     renderSetup() {
       [
-        this.scatterParams.svg,
-        this.scatterParams.svgG,
-        this.scatterParams.svgSvgFilter
-      ] = drawSvg(this.scatterParams);
+        scatterParams.svg,
+        scatterParams.svgG,
+        scatterParams.svgSvgFilter
+      ] = drawSvg(scatterParams);
     },
     renderScatter() {
-      // TODO: Filter data (negative and zero value to separate)
+      // Remove all elements from parent svgG
+      scatterParams.svgG.selectAll('*').remove();
+
       [this.dataToGraph, this.dataToNotGraph] = separatePosNeg(
         this.allData,
         this.currentVars
       );
       [
-        this.scatterParams.scales.x.function,
-        this.scatterParams.scales.y.function,
-        this.scatterParams.scales.radius.function,
-        this.scatterParams.scales.color.function
-      ] = createScales(this.scatterParams, this.allData, this.currentVars);
+        scatterParams.scales.x.function,
+        scatterParams.scales.y.function,
+        scatterParams.scales.radius.function,
+        scatterParams.scales.color.function
+      ] = createScales(scatterParams, this.dataToGraph, this.currentVars);
 
       const [xAxis, yAxis] = drawAxes(
-        this.scatterParams.svgG,
-        this.scatterParams,
+        scatterParams.svgG,
+        scatterParams,
         this.varsMetaObj,
         this.currentVars
       );
 
-      setTicks(this.scatterParams.scales, xAxis, yAxis);
+      setTicks(scatterParams.scales, xAxis, yAxis);
+
+      drawGridlines(scatterParams);
 
       const circles = drawCircles(
-        this.scatterParams,
+        scatterParams,
         this.dataToGraph,
         this.currentVars
       );
     }
   },
   mounted() {
+    console.log(this.currentVars);
+
     const filepath = '/data/data_explorer_12_6_17.csv';
     parseData(filepath).get(data => {
       this.allData = numberify(data, varsMetaObj);
@@ -280,9 +303,8 @@ export default {
       // Run renderScatter and renderMap on mount and
       // then every time a relevant change happens
       this.renderScatter();
+      // this.renderMap();
     });
-
-    //   this.renderMap();
   }
 };
 </script>

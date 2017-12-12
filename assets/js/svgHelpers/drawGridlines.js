@@ -1,9 +1,14 @@
-import { axis } from 'd3-scale';
-import 'd3-selection-multi';
+import { axisBottom, axisLeft } from 'd3-axis';
+import { select, selectAll } from 'd3-selection';
 
-export function drawGridlines() {
+export function drawGridlines(svgParams) {
+  const {
+    width, height, scales, svgG,
+  } = svgParams;
+  const xScale = scales.x.function;
+  const yScale = scales.y.function;
   // add the X gridlines
-  svgGElem
+  svgG
     .append('g')
     .attr('class', 'grid x')
     .style('stroke-opacity', '0.2')
@@ -13,16 +18,16 @@ export function drawGridlines() {
       .tickFormat(''));
 
   // add the Y gridlines
-  svgGElem
+  svgG
     .append('g')
     .attr('class', 'grid y')
-    .style('stroke-opacity', '0.1')
+    .style('stroke-opacity', '0.2')
     .call(axisLeft(yScale)
       .tickSize(-width)
       .tickFormat(''));
 
   // TODO: use class isntead
-  //   d3.selectAll('.axis>.tick>text').each(function makeTickBigger(d, i) {
-  //     d3.select(this).style('font-size', '1.5em');
-  //   });
+  selectAll('.axis>.tick>text').each(function makeTickBigger(d, i) {
+    select(this).style('font-size', '1.5em');
+  });
 }

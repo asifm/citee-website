@@ -1,5 +1,5 @@
 // import { select, selectAll } from 'd3-selection';
-
+import * as _ from 'lodash';
 /**
  *
  *
@@ -13,7 +13,14 @@
 export function drawCircles(svgParams, data, currentVars) {
   const {
     x, y, radius, color,
-  } = currentVars;
+  } = _.reduce(
+    currentVars,
+    (result, value, key) => {
+      result[key] = value.name;
+      return result;
+    },
+    {},
+  );
   const xScale = svgParams.scales.x.function;
   const yScale = svgParams.scales.y.function;
   const radiusScale = svgParams.scales.radius.function;
@@ -22,6 +29,7 @@ export function drawCircles(svgParams, data, currentVars) {
   console.dir(svgParams);
 
   const circles = svgParams.svgSvgFilter
+
     .selectAll('.dot')
     .data(data)
     .enter()

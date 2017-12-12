@@ -1,12 +1,13 @@
 import { scaleLog, scaleLinear, scaleSqrt, scaleSequential } from 'd3-scale';
 import { min, max } from 'd3-array';
 import { rgb } from 'd3-color';
+import * as _ from 'lodash';
 
 /**
  *
  * @param {Object<string, any>} svgParams
  * @param {Object[]} data
- * @param {string[]} currentVars
+ * @param {Object<string, Object>} currentVars
  * @returns {Function[]}
  */
 export function createScales(svgParams, data, currentVars) {
@@ -25,10 +26,19 @@ export function createScales(svgParams, data, currentVars) {
   about how many and what vars.
   Get more parameters from invoking function,
   rather than fixing here. */
+
   const {
     x, y, radius, color,
-  } = currentVars;
+  } = _.reduce(
+    currentVars,
+    (result, value, key) => {
+      result[key] = value.name;
+      return result;
+    },
+    {},
+  );
 
+  console.log(x, y, radius, color);
   const scaleTypes = {
     log: scaleLog,
     linear: scaleLinear,
