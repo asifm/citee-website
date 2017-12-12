@@ -1,0 +1,8 @@
+{
+  "compilerOptions": {
+    "target": "ES2017"
+    // "noLib": true
+  },
+  "exclude": ["node_modules", "dist"]
+  // "include": ["src/**/*", "typings/*"]
+}

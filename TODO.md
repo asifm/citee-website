@@ -1,5 +1,10 @@
 ## GeoLocator.vue / Your CITY
 
+Amet do veniam pariatur mollit. Id incididunt ea consectetur ipsum exercitation.
+Velit anim eiusmod eiusmod irure nisi quis minim magna. Pariatur dolore deserunt
+eiusmod irure aliqua sunt. Ipsum deserunt dolore excepteur voluptate do ad. Sint
+deserunt ad adipisicing labore ad mollit velit reprehenderit proident irure.
+
 * [ ] Show nearest R universities
 * [ ] Add select to change map type: satellite etc.
 * [ ] Reduce number of decimals in lot lan inputs
@@ -58,9 +63,24 @@
 
 ## Cool libraries
 
-* Fuzzy search: http://fusejs.io/
+lists https://github.com/wbkd/awesome-d3 https://github.com/d3/d3/wiki/Plugins
 
-## Learn
+* d3 legend _ http://d3-legend-v3.susielu.com/ _ use idea: in all charts
+* d3 annotation https://github.com/susielu/d3-annotation \*
+  http://d3-annotation.susielu.com/#examples
+* d3 kit https://github.com/twitter/d3kit
+* leaflet d3 https://github.com/Asymmetrik/leaflet-d3
+* d3 loom https://github.com/nbremer/d3-loom _
+  https://www.visualcinnamon.com/2017/08/d3-loom.html _ use idea: startup
+  capital flow between msas
+* d3 map https://github.com/markmarkoh/datamaps
+* Explored d3 map https://github.com/bsouthga/d3-exploder _ example
+  http://bsouthga.github.io/d3-exploder/ _ example
+  https://jsfiddle.net/9Lpcm56n/16/
+* d3 text-wrap https://github.com/vijithassar/d3-textwrap
+* Fuzzy search http://fusejs.io/
+
+  ## Learn
 
 * Vue component unit testing
 * Geojson with leaflet: http://leafletjs.com/examples/geojson/
