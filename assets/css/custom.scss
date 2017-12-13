@@ -58,11 +58,25 @@ option {
   font-family: franklin-gothic-urw;
   // font-size: 0.7em !important;
 }
+// ********************
+// d3
+// ********************
 
-// d3 graphs
+// TOOLTIPS
 // carefuL: classname .tooltip conflicts with vuetify class
 .tooltip-viz {
   font-family: franklin-gothic-urw;
   background-color: whitesmoke;
   line-height: 1.3em !important;
+}
+
+// BRUSH
+// vuetify has a classname overlay which conflicts
+// with d3 brush overlay class
+.brush > .overlay {
+  pointer-events: all;
+}
+.brush > .selection {
+  fill: yellow;
+  fill-opacity: 0.1;
 }

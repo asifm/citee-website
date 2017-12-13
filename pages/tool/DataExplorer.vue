@@ -124,6 +124,7 @@ import { parseData } from '../../assets/js/dataHelpers/parseData';
 import { numberify } from '../../assets/js/dataHelpers/numberify';
 // This contains meta data about vars to use for chart parameters
 import { varsMetaAllArr } from '../../assets/js/dataHelpers/dataExplorerMetaData';
+import { separatePosNeg } from '../../assets/js/dataHelpers/separatePosNeg';
 
 import { drawSvg } from '../../assets/js/svgHelpers/drawSvg';
 import { createScales } from '../../assets/js/svgHelpers/createScales';
@@ -132,7 +133,7 @@ import { drawAxes } from '../../assets/js/svgHelpers/drawAxes';
 import { drawGridlines } from '../../assets/js/svgHelpers/drawGridlines';
 import { drawCircles } from '../../assets/js/svgHelpers/drawCircles';
 import { createTooltips } from '../../assets/js/svgHelpers/createTooltips';
-import { separatePosNeg } from '../../assets/js/dataHelpers/separatePosNeg';
+import { createBrush } from '../../assets/js/svgHelpers/createBrush';
 /* +++++++++ import ends +++++++++ */
 
 // Choose only the vars marked with 'include'
@@ -157,9 +158,6 @@ const height = 700;
 
 // All params related to scatter chart
 const scatterParams = {
-  // svg: null,
-  // svgG: null,
-  // svgGFilter: null,
   containerId: '#scatter',
   width,
   height,
@@ -222,11 +220,7 @@ export default {
   },
   methods: {
     renderSetup() {
-      [
-        scatterParams.svg,
-        scatterParams.svgG,
-        scatterParams.svgSvgFilter
-      ] = drawSvg(scatterParams);
+      [scatterParams.svg, scatterParams.svgG] = drawSvg(scatterParams);
     },
     renderScatter() {
       // Remove all elements from parent svgG
@@ -265,8 +259,8 @@ export default {
         this.dataToGraph,
         this.currentVars
       );
-
       createTooltips(circles, this.currentVars, this.varsMetaArr);
+      createBrush(scatterParams);
     }
   },
   mounted() {
@@ -276,7 +270,7 @@ export default {
 
       this.metrosArr = this.allData.map(elem => elem.cbsaname15);
       this.statesArr = this.allData.map(elem => elem.state_name);
-      console.log(this.allData);
+
       // Run renderSetup this first time only, on mount
       this.renderSetup();
       // Run renderScatter and renderMap on mount and
