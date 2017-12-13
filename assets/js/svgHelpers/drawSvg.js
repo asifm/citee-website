@@ -23,11 +23,5 @@ export function drawSvg(svgParams) {
     .append('g')
     .attr('transform', `translate(${margin.left}, ${margin.top})`);
 
-  // Use this inner svg variable for elements where
-  // filter will applied (all but axis text)
-  const svgSvgFilter = svg
-    .append('g')
-    .attr('transform', `translate(${margin.left}, ${margin.top})`);
-
-  return [svg, svgG, svgSvgFilter];
+  return [svg, svgG];
 }
