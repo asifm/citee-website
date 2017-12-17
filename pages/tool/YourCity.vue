@@ -65,7 +65,7 @@ v-container(fluid)
             :center-val="center" 
             :marker-val="marker"
             :click-handler="renderGeoFromMap" 
-            ref="drawMap")
+            ref="mapbox")
 
     //- Using lib. For list of transitions: https://github.com/asika32764/vue2-animate
     transition(name="bounceUp")
@@ -81,7 +81,7 @@ v-container(fluid)
 
 <script>
 // child component
-import drawMap from '../../components/DrawMap.vue';
+import mapbox from '../../components/Mapbox.vue';
 import listGeoData from '../../components/ListGeoData.vue';
 import {
   getGeoFromLonLat,
@@ -242,7 +242,7 @@ export default {
       this.lat = e.latlng.lat;
       this.lon = e.latlng.lng;
       this.renderGeoTiles();
-      // console.log(this.$refs.drawMap.$refs.map.mapObject.getZoom());
+      // console.log(this.$refs.mapbox.$refs.map.mapObject.getZoom());
     },
   },
   computed: {
@@ -254,7 +254,7 @@ export default {
     },
   },
   components: {
-    'draw-map': drawMap,
+    'draw-map': mapbox,
     'list-geo-data': listGeoData,
   },
 };

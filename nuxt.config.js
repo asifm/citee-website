@@ -3,6 +3,7 @@ module.exports = {
     '~plugins/vuetify.js',
     '~plugins/vee-validate.js',
     { src: '~plugins/vue2-leaflet.js', ssr: false },
+    { src: '~plugins/vue2-google-maps.js', ssr: false },
   ],
 
   modules: ['@nuxtjs/markdownit'],
@@ -120,7 +121,7 @@ module.exports = {
       'leaflet',
       'vee-validate',
       'd3',
-      'load-google-maps-api',
+      'vue2-google-maps',
     ],
   },
 };

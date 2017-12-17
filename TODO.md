@@ -1,9 +1,31 @@
-Definitely check out
+##Definitely check out
+
 margin conventions https://gist.github.com/mbostock/3019563
 
-Potentially useful
+## Potentially useful
+
 reusability https://bocoup.com/blog/reusability-with-d3
 responsive svg https://mathisonian.com/writing/easy-responsive-svgs-with-viewbox
+
+## Cool libraries
+
+lists https://github.com/wbkd/awesome-d3 https://github.com/d3/d3/wiki/Plugins
+
+* draggable elements plugin http://pep.briangonzalez.org/
+* d3 legend _ http://d3-legend-v3.susielu.com/ _ use idea: in all charts
+* d3 annotation https://github.com/susielu/d3-annotation \*
+  http://d3-annotation.susielu.com/#examples
+* d3 kit https://github.com/twitter/d3kit
+* leaflet d3 https://github.com/Asymmetrik/leaflet-d3
+* d3 loom https://github.com/nbremer/d3-loom _
+  https://www.visualcinnamon.com/2017/08/d3-loom.html _ use idea: startup
+  capital flow between msas
+* d3 map https://github.com/markmarkoh/datamaps
+* Explored d3 map https://github.com/bsouthga/d3-exploder _ example
+  http://bsouthga.github.io/d3-exploder/ _ example
+  https://jsfiddle.net/9Lpcm56n/16/
+* d3 text-wrap https://github.com/vijithassar/d3-textwrap
+* Fuzzy search http://fusejs.io/
 
 ## GeoLocator.vue / Your CITY
 
@@ -68,26 +90,7 @@ deserunt ad adipisicing labore ad mollit velit reprehenderit proident irure.
   * Swoopy map: https://blog.webkid.io/swoopy-arrows-for-leaflet-maps/
   * ## Fullscreen: https://github.com/Leaflet/Leaflet.fullscreen
 
-## Cool libraries
-
-lists https://github.com/wbkd/awesome-d3 https://github.com/d3/d3/wiki/Plugins
-
-* d3 legend _ http://d3-legend-v3.susielu.com/ _ use idea: in all charts
-* d3 annotation https://github.com/susielu/d3-annotation \*
-  http://d3-annotation.susielu.com/#examples
-* d3 kit https://github.com/twitter/d3kit
-* leaflet d3 https://github.com/Asymmetrik/leaflet-d3
-* d3 loom https://github.com/nbremer/d3-loom _
-  https://www.visualcinnamon.com/2017/08/d3-loom.html _ use idea: startup
-  capital flow between msas
-* d3 map https://github.com/markmarkoh/datamaps
-* Explored d3 map https://github.com/bsouthga/d3-exploder _ example
-  http://bsouthga.github.io/d3-exploder/ _ example
-  https://jsfiddle.net/9Lpcm56n/16/
-* d3 text-wrap https://github.com/vijithassar/d3-textwrap
-* Fuzzy search http://fusejs.io/
-
-  ## Learn
+## Learn
 
 * Vue component unit testing
 * Geojson with leaflet: http://leafletjs.com/examples/geojson/
