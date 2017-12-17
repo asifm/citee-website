@@ -1,101 +1,81 @@
 <template lang="pug">
 
-  v-container(fluid).pa-0
-    v-card.pa-0.orange.opacity-8
-      v-layout(row wrap)
-        v-flex(lg3 xs6).pa-3
-          v-btn.lime X Axis
-          v-select(
-            autocomplete
-            dense
-            :items="varsMetaArr"
-            v-model="currentVars.x"
-            item-value="name"
-            item-text="text"
-            @select="renderScatter()"
-            ).text--white
-
-        v-flex(lg3 xs6).pa-3
-          v-btn.lime Y Axis
-          v-select(
-                autocomplete
-                dense
-                :items="varsMetaArr"
-                v-model="currentVars.y"
-                item-value="name"
-                item-text="text"
-                @select="renderScatter()"
-                )
-      
-        v-flex(lg3 xs6).pa-3
-          v-btn.lime Radius
-          v-select(
-                autocomplete
-                dense
-                :items="varsMetaArr"
-                v-model="currentVars.radius"
-                item-value="name"
-                item-text="text"
-                @select="renderScatter()"
-                )
-      
-        v-flex(lg3 xs6).pa-3
-          v-btn.lime Color
-          v-select(
-                autocomplete
-                dense
-                :items="varsMetaArr"
-                v-model="currentVars.color"
-                item-value="name"
-                item-text="text"
-                @select="renderScatter()"
-                )
-
-    v-layout(row wrap).pa-0
-      v-flex(lg7 md12).pa-0
-        v-card.pa-2.card--raised.elevation-10
-          div#scatter
-            //- TODO: apply the filter to circles and lines only. not on text
-            //- create a separate svg element for this purpose
-            //- Tried separate svg; not working
-            defs
-              filter#dropshadow
-                feGaussianBlur(in="SourceAlpha" stdDeviation="10")
-                feOffset(dx="0", dy="0")
-                feMerge
-                  feMergeNode
-                  feMergeNode(in="SourceGraphic")
-      
-      
-                
-          //- v-flex(lg12)
-            v-card.pa-4.card--raised
-              //- use log scale
-              //- TODO population range selection
-              //- v-slider(label="Metro population range")
-
+  v-container(fluid).pa-0.pt-1
+    v-layout(row wrap)
+      v-flex(lg12)
+        v-toolbar(dark).secondary.elevation-5
+          h4.display-1 Metro Explorer
+        v-card.pa-0.grey.lighten-4
+          v-layout(row wrap)
+            v-flex(lg3 xs6).pa-3
+              v-btn.lime X Axis
               v-select(
-                label="Select metro"
                 autocomplete
-                clearable
-                chips
                 dense
-                :items="metrosArr"
-                v-model="selectedMetrosArr"
-                )
-              v-select(
-                label="Select state"
-                autocomplete
-                clearable
-                chips
-                dense
-                :items="statesArr"
-                v-model="selectedStatesArr"
-                )
-    
+                :items="varsMetaArr"
+                v-model="currentVars.x"
+                item-value="name"
+                item-text="text"
+                @select="renderScatter()"
+                ).text--white
 
+            v-flex(lg3 xs6).pa-3
+              v-btn.lime Y Axis
+              v-select(
+                    autocomplete
+                    dense
+                    :items="varsMetaArr"
+                    v-model="currentVars.y"
+                    item-value="name"
+                    item-text="text"
+                    @select="renderScatter()"
+                    )
+          
+            v-flex(lg3 xs6).pa-3
+              v-btn.lime Radius
+              v-select(
+                    autocomplete
+                    dense
+                    :items="varsMetaArr"
+                    v-model="currentVars.radius"
+                    item-value="name"
+                    item-text="text"
+                    @select="renderScatter()"
+                    )
+          
+            v-flex(lg3 xs6).pa-3
+              v-btn.lime Color
+              v-select(
+                    autocomplete
+                    dense
+                    :items="varsMetaArr"
+                    v-model="currentVars.color"
+                    item-value="name"
+                    item-text="text"
+                    @select="renderScatter()"
+                    )
+
+      v-flex(lg12 md12).pa-0
+        v-card.pa-3.card--raised.elevation-1
+          v-layout
+            v-flex(lg6)
+              div#scatter.elevation-10
+                defs
+                  filter#dropshadow
+                    feGaussianBlur(in="SourceAlpha" stdDeviation="10")
+                    feOffset(dx="0", dy="0")
+                    feMerge
+                      feMergeNode
+                      feMergeNode(in="SourceGraphic")
+            
+            v-flex(lg6)
+              div#map
+                no-ssr
+                  google-map
+            
+              v-card.pa-5
+                p Tempor qui Lorem ipsum Lorem ut labore. Irure fugiat commodo duis quis aute officia sit amet ea commodo. Exercitation mollit culpa sint cupidatat consectetur ea excepteur laboris cupidatat ullamco.
     v-layout
-      //- map
       v-flex(lg12).pa-4
         v-data-table(
             must-sort
@@ -133,6 +113,9 @@ import { drawGridlines } from '../../assets/js/svgHelpers/drawGridlines';
 import { drawCircles } from '../../assets/js/svgHelpers/drawCircles';
 import { createTooltips } from '../../assets/js/svgHelpers/createTooltips';
 import { createBrush } from '../../assets/js/svgHelpers/createBrush';
+
+import  googleMap  from "../../components/GoogleMap.vue"
+
 /* +++++++++ import ends +++++++++ */
 
 // Choose only the vars marked with 'include'
@@ -188,6 +171,7 @@ const scatterParams = {
 /* +++++++++ Parameters end +++++++++ */
 
 export default {
+  components: {'google-map': googleMap},
   data() {
     return {
       tableHeaders: [],
