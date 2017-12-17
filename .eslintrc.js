@@ -18,7 +18,7 @@ module.exports = {
   plugins: ['html', 'promise', 'vue'],
   // add  custom rules here
   rules: {
-    'max-len': ['warn', { code: 80 }],
+    'max-len': ['warn', { code: 90 }],
     'no-console': 0,
     'no-return-assign': 0,
     'no-param-reassign': ['error', { props: false }],

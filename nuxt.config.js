@@ -45,9 +45,9 @@ module.exports = {
         content: 'width=device-width, initial-scale=1',
       },
       {
-        hid: 'description',
         name: 'description',
-        content: 'CIT.ee: a Darden School Research Project',
+        content: `CIT.ee means "Cities Innovating Tomorrow's Entrepreneurial Ecosystems. 
+          It's a research project at the Darden School of Business.`,
       },
     ],
     script: [
@@ -93,23 +93,34 @@ module.exports = {
   ** Build configuration
   */
   build: {
+    extractCSS: true,
+    analyze: true,
     // experimental, turn off if doesn't work
     // dll: true,
     /*
+    ** NO NEED for eslint it's already is used separately
     ** Run ESLINT on save
     */
-    extend(config, ctx) {
-      if (ctx.isDev && ctx.isClient) {
-        config.module.rules.push({
-          enforce: 'pre',
-          test: /\.(js|vue)$/,
-          loader: 'eslint-loader',
-          exclude: /(node_modules)/,
-        });
-      }
-    },
+    // extend(config, ctx) {
+    //   if (ctx.isDev && ctx.isClient) {
+    //     config.module.rules.push({
+    //       enforce: 'pre',
+    //       test: /\.(js|vue)$/,
+    //       loader: 'eslint-loader',
+    //       exclude: /(node_modules)/,
+    //     });
+    //   }
+    // },
     // add external packages here so that they're loaded only once
     // Is it needed only for vue plugins, or all packages?
-    vendor: ['axios', 'vuetify', 'vue2-leaflet', 'leaflet', 'vee-validate', 'd3'],
+    vendor: [
+      'axios',
+      'vuetify',
+      'vue2-leaflet',
+      'leaflet',
+      'vee-validate',
+      'd3',
+      'load-google-maps-api',
+    ],
   },
 };
