@@ -44,9 +44,7 @@ export function createBrush(svgParams, varsMetaArr, currentVars) {
       yScale.domain([s[1][1], s[0][1]].map(yScale.invert, yScale));
       svgG.select('.brush').call(brushGenerator.move, null);
     }
-    // todo reset grid and ticks'
     drawAxes(svgParams, varsMetaArr, currentVars);
-    // setTicks(svgParams);
     drawGridlines(svgParams);
     createZoom(svgParams, currentVars);
   }

@@ -5,6 +5,8 @@ export function createZoom(svgParams, currentVars) {
     svgG, xScale, yScale, xAxis, yAxis,
   } = svgParams;
 
+  // TODO: Have more gridlines and ticks when zoomed in
+
   const { x, y } = currentVars;
   const t = svgG.transition().duration(750);
   svgG
