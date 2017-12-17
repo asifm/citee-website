@@ -1,12 +1,16 @@
-import { brush } from 'd3-brush';
-import { event } from 'd3-selection';
-import { createZoom } from './createZoom';
+// https://bl.ocks.org/mbostock/f48fcdb929a620ed97877e4678ab15e6
 
-export function createBrush(svgParams, currentVars) {
+import { brush } from 'd3-brush';
+import { event, select } from 'd3-selection';
+import { createZoom } from './createZoom';
+import { setTicks } from './setTicks';
+import { drawGridlines } from './drawGridlines';
+import { drawAxes } from './drawAxes';
+
+export function createBrush(svgParams, varsMetaArr, currentVars) {
   const {
-    xScale, yScale, svgG, plotwidth, plotheight, svgGCircles,
+    xScale, yScale, svgG, plotwidth, plotheight,
   } = svgParams;
-  console.log('svgGCircles: ', svgGCircles);
 
   // save the domains so that we can get back to previous
   // state when zoom reverses
@@ -29,6 +33,7 @@ export function createBrush(svgParams, currentVars) {
 
   function brushended() {
     const s = event.selection;
+
     if (!s) {
       if (!idleTimeout) return (idleTimeout = setTimeout(idled, idleDelay));
       xScale.domain(xDomain);
@@ -37,11 +42,19 @@ export function createBrush(svgParams, currentVars) {
     } else {
       xScale.domain([s[0][0], s[1][0]].map(xScale.invert, xScale));
       yScale.domain([s[1][1], s[0][1]].map(yScale.invert, yScale));
-      // todo reset grid and ticks
       svgG.select('.brush').call(brushGenerator.move, null);
     }
+    // todo reset grid and ticks'
+    drawAxes(svgParams, varsMetaArr, currentVars);
+    // setTicks(svgParams);
+    drawGridlines(svgParams);
     createZoom(svgParams, currentVars);
   }
   brushGenerator.on('end', brushended);
-  // svgG.on('click', brushended);
 }
+
+// For different events on brush or other elements,
+// Get brush height width x y like here
+// const s = svgG.select('.selection');
+// console.log(s.attr('height'));
+

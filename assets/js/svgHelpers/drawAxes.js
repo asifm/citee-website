@@ -1,35 +1,37 @@
 import { axisBottom, axisLeft } from 'd3-axis';
-import 'd3-selection-multi';
+import { selectAll } from 'd3-selection';
 import { setTicks } from './setTicks';
 
 // Important: Draw before drawing circles so circles are on top;
 // that makes hover experience better
-export function drawAxes(svgG, svgParams, varsMetaArr, currentVars) {
+export function drawAxes(svgParams, varsMetaArr, currentVars) {
+  // remove existing axes if any
+  selectAll('.axis').remove();
+
   const {
-    plotwidth, plotheight, margin, xScale, yScale, radiusScaleRange,
+    svgG, plotwidth, plotheight, margin, xScale, yScale, radiusScaleRange,
   } = svgParams;
   const { x, y } = currentVars;
 
   const xText = varsMetaArr.filter(elem => elem.name === x)[0].text;
   const yText = varsMetaArr.filter(elem => elem.name === y)[0].text;
 
-  const xAxis = axisBottom(xScale);
-  const yAxis = axisLeft(yScale);
+  svgParams.xAxis = axisBottom(xScale);
+  svgParams.yAxis = axisLeft(yScale);
 
-  setTicks(xScale, yScale, xAxis, yAxis);
-
+  setTicks(svgParams);
   // Add the x Axis
   svgG
     .append('g')
     .attr('transform', `translate(0,${plotheight + radiusScaleRange[1]})`)
-    .call(xAxis)
+    .call(svgParams.xAxis)
     .attr('class', 'axis axis--x');
 
   // Add the y Axis
   svgG
     .append('g')
     .attr('transform', `translate(${-radiusScaleRange[1]},0)`)
-    .call(yAxis)
+    .call(svgParams.yAxis)
     .attr('class', 'axis axis--y');
 
   // text label for the x axis
@@ -54,6 +56,4 @@ export function drawAxes(svgG, svgParams, varsMetaArr, currentVars) {
     .style('text-anchor', 'middle')
     .style('font-family', 'franklin-gothic-urw')
     .text(yText);
-
-  return [xAxis, yAxis];
 }

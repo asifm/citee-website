@@ -2,6 +2,9 @@ import { axisBottom, axisLeft } from 'd3-axis';
 import { select, selectAll } from 'd3-selection';
 
 export function drawGridlines(svgParams) {
+  // remove existing grid if any
+  selectAll('.grid').remove();
+
   const {
     plotwidth, plotheight, xScale, yScale, svgG,
   } = svgParams;

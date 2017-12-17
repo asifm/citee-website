@@ -7,8 +7,12 @@
  * @param {any} xAxis
  * @param {any} yAxis
  */
-export function setTicks(xScale, yScale, xAxis, yAxis) {
+export function setTicks(svgParams) {
   // for sideeffect; no return
+
+  const {
+    xScale, yScale, xAxis, yAxis,
+  } = svgParams;
 
   // Set ticks format based on largest value
   // (use current domains to get the value)

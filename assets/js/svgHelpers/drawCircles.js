@@ -24,6 +24,7 @@ export function drawCircles(svgParams, data, currentVars) {
     .data(data)
     .enter()
     .append('circle')
+    .attr('pointer-events', 'all')
     .attr('class', 'dot')
     // prepend any letter (here 'a') to id because html id cannot start with a number
     .attr('id', d => `a${d.cbsa15}`)

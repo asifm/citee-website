@@ -155,7 +155,7 @@ const defaultVars = {
 const width = 750;
 const height = 750;
 const margin = {
-  top: 20,
+  top: 40,
   right: 40,
   bottom: 120,
   left: 120,
@@ -178,7 +178,7 @@ const scatterParams = {
   yScaleType: 'log',
   yScaleRange: [plotheight, 0],
   radiusScaleType: 'sqrt',
-  radiusScaleRange: [3, 25],
+  radiusScaleRange: [2, 20],
   colorScaleType: 'log',
   colorScaleRange: ['#FFD500', '#007AFF'],
 
@@ -242,25 +242,20 @@ export default {
         scatterParams.colorScale,
       ] = createScales(scatterParams, this.dataToGraph, this.currentVars);
 
-      [scatterParams.xAxis, scatterParams.yAxis] = drawAxes(
-        scatterParams.svgG,
+      drawAxes(
         scatterParams,
         this.varsMetaArr,
         this.currentVars,
       );
 
-      setTicks(
-        scatterParams.xScale,
-        scatterParams.yScale,
-        scatterParams.xAxis,
-        scatterParams.yAxis,
-      );
+      setTicks( scatterParams );
 
       drawGridlines(scatterParams);
 
       // Sorts in-place; smaller circles will be on top of bigger
       this.dataToGraph.sort((a, b) => b[this.currentVars.radius] - a[this.currentVars.radius],);
-      createBrush(scatterParams, this.currentVars);
+
+      createBrush(scatterParams, this.varsMetaArr, this.currentVars);
 
       const circles = drawCircles(
         scatterParams,
