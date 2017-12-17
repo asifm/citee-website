@@ -1,3 +1,10 @@
+Definitely check out
+margin conventions https://gist.github.com/mbostock/3019563
+
+Potentially useful
+reusability https://bocoup.com/blog/reusability-with-d3
+responsive svg https://mathisonian.com/writing/easy-responsive-svgs-with-viewbox
+
 ## GeoLocator.vue / Your CITY
 
 Amet do veniam pariatur mollit. Id incididunt ea consectetur ipsum exercitation.
