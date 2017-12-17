@@ -85,8 +85,8 @@ import drawMap from '../../components/DrawMap.vue';
 import listGeoData from '../../components/ListGeoData.vue';
 import {
   getGeoFromLonLat,
-  getGeoFromAddress
-} from '../../assets/js/geocodingHelpers/geoLocator';
+  getGeoFromAddress,
+} from '../../assets/js/mapHelpers/geoLocator';
 
 // TODO: Add definition to each geo in the array
 // TODO: On hover show definition
@@ -113,7 +113,7 @@ const geoMainArr = [
 
   { code: '950', name: 'School District (Elementary)' },
   { code: '960', name: 'School District (Secondary)' },
-  { code: '970', name: 'School District (Unified)' }
+  { code: '970', name: 'School District (Unified)' },
 ];
 
 const variablesArr = [
@@ -131,7 +131,7 @@ const variablesArr = [
   'Number of Fortune 1000 companies per 1M population',
   'Number of Inc 5000 companies per 1M population',
   'Number of patents since 2000 per 10K population',
-  'Number of restaurants per 10K population'
+  'Number of restaurants per 10K population',
 ];
 
 export default {
@@ -154,13 +154,13 @@ export default {
       geoNamesArr: geoMainArr.map(elem => elem.name),
       apiResultsObj: {},
       dataErrorMsg: '',
-      zoom: 4
+      zoom: 4,
     };
   },
   methods: {
     clearResults() {
       // clear returned results
-      this.geoMainArr.forEach(elem => {
+      this.geoMainArr.forEach((elem) => {
         elem.value = '';
         elem.geoid = '';
       });
@@ -172,12 +172,10 @@ export default {
 
       // imported function
       getGeoFromLonLat(this.lon, this.lat, this.geoCodesArr.toString())
-        .then(response => {
+        .then((response) => {
           const { results } = response.data;
-          this.geoMainArr.forEach(elem => {
-            const correspondingElemAPI = results.filter(
-              apiElem => apiElem.sumlevel === elem.code
-            );
+          this.geoMainArr.forEach((elem) => {
+            const correspondingElemAPI = results.filter(apiElem => apiElem.sumlevel === elem.code,);
             elem.value =
               correspondingElemAPI.length > 0
                 ? correspondingElemAPI[0].full_name
@@ -208,7 +206,7 @@ export default {
       }
       // imported function
       getGeoFromAddress(addressQuery, onlyZip)
-        .then(response => {
+        .then((response) => {
           console.log(response.data);
           // check result is a postcode
           if (
@@ -245,7 +243,7 @@ export default {
       this.lon = e.latlng.lng;
       this.renderGeoTiles();
       // console.log(this.$refs.drawMap.$refs.map.mapObject.getZoom());
-    }
+    },
   },
   computed: {
     center() {
@@ -253,20 +251,17 @@ export default {
     },
     marker() {
       return this.center;
-    }
+    },
   },
   components: {
     'draw-map': drawMap,
-    'list-geo-data': listGeoData
-  }
+    'list-geo-data': listGeoData,
+  },
 };
 </script>
 
 
 <style lang="scss" scoped>
-#top-row {
-  // line-height: 1.1em;
-}
 .list__tile--highlighted {
   font-family: Open Sans;
 }

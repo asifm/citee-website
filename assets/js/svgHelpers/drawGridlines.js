@@ -3,16 +3,16 @@ import { select, selectAll } from 'd3-selection';
 
 export function drawGridlines(svgParams) {
   const {
-    width, height, xScale, yScale, svgG,
+    plotwidth, plotheight, xScale, yScale, svgG,
   } = svgParams;
   // add the X gridlines
   svgG
     .append('g')
     .attr('class', 'grid x')
-    .style('stroke-opacity', '0.2')
-    .attr('transform', `translate(0,${height})`)
+    .style('stroke-opacity', '0.1')
+    .attr('transform', `translate(0,${plotheight})`)
     .call(axisBottom(xScale)
-      .tickSize(-height)
+      .tickSize(-plotheight)
       .tickFormat(''));
 
   // add the Y gridlines
@@ -21,7 +21,7 @@ export function drawGridlines(svgParams) {
     .attr('class', 'grid y')
     .style('stroke-opacity', '0.2')
     .call(axisLeft(yScale)
-      .tickSize(-width)
+      .tickSize(-plotwidth)
       .tickFormat(''));
 
   // TODO: use class isntead

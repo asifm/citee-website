@@ -1,3 +1,12 @@
+/**
+ *
+ *
+ * @export
+ * @param {any} xScale
+ * @param {any} yScale
+ * @param {any} xAxis
+ * @param {any} yAxis
+ */
 export function setTicks(xScale, yScale, xAxis, yAxis) {
   // for sideeffect; no return
 

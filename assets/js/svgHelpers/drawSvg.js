@@ -15,8 +15,8 @@ export function drawSvg(svgParams) {
 
   const svg = select(containerId)
     .append('svg')
-    .attr('width', width + margin.left + margin.right)
-    .attr('height', height + margin.top + margin.bottom);
+    .attr('width', width)
+    .attr('height', height);
 
   const svgG = svg
     .style('filter', 'url(#dropshadow)')

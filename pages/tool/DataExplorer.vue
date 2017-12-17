@@ -50,7 +50,6 @@
                 item-text="text"
                 @select="renderScatter()"
                 )
-        
 
     v-layout(row wrap).pa-0
       v-flex(lg7 md12).pa-0
@@ -58,6 +57,7 @@
           div#scatter
             //- TODO: apply the filter to circles and lines only. not on text
             //- create a separate svg element for this purpose
+            //- Tried separate svg; not working
             defs
               filter#dropshadow
                 feGaussianBlur(in="SourceAlpha" stdDeviation="10")
@@ -118,13 +118,12 @@
 /* **************************
   section: Imports
 ************************** */
-// import * as _ from 'lodash';
 
 import { parseData } from '../../assets/js/dataHelpers/parseData';
 import { numberify } from '../../assets/js/dataHelpers/numberify';
-// This contains meta data about vars to use for chart parameters
 import { varsMetaAllArr } from '../../assets/js/dataHelpers/dataExplorerMetaData';
 import { separatePosNeg } from '../../assets/js/dataHelpers/separatePosNeg';
+import * as miscFunc from '../../assets/js/dataHelpers/miscHelpers';
 
 import { drawSvg } from '../../assets/js/svgHelpers/drawSvg';
 import { createScales } from '../../assets/js/svgHelpers/createScales';
@@ -143,7 +142,7 @@ const defaultVars = {
   x: 'income_above_poverty_line',
   y: 'bachelors_degree_or_higher',
   radius: 'patents_count',
-  color: 'per_capita_income'
+  color: 'per_capita_income',
 };
 
 /* **************************
@@ -153,32 +152,38 @@ const defaultVars = {
 
 // Separately declared as need to refer
 // from within scatterParams object
-const width = 700;
-const height = 700;
+const width = 750;
+const height = 750;
+const margin = {
+  top: 20,
+  right: 40,
+  bottom: 120,
+  left: 120,
+};
+const plotwidth = width - margin.left - margin.right;
+const plotheight = height - margin.top - margin.bottom;
 
 // All params related to scatter chart
 const scatterParams = {
   containerId: '#scatter',
   width,
   height,
-  margin: {
-    top: 10,
-    right: 10,
-    bottom: 100,
-    left: 100
-  },
-
+  margin,
+  plotwidth,
+  plotheight,
+  xScale: Function,
   xScaleType: 'log',
-  xScaleRange: [25, width - 25],
+  xScaleRange: [0, plotwidth],
+  yScale: Function,
   yScaleType: 'log',
-  yScaleRange: [height - 25, 25],
+  yScaleRange: [plotheight, 0],
   radiusScaleType: 'sqrt',
-  radiusScaleRange: [4, 15],
+  radiusScaleRange: [3, 25],
   colorScaleType: 'log',
   colorScaleRange: ['#FFD500', '#007AFF'],
 
   xAxis: Function,
-  yAxis: Function
+  yAxis: Function,
 };
 /* +++++++++ Parameters end +++++++++ */
 
@@ -192,10 +197,10 @@ export default {
 
       // currently selected variable names; inited with defaults
       currentVars: {
-        x: defaultVars['x'],
-        y: defaultVars['y'],
-        radius: defaultVars['radius'],
-        color: defaultVars['color']
+        x: defaultVars.x,
+        y: defaultVars.y,
+        radius: defaultVars.radius,
+        color: defaultVars.color,
       },
       varsMetaArr,
       // allData => parsed and processed data without any filtering
@@ -210,7 +215,7 @@ export default {
       statesArr: [],
 
       selectedMetrosArr: [],
-      selectedStatesArr: []
+      selectedStatesArr: [],
 
       // // Arr of variable names
       // varsNamesArr: varsMetaArr.map(elem => elem.name),
@@ -228,44 +233,51 @@ export default {
 
       [this.dataToGraph, this.dataToNotGraph] = separatePosNeg(
         this.allData,
-        this.currentVars
+        this.currentVars,
       );
       [
         scatterParams.xScale,
         scatterParams.yScale,
         scatterParams.radiusScale,
-        scatterParams.colorScale
+        scatterParams.colorScale,
       ] = createScales(scatterParams, this.dataToGraph, this.currentVars);
 
       [scatterParams.xAxis, scatterParams.yAxis] = drawAxes(
         scatterParams.svgG,
         scatterParams,
         this.varsMetaArr,
-        this.currentVars
+        this.currentVars,
       );
 
       setTicks(
         scatterParams.xScale,
         scatterParams.yScale,
         scatterParams.xAxis,
-        scatterParams.yAxis
+        scatterParams.yAxis,
       );
 
       drawGridlines(scatterParams);
 
-      // TODO: sort data before drawing circles: big to small
+      // Sorts in-place; smaller circles will be on top of bigger
+      this.dataToGraph.sort((a, b) => b[this.currentVars.radius] - a[this.currentVars.radius],);
+      createBrush(scatterParams, this.currentVars);
+
       const circles = drawCircles(
         scatterParams,
         this.dataToGraph,
-        this.currentVars
+        this.currentVars,
       );
-      createTooltips(circles, this.currentVars, this.varsMetaArr);
-      createBrush(scatterParams);
-    }
+      createTooltips(
+        circles,
+        this.currentVars,
+        this.varsMetaArr,
+        scatterParams,
+      );
+    },
   },
   mounted() {
     const filepath = '/data/data_explorer_12_6_17.csv';
-    parseData(filepath).get(data => {
+    parseData(filepath).get((data) => {
       this.allData = numberify(data, varsMetaArr);
 
       this.metrosArr = this.allData.map(elem => elem.cbsaname15);
@@ -279,11 +291,6 @@ export default {
       // this.renderMap();
     });
   },
-  filters: {
-    shortenMetroName(metroName) {
-      return metroName.substr(0, metroName.length - 11);
-    }
-  }
 };
 </script>
 

@@ -4,54 +4,56 @@ import { setTicks } from './setTicks';
 
 // Important: Draw before drawing circles so circles are on top;
 // that makes hover experience better
-export function drawAxes(svgG, svgParams, varsMetaObj, currentVars) {
+export function drawAxes(svgG, svgParams, varsMetaArr, currentVars) {
   const {
-    width, height, margin, xScale, yScale,
+    plotwidth, plotheight, margin, xScale, yScale, radiusScaleRange,
   } = svgParams;
   const { x, y } = currentVars;
+
+  const xText = varsMetaArr.filter(elem => elem.name === x)[0].text;
+  const yText = varsMetaArr.filter(elem => elem.name === y)[0].text;
 
   const xAxis = axisBottom(xScale);
   const yAxis = axisLeft(yScale);
 
-  // const xScale = scales.x.function;
-  // const yScale = scales.y.function;
   setTicks(xScale, yScale, xAxis, yAxis);
 
   // Add the x Axis
   svgG
     .append('g')
-    .attr('transform', `translate(0,${height})`)
+    .attr('transform', `translate(0,${plotheight + radiusScaleRange[1]})`)
     .call(xAxis)
     .attr('class', 'axis axis--x');
 
   // Add the y Axis
   svgG
     .append('g')
+    .attr('transform', `translate(${-radiusScaleRange[1]},0)`)
     .call(yAxis)
     .attr('class', 'axis axis--y');
 
   // text label for the x axis
   svgG
     .append('text')
-    .attr('x', width / 2)
-    .attr('y', height + margin.bottom)
+    .attr('x', plotwidth / 2)
+    .attr('y', plotheight + margin.bottom)
     .attr('dy', '-50px')
-    .style('font-size', '2em')
+    .style('font-size', '1.5em')
     .style('text-anchor', 'middle')
     .style('font-family', 'franklin-gothic-urw')
-    .text(x.text);
+    .text(xText);
 
   // text label for the y axis
   svgG
     .append('text')
     .attr('transform', 'rotate(-90)')
     .attr('y', -margin.left)
-    .attr('x', -height / 2)
+    .attr('x', -plotheight / 2)
     .attr('dy', '50px')
-    .style('font-size', '2em')
+    .style('font-size', '1.5em')
     .style('text-anchor', 'middle')
     .style('font-family', 'franklin-gothic-urw')
-    .text(y.text);
+    .text(yText);
 
   return [xAxis, yAxis];
 }
