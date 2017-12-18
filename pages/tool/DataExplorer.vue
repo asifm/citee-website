@@ -79,8 +79,8 @@
       v-flex(lg12).pa-4
         v-data-table(
             must-sort
-            :rows-per-page-items=[10, 20, 50, {text: "All", value: -1}]
             rows-per-page-text="Select number of metros to show"
+            :rows-per-page-items=[10, 20, 50, {text: "All", value: -1}]
             :headers="tableHeaders"
             :items="allData")
       
@@ -91,7 +91,6 @@
             td(class="text-xs-right") {{ props.item[currentVars.radius] }}
             td(class="text-xs-right") {{ props.item[currentVars.color] }}
         
-    
 </template>
 
 <script>
@@ -113,8 +112,8 @@ import { drawGridlines } from '../../assets/js/svgHelpers/drawGridlines';
 import { drawCircles } from '../../assets/js/svgHelpers/drawCircles';
 import { createTooltips } from '../../assets/js/svgHelpers/createTooltips';
 import { createBrush } from '../../assets/js/svgHelpers/createBrush';
-
-import  googleMap  from "../../components/GoogleMap.vue"
+import { getLatLonsForMap } from "../../assets/js/svgHelpers/getLatLonsForMap";
+import  googleMap  from "../../components/GoogleMap.vue";
 
 /* +++++++++ import ends +++++++++ */
 
@@ -239,15 +238,19 @@ export default {
       // Sorts in-place; smaller circles will be on top of bigger
       this.dataToGraph.sort((a, b) => b[this.currentVars.radius] - a[this.currentVars.radius],);
 
-      createBrush(scatterParams, this.varsMetaArr, this.currentVars);
+      const brushGenerator = createBrush(scatterParams);
 
-      const circles = drawCircles(
+      scatterParams.circles = drawCircles(
         scatterParams,
         this.dataToGraph,
         this.currentVars,
       );
+
+      scatterParams.latLonsForMap = getLatLonsForMap(brushGenerator, scatterParams, console.log)
+
+
       createTooltips(
-        circles,
+        scatterParams.circles,
         this.currentVars,
         this.varsMetaArr,
         scatterParams,

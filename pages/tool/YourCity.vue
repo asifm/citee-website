@@ -2,7 +2,6 @@
 v-container(fluid)
   v-toolbar(dark).secondary
     v-icon map
-    v-toolbar-title  In aliquip ad sint officia culpa in labore nisi
     //- v-spacer
   v-layout(row wrap)#top-row
     v-flex(d-flex md2).pa-2
