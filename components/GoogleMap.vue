@@ -1,35 +1,47 @@
 <template lang="pug">
-  div#mapcon
+  div
     gmap-map(
-      style="height:400px; width:700px;"
-      :center="center"
-      :zoom="zoom"
-      :mapTypeId="mapTypeId"
+      style="height:450px; width:850px;"
+      :center="centerVal"
+      :zoom="zoomVal"
+      :mapTypeId="mapTypeIdVal",
       )
-      //- gmap-marker(
-      //-   v-for="(m, index) in markers"
-      //-   :key="index"
-      //-   :position="m.position"
-      //-   :clickable="true"
-      //-   :draggable="true"
-      //-   @click="center=m.position"
-      //-   )
+      gmap-marker(
+        :clickable="true"
+        :draggable="true"
+        v-for="(m, index) in markersVal"
+        :key="index"
+        :position="m.position"
+        @click="center=m.position"
+        )
 </template>
 
 
 <script>
-  const mapOptions = {
-
-  };
+  
   export default  {
     props: {
-      zoom: { default:4},
-      mapTypeId: { default: 'roadmap'},
-      center: {
-        default() {
-        return {lat: 38.0, lng: -100.0}
-        }
+      markersVal: {
+        type: Array,
+        default() { return []}
       },
+      zoomVal: {
+        type: Number,
+        default: 4
+      },
+      mapTypeIdVal: {
+        type: String,
+        default: 'roadmap'
+      },
+      centerVal: {
+        type: Object,
+        default() {
+          return {
+            lat: 39.5,
+            lng: -98.35,
+          }
+        }
+      }
     },
     data() {
       return {
@@ -38,9 +50,3 @@
   }
 </script>
 
-<style lang="scss" scoped>
-#mapcon {
-  width: 700;
-  height: 450;
-}
-</style>

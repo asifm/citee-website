@@ -1,6 +1,5 @@
 import { format } from 'd3-format';
 import { select, event as d3Event } from 'd3-selection';
-import * as miscFunc from '../dataHelpers/miscHelpers';
 
 export function createTooltips(circles, currentVars, varsMetaArr, svgParams) {
   const {
@@ -36,7 +35,7 @@ export function createTooltips(circles, currentVars, varsMetaArr, svgParams) {
     tooltip
       .html('')
       .style('visibility', 'visible')
-      .html(() => `<h3>${miscFunc.shortenMetroName(d.cbsaname15)}</h3>
+      .html(() => `<h3>${d.cbsaname15}</h3>
               <br><strong>${format(xFormat)(d[x])}</strong> ${xText}
               <br><strong>${format(yFormat)(d[y])}</strong> ${yText}
               <br><strong>${format(radiusFormat)(d[radius])}</strong> ${radiusText}

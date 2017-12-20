@@ -9,7 +9,7 @@ export function createBrush(svgParams) {
   } = svgParams;
 
 
-  const brushGenerator = brush().extent([[0, 0], [plotwidth, plotheight]]);
+  const brushGenerator = brush().extent([[-40, -40], [plotwidth + 40, plotheight + 40]]);
 
   svgG
     .append('g')
