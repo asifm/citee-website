@@ -1,4 +1,4 @@
-<template lang="pug"> 
+<template lang="pug">
 v-card(hover).mr-2.mb-2.pa-2
   v-list(two-line dark dense v-for="elem in geoData.slice(beginIndex, endIndex)" :key="elem.code" )
     v-divider
@@ -14,11 +14,11 @@ v-card(hover).mr-2.mb-2.pa-2
 </template>
 <script>
 export default {
-  props: {
-    geoData: Array,
-    beginIndex: null,
-    endIndex: null,
-  },
+    props: {
+        geoData: Array,
+        beginIndex: null,
+        endIndex: null,
+    },
 };
 </script>
 
@@ -40,4 +40,3 @@ export default {
   font-family: Open Sans;
 }
 </style>
-

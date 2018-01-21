@@ -16,3 +16,6 @@ dist
 
 # webpack dll (experimental)
 .cache
+
+# misc notes
+.scrap

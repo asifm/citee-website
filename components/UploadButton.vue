@@ -1,38 +1,41 @@
 <template>
-  <v-btn dark class="btn--dark-flat-focused jbtn-file">
-    {{ title }}<input id="selectFile" type="file" v-on:change="fileSelected">
-  </v-btn>
+    <v-btn dark class="btn--dark-flat-focused jbtn-file">
+        {{ title }}<input id="selectFile" type="file" @change="fileSelected">
+    </v-btn>
 </template>
 
 <script>
-  export default {
-    name: 'upload-button',
+export default {
+    name: 'UploadButton',
     props: {
-      selectedCallback: Function,
-      title: String
+        selectedCallback: {
+            type: Function,
+            default: function handleFile() {},
+        },
+        title: { type: String, default: 'Upload' },
     },
     methods: {
-      fileSelected(e) {
-        if (this.selectedCallback) {
-          if (e.target.files[0]) {
-            this.selectedCallback(e.target.files[0]);
-          } else {
-            this.selectedCallback(null);
-          }
-        }
-      }
-    }
-  }
+        fileSelected( e ) {
+            if ( this.selectedCallback ) {
+                if ( e.target.files[ 0 ] ) {
+                    this.selectedCallback( e.target.files[ 0 ] );
+                } else {
+                    this.selectedCallback( null );
+                }
+            }
+        },
+    },
+};
 </script>
 
 <style scoped>
-  .jbtn-file {
+.jbtn-file {
     cursor: pointer;
     position: relative;
     overflow: hidden;
-  }
+}
 
-  .jbtn-file input[type=file] {
+.jbtn-file input[type='file'] {
     position: absolute;
     top: 0;
     right: 0;
@@ -45,10 +48,8 @@
     outline: none;
     cursor: inherit;
     display: block;
-  }
+}
 </style>
-
-
 
 //   Core-Based Statistical Area
 //   Metropolitan Division
@@ -56,16 +57,15 @@
 //   County
 //   County Subdivision
 //   Place
-//     Region
+//   Region
 //   Division
 //   State
-// Census Tract
+//   Census Tract
 //   Block Group
 //   ZIP Code Tabulation Area
-// Congressional District (111th)
+//   Congressional District (111th)
 //   State Legislative District (Upper)
 //   State Legislative District (Lower)
-
-// School District (Elementary)
+//   School District (Elementary)
 //   School District (Secondary)
-// School District (Unified)
+//   School District (Unified)

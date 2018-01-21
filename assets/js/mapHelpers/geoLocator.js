@@ -1,11 +1,13 @@
 import * as axios from 'axios';
 
-async function getGeoFromLonLat(lon, lat, sumlevs) {
-  const endpoint = `https://api.censusreporter.org/1.0/geo/search?lat=${lat}&lon=${
-    lon
-  }&sumlevs=${sumlevs}`;
-  const response = await axios.get(endpoint);
-  return response;
+async function getGeoLevelsForLonLat(
+    lon, lat, sumlevs
+) {
+    const endpoint = `https://api.censusreporter.org/1.0/geo/search?lat=${ lat }&lon=${
+        lon
+    }&sumlevs=${ sumlevs }`;
+    const response = await axios.get( endpoint );
+    return response;
 }
 
 const mapboxToken =
@@ -13,15 +15,22 @@ const mapboxToken =
 // const mapboxToken =
 // 'pk.eyJ1IjoiYXNpZm0iLCJhIjoiNmJkZmNhNmUwZWI4YmMwMTM
 // 2Y2Y4NjQ4NjM0Nzg1MWEifQ.SntXBB_ZwOFBy5GbtmbeZg';
-
-async function getGeoFromAddress(addressQuery, onlyZip) {
-  const address = onlyZip === true ? `Zip code ${addressQuery}` : addressQuery;
-
-  const endpoint = `https://api.tiles.mapbox.com/v4/geocode/mapbox.places/${
-    address
-  }.json?access_token=${mapboxToken}&country=us`;
-  const response = await axios.get(endpoint);
-  return response;
+// TODO: refactor zip to a separate function
+async function getDetailForAddress( query ) {
+    const endpoint = `https://api.tiles.mapbox.com/v4/geocode/mapbox.places/${
+        query
+    }.json?access_token=${ mapboxToken }&country=us`;
+    const response = await axios.get( endpoint );
+    return response;
 }
 
-export { getGeoFromLonLat, getGeoFromAddress };
+async function getDetailForZip( zip ) {
+    const query = `Zip code ${ zip }`;
+    const endpoint = `https://api.tiles.mapbox.com/v4/geocode/mapbox.places/${
+        query
+    }.json?access_token=${ mapboxToken }&country=us`;
+    const response = await axios.get( endpoint );
+    return response;
+}
+
+export { getGeoLevelsForLonLat, getDetailForAddress, getDetailForZip };
