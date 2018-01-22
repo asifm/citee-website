@@ -1,6 +1,7 @@
 module.exports = {
     plugins: [
         '~plugins/vuetify.js',
+        '~plugins/vue-axios.js',
         '~plugins/vee-validate.js',
         { src: '~plugins/vue2-leaflet.js', ssr: false },
         { src: '~plugins/vue2-google-maps.js', ssr: false },
@@ -29,9 +30,17 @@ module.exports = {
             src: './assets/css/app.styl',
             lang: 'styl',
         },
-        {
+{
             src: './assets/css/custom.scss',
             lang: 'scss',
+        }, 
+{
+            src: './assets/css/vue2-animate.min.css',
+            lang: 'css',
+        }, 
+{
+            src: './assets/font/mdi/css/materialdesignicons.min.css',
+            lang: 'css',
         },
     ],
     /*
@@ -52,8 +61,7 @@ module.exports = {
             },
         ],
         script: [
-            { src: 'https://use.typekit.net/pbg0kfs.js' },
-            { innerHTML: 'try { Typekit.load({ async: true }); } catch (e) {}' },
+            { src: 'https://use.typekit.net/pbg0kfs.js' }, { innerHTML: 'try { Typekit.load({ async: true }); } catch (e) {}' },
         ],
         // Needed if innerhtml for script contains quotations which shouldn't be escaped
         __dangerouslyDisableSanitizers: [ 'script' ],
@@ -66,17 +74,7 @@ module.exports = {
             {
                 rel: 'stylesheet',
                 type: 'text/css',
-                href: '/css/vue2-animate.min.css',
-            },
-            {
-                rel: 'stylesheet',
-                type: 'text/css',
                 href: 'https://fonts.googleapis.com/css?family=Open+Sans:300,400,500,700|Libre+Franklin:300,500,700|Material+Icons',
-            },
-            {
-                rel: 'stylesheet',
-                type: 'text/css',
-                href: '/font/mdi/css/materialdesignicons.min.css',
             },
             {
                 rel: 'stylesheet',
@@ -113,7 +111,7 @@ module.exports = {
         //   }
         // },
         // add external packages here so that they're loaded only once
-        // Is it needed only for vue plugins, or all packages?
+        // Is it needed only for vue plugins, or all packages, or all packages and not vue plugins?
         vendor: [
             'axios',
             'vuetify',
@@ -121,6 +119,7 @@ module.exports = {
             'vee-validate',
             'd3',
             'vue2-google-maps',
+            'vue-axios',
         ],
     },
 };
