@@ -4,7 +4,7 @@
       v-flex(xs12 sm8 md5 lg4).pa-0
         img(src="~/assets/img/citee-logo-white.svg").ma-3.dropshadow.opacity-6
         h1.display-1.pa-3.white--text.elevation-12#text-bg Cities Innovating Tomorrow's Entrepreneurial Ecosystems
-  
+
     v-layout(row wrap v-if="show").pa-0.justify-center
       v-flex(xs12 sm5 md3 lg2).pa-3
         v-card.py-3.elevation-24.grey.lighten-3.opacity-7
@@ -22,22 +22,21 @@
         v-card.py-3.elevation-24.grey.lighten-3.opacity-7
           v-icon(x-large).blue-grey--text mdi-book-open
           h3 Blog
-          
+
 </template>
 
 <script>
 export default {
-  data() {
-    return {
-      show: false,
-    };
-  },
-  mounted() {
-    this.show = true;
-  },
+    data() {
+        return {
+            show: false,
+        };
+    },
+    mounted() {
+        this.show = true;
+    },
 };
 </script>
-
 
 <style lang="scss" scoped>
 #landing-top {

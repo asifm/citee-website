@@ -130,8 +130,7 @@
 /* **************************
   section: Imports
 ************************** */
-
-import { parseData } from '../../assets/js/dataHelpers/parseData';
+import { csv } from 'd3';
 import { numberify } from '../../assets/js/dataHelpers/numberify';
 import { varsMetaAllArr } from '../../assets/js/dataHelpers/dataExplorerMetaData';
 import { separatePosNeg } from '../../assets/js/dataHelpers/separatePosNeg';
@@ -267,7 +266,7 @@ export default {
             },
         ];
         const filepath = '/data/data_explorer_12_6_17.csv';
-        parseData( filepath ).get( data => {
+        csv( filepath, data => {
             this.allData = numberify( data, varsMetaArr );
             this.allData.forEach( elem =>
                 ( elem.cbsaname15 =
@@ -286,8 +285,8 @@ export default {
             drawSvg( scatterParams );
         },
         renderScatter() {
-            console.log( 'inside render scatter' );
-            console.log( this.$refs.metroSelector.$el );
+            // console.log( 'inside render scatter' );
+            // console.log( this.$refs.metroSelector.$el );
 
             // Remove all elements from parent svgG
             scatterParams.svgG.selectAll( '*' ).remove();
@@ -353,7 +352,9 @@ export default {
             );
 
             createTooltips(
-                scatterParams.circles, this.currentVars, this.varsMetaArr,
+                scatterParams.circles,
+                this.currentVars,
+                this.varsMetaArr,
                 scatterParams
             );
         },

@@ -1,5 +1,5 @@
 <template>
-    <v-btn dark class="btn--dark-flat-focused jbtn-file">
+    <v-btn class="jbtn-file">
         {{ title }}<input id="selectFile" type="file" @change="fileSelected">
     </v-btn>
 </template>
