@@ -1,25 +1,64 @@
-<<template lang="pug">
-v-container
-    v-layout(row wrap).text-lg-center
-        v-flex(offset-lg4 lg4)
-            v-toolbar.indigo.lighten-3.pa-3
-                h1.display-1 Metro Geocoder
-            v-card.pa-5
-                p Upload a list of addresses in a csv file and get back detailed geographical data about these addresses. The addresses need not be complete.
-                div#address
-                    no-ssr
-                        upload-button(
-                            title="Upload a list of adresses"
-                            :selectedCallback="fromAddress")
-            v-card.pa-5
-                p Upload a list of latitude-longitude pairs in a csv file and get back detailed geographical data about these locations.
-                div#latlon
-                    no-ssr
-                       upload-button(
-                           title="Upload a list of latitude-longitude pairs"
-                           :selectedCallback="fromLatLon")
-            v-card.pa-5
-                a#downloadlink Download File
+<template lang="pug">
+div.grey.lighten-2
+    v-container
+        v-toolbar.secondary.pl-3.white--text
+            h1 Convert Between Geographic Data
+        v-layout(row wrap)
+            v-flex(lg4).pa-3
+                v-card(height="100%").brown.lighten-4
+                    v-card-title.grey.lighten-2.elevation-3
+                        h2 Step 1: Prepare Your Data
+                    v-card-text.pa-5
+                        p Pariatur Lorem sunt non nisi cillum enim nisi ea.
+                        p Tempor eiusmod aliqua cupidatat ipsum tempor esse id occaecat.
+                        p commodo non dolore ea exercitation ullamco.
+                        p Elit consectetur id aliqua culpa consectetur voluptate.
+                        p Elit adipisicing laborum excepteur aliquip labore officia Lorem consequat aliqua Lorem.
+                        p Id nulla officia mollit ullamco officia dolore Lorem ea et dolore ullamco veniam occaecat mollit.
+            v-flex(lg4).pa-3
+                v-card(height="100%").blue-grey.lighten-4
+                    v-card-title.grey.lighten-2.elevation-3
+                        h2 Step 2: Select Types of Geography
+                    v-card-text.pa-5
+                        p Aliqua enim id reprehenderit nisi deserunt fugiat. Incididunt adipisicing ex Lorem id et laboris aute elit labore aute anim do cupidatat. Consequat pariatur id laboris aute enim eu ad. Culpa aute exercitation qui nulla labore velit occaecat mollit anim esse enim ullamco. Velit pariatur proident adipisicing aliquip fugiat ipsum. Esse ex et labore ex irure consectetur sint ipsum est magna ullamco adipisicing eu.
+                        v-select(label="Select"
+                            :items="geoNamesArr"
+                            :v-model="selectedLevels"
+                            multiple
+                            persistent-hint
+                            chips
+                            hint="Choose the types of geographic data you need")
+
+            v-flex(lg4).pa-3
+                v-card(height="100%").grey.lighten-4
+                    v-card-title.grey.lighten-2.elevation-3
+                        h2 Step 3: Upload File
+                    v-card-text.pa-5
+                        no-ssr
+                            div
+                                div
+                                    upload-button(
+                                        title="Upload Zip Codes"
+                                        :selectedCallback="fromZip").amber.lighten-1.ml-0
+                                    p Qui do sit sunt quis qui officia tempor labore sunt ullamco minim nostrud.
+                                div
+                                    upload-button(
+                                        title="Upload (Partial) Addresses"
+                                        :selectedCallback="fromAddress").light-green.lighten-1.ml-0
+                                    p Minim magna dolore incididunt duis reprehenderit incididunt est ad nostrud pariatur magna esse.
+                                div
+                                    upload-button(
+                                        title="Upload Latitude-Longitude Pairs"
+                                        :selectedCallback="fromLatLon").indigo.lighten-3.ml-0
+                                    p Ad aliqua ex occaecat incididunt est reprehenderit dolor.
+
+        v-card.pa-5.card--flat.grey.lighten-2
+            h4 Developed By
+            p Ad labore reprehenderit labore sunt exercitation dolor nostrud nisi pariatur ut est cupidatat.
+            h4 Acknowledgement
+            p Officia sit laborum aliqua ad minim officia consectetur aute culpa.
+            h4 Citation
+            p Reprehenderit commodo adipisicing consectetur eiusmod occaecat consequat ea ad non incididunt ea. Occaecat veniam commodo ullamco enim sint fugiat Lorem voluptate adipisicing Lorem. Ipsum irure ex non magna et occaecat.
 
 </template>
 
@@ -64,6 +103,7 @@ export default {
     data() {
         return {
             textFile: null,
+            selectedLevels: [],
             geoMainArr,
             geoCodesArr: geoMainArr.map( elem => elem.code ),
             geoNamesArr: geoMainArr.map( elem => elem.name ),
