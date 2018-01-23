@@ -46,6 +46,8 @@
         "nuxt": "^1.1.1",
         "scrollmagic": "^2.0.5",
         "vee-validate": "^2.0.3",
+        "vue": "latest",
+        "vue-axios": "^2.0.2",
         "vue2-animate": "^1.0.4",
         "vue2-google-maps": "^0.8.4",
         "vue2-leaflet": "0.0.57",

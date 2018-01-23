@@ -30,15 +30,15 @@ module.exports = {
             src: './assets/css/app.styl',
             lang: 'styl',
         },
-{
+        {
             src: './assets/css/custom.scss',
             lang: 'scss',
-        }, 
-{
+        },
+        {
             src: './assets/css/vue2-animate.min.css',
-            lang: 'css',
-        }, 
-{
+            lang: 'csss',
+        },
+        {
             src: './assets/font/mdi/css/materialdesignicons.min.css',
             lang: 'css',
         },
