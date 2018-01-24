@@ -15,7 +15,7 @@ const mapboxToken =
 // const mapboxToken =
 // 'pk.eyJ1IjoiYXNpZm0iLCJhIjoiNmJkZmNhNmUwZWI4YmMwMTM
 // 2Y2Y4NjQ4NjM0Nzg1MWEifQ.SntXBB_ZwOFBy5GbtmbeZg';
-// TODO: refactor zip to a separate function
+
 async function getDetailForAddress( query ) {
     const endpoint = `https://api.tiles.mapbox.com/v4/geocode/mapbox.places/${
         query
@@ -25,6 +25,8 @@ async function getDetailForAddress( query ) {
 }
 
 async function getDetailForZip( zip ) {
+    // Assume the provided zip is valid. Handle error downstream.
+
     const query = `Zip code ${ zip }`;
     const endpoint = `https://api.tiles.mapbox.com/v4/geocode/mapbox.places/${
         query

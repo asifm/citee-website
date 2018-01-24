@@ -22,9 +22,15 @@ div.grey.lighten-2
                     v-card-text.pa-5
                         p Aliqua enim id reprehenderit nisi deserunt fugiat. Incididunt adipisicing ex Lorem id et laboris aute elit labore aute anim do cupidatat. Consequat pariatur id laboris aute enim eu ad. Culpa aute exercitation qui nulla labore velit occaecat mollit anim esse enim ullamco. Velit pariatur proident adipisicing aliquip fugiat ipsum. Esse ex et labore ex irure consectetur sint ipsum est magna ullamco adipisicing eu.
                         v-select(label="Select"
-                            :items="geoNamesArr"
-                            :v-model="selectedLevels"
+                            :items="allGeoLevelsArr"
+                            item-text="name"
+                            item-value="code"
+                            v-model="selectedGeoLevels"
+                            @input="logLevels"
+                            return-object
                             multiple
+                            autocomplete
+                            dense
                             persistent-hint
                             chips
                             hint="Choose the types of geographic data you need")
@@ -39,17 +45,20 @@ div.grey.lighten-2
                                 div
                                     upload-button(
                                         title="Upload Zip Codes"
-                                        :selectedCallback="fromZip").amber.lighten-1.ml-0
+                                        :selectedCallback="fromZip")
+                                        .amber.lighten-1.ml-0
                                     p Qui do sit sunt quis qui officia tempor labore sunt ullamco minim nostrud.
                                 div
                                     upload-button(
                                         title="Upload (Partial) Addresses"
-                                        :selectedCallback="fromAddress").light-green.lighten-1.ml-0
+                                        :selectedCallback="fromAddress")
+                                        .light-green.lighten-1.ml-0
                                     p Minim magna dolore incididunt duis reprehenderit incididunt est ad nostrud pariatur magna esse.
                                 div
                                     upload-button(
                                         title="Upload Latitude-Longitude Pairs"
-                                        :selectedCallback="fromLatLon").indigo.lighten-3.ml-0
+                                        :selectedCallback="fromLatLon")
+                                        .indigo.lighten-3.ml-0
                                     p Ad aliqua ex occaecat incididunt est reprehenderit dolor.
 
         v-card.pa-5.card--flat.grey.lighten-2
@@ -65,6 +74,10 @@ div.grey.lighten-2
 <script>
 import * as fs from 'file-saver';
 import { csvParseRows, csvFormat } from 'd3';
+import * as allGeoLevelsArr from '../../static/data/geo_levels_codes.json';
+import validZips from '../../static/data/valid-zips.json';
+
+// Refactor so no need for external uploadbutton component
 import UploadButton from '../../components/UploadButton.vue';
 import {
     getGeoLevelsForLonLat,
@@ -72,50 +85,36 @@ import {
     getDetailForZip,
 } from '../../assets/js/mapHelpers/geoLocator';
 
-const geoMainArr = [
-    { code: '310', name: 'Core-Based Statistical Area' },
-    { code: '314', name: 'Metropolitan Division' },
-    { code: '330', name: 'Combined Statistical Area' },
-
-    { code: '050', name: 'County' },
-    { code: '060', name: 'County Subdivision' },
-    { code: '160', name: 'Place' },
-
-    { code: '020', name: 'Region' },
-    { code: '030', name: 'Division' },
-    { code: '040', name: 'State' },
-
-    { code: '140', name: 'Census Tract' },
-    { code: '150', name: 'Block Group' },
-    { code: '860', name: 'ZIP Code Tabulation Area' },
-
-    { code: '500', name: 'Congressional District (111th)' },
-    { code: '610', name: 'State Legislative District (Upper)' },
-    { code: '620', name: 'State Legislative District (Lower)' },
-
-    { code: '950', name: 'School District (Elementary)' },
-    { code: '960', name: 'School District (Secondary)' },
-    { code: '970', name: 'School District (Unified)' },
-];
-
 export default {
     components: { 'upload-button': UploadButton },
     data() {
         return {
             textFile: null,
-            selectedLevels: [],
-            geoMainArr,
-            geoCodesArr: geoMainArr.map( elem => elem.code ),
-            geoNamesArr: geoMainArr.map( elem => elem.name ),
+            selectedGeoLevels: [],
+            allGeoLevelsArr,
         };
     },
+    // For debugging
+    created() {
+        // console.log( allGeoLevelsArr );
+    },
+
+    computed:
+        {
+            selectedGeoCodes() {
+                return this.selectedGeoLevels.map( elem => elem.code );
+            },
+        },
     methods: {
+        logLevels() {
+            // console.log( 'e', e );
+            console.log( 'geotext', this.selectedGeoLevels );
+            // console.log( 'refs', this.$refs );
+        },
         fromAddress( file ) {
             const vm = this;
-            const reader = new FileReader();
-            reader.readAsText( file );
-            reader.onload = fileLoadHandler;
-            function fileLoadHandler( evt ) {
+            this.loadFile( file, loadedAddresses );
+            function loadedAddresses( evt ) {
                 const csvString = evt.target.result;
                 // returns an array of arrays
                 const addressesArr = csvParseRows( csvString )
@@ -123,43 +122,97 @@ export default {
 
                 const promises = [];
                 addressesArr.forEach( address =>
-                    promises.push( getDetailForAddress( address )
-                        .then( response => response.data.features[ 0 ].center )
-                        .then( lonLat => ( getGeoLevelsForLonLat(
-                            lonLat[ 0 ],
-                            lonLat[ 1 ],
-                            vm.geoCodesArr.toString()
-                        ) ) ) ) );
+                    promises.push(
+                        getDetailForAddress( address )
+                            .then( response =>
+                                response.data.features[ 0 ].center )
+                            .then( lonLat =>
+                                getGeoLevelsForLonLat(
+                                    lonLat[ 0 ],
+                                    lonLat[ 1 ],
+                                    vm.selectedGeoCodes.toString()
+                                ) )
+                    ) );
 
                 Promise.all( promises )
                     .then( resolvedArr => {
                         const dataArr = resolvedArr.map( el => el.data );
-                        // TODO: convert dataArr to the right format: array of objects
-                        // add options to select fields
-                        // normalize the geo codes
-                        const geoDataText = csvFormat( dataArr[ 0 ].results );
-                        const blob = new Blob( [ geoDataText ], { type: 'text/plain;charset=utf-8' } );
-                        // TODO: filename based on date and time
-                        fs.saveAs( blob, 'Results.csv' );
+                        vm.writeCsv( dataArr );
                     } )
                     .catch( error => console.log( 'Something went wrong', error ) );
             }
         },
         fromZip( file ) {
-            // TODO:
-            getDetailForZip( zip );
+            const vm = this;
+            this.loadFile( file, loadedZips );
+            function loadedZips( evt ) {
+                const csvString = evt.target.result;
+                // returns an array of arrays
+                const zipsArr = csvParseRows( csvString ).map( el => el[ 0 ] );
+
+                const invalidZips = zipsArr.filter(
+                    zip => !validZips.includes( zip )
+                );
+                if ( invalidZips.length > 0 ) {
+                    // eslint-disable-next-line no-alert
+                    alert( `Invalid Zip codes: ${ invalidZips }
+                    Please correct or exclude, and then reupload.` );
+                    return;
+                }
+
+                const promises = [];
+                zipsArr.forEach( zip =>
+                    promises.push(
+                        getDetailForZip( zip )
+                            .then( response =>
+                                response.data.features[ 0 ].center )
+                            .then( lonLat =>
+                                getGeoLevelsForLonLat(
+                                    lonLat[ 0 ],
+                                    lonLat[ 1 ],
+                                    vm.selectedGeoCodes.toString()
+                                ) )
+                    ) );
+
+                // TODO: refactor Promise.all to a separate function for DRY
+                Promise.all( promises )
+                    .then( resolvedArr => {
+                        const dataArr = resolvedArr.map( el => el.data );
+                        vm.writeCsv( dataArr );
+                    } )
+                    .catch( error => console.log( 'Something went wrong', error ) );
+            }
         },
+
         fromLatLon( file ) {
-            const reader = new FileReader();
-            reader.readAsText( file );
-            reader.onload = loaded;
-            function loaded( evt ) {
+            // TODO
+            this.loadFile( file, loadedLatLons );
+            function loadedLatLons( evt ) {
                 const csvString = evt.target.result;
                 const latLonArr = [];
                 csvParseRows( csvString, data => {
                     latLonArr.push( data );
                 } );
             }
+        },
+        loadFile( file, loadHandler ) {
+            const reader = new FileReader();
+            reader.readAsText( file );
+            reader.onload = loadHandler;
+        },
+        writeCsv( dataArr ) {
+            // TODO: convert dataArr to the right format: array of objects
+            // add options to select fields
+            // normalize the geo codes
+            console.log( 'whole arr, ', dataArr );
+            console.log( 'elem', dataArr[ 2 ] );
+            const geoDataText = csvFormat( dataArr[ 2 ].results );
+            const blob = new Blob( [ geoDataText ], {
+                type: 'text/plain;charset=utf-8',
+            } );
+            // TODO: filename based on date and time
+            // TODO: ensure no memory leak from prior files
+            fs.saveAs( blob, 'Results.csv' );
         },
     },
 };
