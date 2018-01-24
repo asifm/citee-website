@@ -94,11 +94,6 @@ export default {
             allGeoLevelsArr,
         };
     },
-    // For debugging
-    created() {
-        // console.log( allGeoLevelsArr );
-    },
-
     computed:
         {
             selectedGeoCodes() {
@@ -106,11 +101,6 @@ export default {
             },
         },
     methods: {
-        logLevels() {
-            // console.log( 'e', e );
-            console.log( 'geotext', this.selectedGeoLevels );
-            // console.log( 'refs', this.$refs );
-        },
         fromAddress( file ) {
             const vm = this;
             this.loadFile( file, loadedAddresses );
@@ -136,7 +126,8 @@ export default {
 
                 Promise.all( promises )
                     .then( resolvedArr => {
-                        const dataArr = resolvedArr.map( el => el.data );
+                        const dataArr = resolvedArr
+                            .map( el => el.data.results );
                         vm.writeCsv( dataArr );
                     } )
                     .catch( error => console.log( 'Something went wrong', error ) );
@@ -174,10 +165,11 @@ export default {
                                 ) )
                     ) );
 
-                // TODO: refactor Promise.all to a separate function for DRY
+                // TODO: refactor Promise.all and other repeated codes to separate functions for DRY
                 Promise.all( promises )
                     .then( resolvedArr => {
-                        const dataArr = resolvedArr.map( el => el.data );
+                        const dataArr = resolvedArr
+                            .map( el => el.data.results );
                         vm.writeCsv( dataArr );
                     } )
                     .catch( error => console.log( 'Something went wrong', error ) );
@@ -202,17 +194,15 @@ export default {
         },
         writeCsv( dataArr ) {
             // TODO: convert dataArr to the right format: array of objects
-            // add options to select fields
             // normalize the geo codes
-            console.log( 'whole arr, ', dataArr );
-            console.log( 'elem', dataArr[ 2 ] );
-            const geoDataText = csvFormat( dataArr[ 2 ].results );
+            const geoDataText = csvFormat( dataArr[ 2 ] );
             const blob = new Blob( [ geoDataText ], {
                 type: 'text/plain;charset=utf-8',
             } );
-            // TODO: filename based on date and time
+            const now = new Date();
+            const filename = `Results_${ now.toLocaleString( 'en', { month: 'short' } ) + 1 }-${ now.getDate() }-${ now.getFullYear() }-${ now.getHours() }-${ now.getMinutes() }-${ now.getSeconds() }.csv`;
             // TODO: ensure no memory leak from prior files
-            fs.saveAs( blob, 'Results.csv' );
+            fs.saveAs( blob, filename );
         },
     },
 };
