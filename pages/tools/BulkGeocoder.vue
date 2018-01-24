@@ -25,8 +25,7 @@ div.grey.lighten-2
                             :items="allGeoLevelsArr"
                             item-text="name"
                             item-value="code"
-                            v-model="selectedGeoLevels"
-                            @input="logLevels"
+                            v-model="selectedGeoLevelsArr"
                             return-object
                             multiple
                             autocomplete
@@ -90,14 +89,14 @@ export default {
     data() {
         return {
             textFile: null,
-            selectedGeoLevels: [],
+            selectedGeoLevelsArr: [],
             allGeoLevelsArr,
         };
     },
     computed:
         {
             selectedGeoCodes() {
-                return this.selectedGeoLevels.map( elem => elem.code );
+                return this.selectedGeoLevelsArr.map( elem => elem.code );
             },
         },
     methods: {
