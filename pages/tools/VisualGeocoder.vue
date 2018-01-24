@@ -113,34 +113,11 @@ import {
     getDetailForAddress,
     getDetailForZip,
 } from '../../assets/js/mapHelpers/geoLocator';
+import geoMainArr from '../../static/data/geo_levels_codes.json';
+import validZips from '../../static/data/valid-zips.json';
 
 // TODO: Add definition to each geo in the array
 // TODO: On hover show definition
-const geoMainArr = [
-    { code: '310', name: 'Core-Based Statistical Area' },
-    { code: '314', name: 'Metropolitan Division' },
-    { code: '330', name: 'Combined Statistical Area' },
-
-    { code: '050', name: 'County' },
-    { code: '060', name: 'County Subdivision' },
-    { code: '160', name: 'Place' },
-
-    { code: '020', name: 'Region' },
-    { code: '030', name: 'Division' },
-    { code: '040', name: 'State' },
-
-    { code: '140', name: 'Census Tract' },
-    { code: '150', name: 'Block Group' },
-    { code: '860', name: 'ZIP Code Tabulation Area' },
-
-    { code: '500', name: 'Congressional District (111th)' },
-    { code: '610', name: 'State Legislative District (Upper)' },
-    { code: '620', name: 'State Legislative District (Lower)' },
-
-    { code: '950', name: 'School District (Elementary)' },
-    { code: '960', name: 'School District (Secondary)' },
-    { code: '970', name: 'School District (Unified)' },
-];
 
 const variablesArr = [
     'Median age',
@@ -268,6 +245,7 @@ export default {
                     if ( response.data.features[ 0 ].place_type[ 0 ] !==
                             'postcode' ||
                             // This is a common return address when zip code fails
+                            // TODO: Use validcodes array for a cleaner solution to this problem
                             response.data.features[ 0 ].place_name[ 0 ] ===
                                 'Zip Code Pl, West Palm Beach, Florida 33409, United States' ) {
                         this.dataErrorMsg = 'Perhaps not a valid ZIP code.';
