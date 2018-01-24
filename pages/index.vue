@@ -2,10 +2,14 @@
 div
     div.container
         div.fullscreen-video-wrap
-            video(src="~assets/video/usmap-dark-rays.mp4" autoplay loop)
+            //- video(src="~assets/video/usmap-dark-rays.mp4" autoplay loop)
+            //- video(src="~assets/video/abstract-network-loop.mp4" autoplay loop)
+            //- video(src="~assets/video/city-still-day.mp4" autoplay loop)
+            video(src="~assets/video/abstract-network-yellowish.mp4" autoplay loop)
+            //- video(src="~assets/video/abstract-network-blueish.mp4" autoplay loop)
         div.header-overlay
-        div.header-content
-            h3.display-2 Cities Innovating Tomorrow's Entrepreneurial Ecosystems
+        div.header-content.elevation-10
+            h3.display-1#text-bg.pa-3.white--text Cities Innovating Tomorrow's Entrepreneurial Ecosystems
 </template>
 
 <style scoped>
@@ -42,10 +46,13 @@ div
     width: 100vw;
     z-index: 1;
     background: #232d4b;
-    opacity: 0.8;
+    opacity: 0.4;
 }
 
 .header-content {
     z-index: 2;
+}
+#text-bg {
+    background-color: rgba(0, 18, 42, 0.6);
 }
 </style>
