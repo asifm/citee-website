@@ -76,7 +76,7 @@ import { csvParseRows, csvFormat } from 'd3';
 import * as allGeoLevelsArr from '../../static/data/geo_levels_codes.json';
 import validZips from '../../static/data/valid-zips.json';
 
-// Refactor so no need for external uploadbutton component
+// TODO: Refactor so no need for external uploadbutton component
 import UploadButton from '../../components/UploadButton.vue';
 import {
     getGeoLevelsForLonLat,
@@ -93,12 +93,11 @@ export default {
             allGeoLevelsArr,
         };
     },
-    computed:
-        {
-            selectedGeoCodes() {
-                return this.selectedGeoLevelsArr.map( elem => elem.code );
-            },
+    computed: {
+        selectedGeoCodes() {
+            return this.selectedGeoLevelsArr.map( elem => elem.code );
         },
+    },
     methods: {
         fromAddress( file ) {
             const vm = this;
@@ -146,7 +145,7 @@ export default {
                 if ( invalidZips.length > 0 ) {
                     // eslint-disable-next-line no-alert
                     alert( `Invalid Zip codes: ${ invalidZips }
-                    Please correct or exclude, and then reupload.` );
+                    Please correct or exclude, and then reupload file.` );
                     return;
                 }
 
@@ -184,24 +183,44 @@ export default {
                 csvParseRows( csvString, data => {
                     latLonArr.push( data );
                 } );
+                console.log( 'latLonArr: ', latLonArr );
             }
         },
-        loadFile( file, loadHandler ) {
+        loadFile( file, fileLoadHandler ) {
             const reader = new FileReader();
             reader.readAsText( file );
-            reader.onload = loadHandler;
+            reader.onload = fileLoadHandler;
         },
         writeCsv( dataArr ) {
-            // TODO: convert dataArr to the right format: array of objects
-            // normalize the geo codes
-            const geoDataText = csvFormat( dataArr[ 2 ] );
+            const modDataArr = dataArr.reduce( ( arr, curArr ) => {
+                arr.push( curArr.reduce( ( obj, innerEl ) => {
+                    obj.query = 'input';
+                    obj.resolvedQuery = 'resolved';
+                    const geoDesc =
+                    this.getGeoDescFromCode( innerEl.sumlevel, allGeoLevelsArr )
+                        .toLowerCase().replace( /\s/g, '_' );
+                    // Excep zip code, because it's already in numeric form
+                    if ( innerEl.sumlevel !== '860' ) {
+                        obj[ `geoid_${ geoDesc }` ] = innerEl.full_geoid.slice( 7 );
+                    }
+                    obj[ `${ geoDesc }` ] = innerEl.full_name;
+                    return obj;
+                }, {} ) );
+                return arr;
+            }, [] );
+            // console.log( 'modDataArr: ', modDataArr );
+            const geoDataText = csvFormat( modDataArr );
             const blob = new Blob( [ geoDataText ], {
                 type: 'text/plain;charset=utf-8',
             } );
+            // Use date and time in file name
             const now = new Date();
             const filename = `Results_${ now.toLocaleString( 'en', { month: 'short' } ) + 1 }-${ now.getDate() }-${ now.getFullYear() }-${ now.getHours() }-${ now.getMinutes() }-${ now.getSeconds() }.csv`;
             // TODO: ensure no memory leak from prior files
             fs.saveAs( blob, filename );
+        },
+        getGeoDescFromCode( givenCode, arr ) {
+            return arr.filter( el => el.code === givenCode )[ 0 ].name;
         },
     },
 };
