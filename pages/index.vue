@@ -1,15 +1,20 @@
 <template lang="pug">
 div
-    div.container
+
+    v-layout.justify-center.container
+        //- v-flex(xs12 sm8 md5 lg4).pa-0
+        //-   h1.display-1.pa-3.white--text.elevation-12#text-bg Cities Innovating Tomorrow's Entrepreneurial Ecosystems
+
         div.fullscreen-video-wrap
             //- video(src="~assets/video/usmap-dark-rays.mp4" autoplay loop)
-            //- video(src="~assets/video/abstract-network-loop.mp4" autoplay loop)
+            video(src="~assets/video/abstract-network-loop.mp4" autoplay loop)
             //- video(src="~assets/video/city-still-day.mp4" autoplay loop)
-            video(src="~assets/video/abstract-network-yellowish.mp4" autoplay loop)
+            //- video(src="~assets/video/abstract-network-yellowish.mp4" autoplay loop)
             //- video(src="~assets/video/abstract-network-blueish.mp4" autoplay loop)
         div.header-overlay
         div.header-content.elevation-10
-            h3.display-1#text-bg.pa-3.white--text Cities Innovating Tomorrow's Entrepreneurial Ecosystems
+            img(src="~/assets/img/citee-logo-white.svg").ma-3.dropshadow.opacity-6
+            h1.display-1#text-bg.pa-3.white--text Cities Innovating Tomorrow's Entrepreneurial Ecosystems
 </template>
 
 <style scoped>
@@ -55,4 +60,7 @@ div
 #text-bg {
     background-color: rgba(0, 18, 42, 0.6);
 }
+img {
+    width: 300px;
+  }
 </style>
