@@ -109,7 +109,7 @@ export default {
                     .map( el => el[ 0 ] );
 
                 const promises = [];
-                vm.addressesArr.forEach( address => {
+                addressesArr.forEach( address => {
                     promises.push(
                         getDetailForAddress( address )
                             .then( response =>
@@ -123,13 +123,7 @@ export default {
                     );
                 } );
 
-                Promise.all( promises )
-                    .then( resolvedArr => {
-                        const dataArr = resolvedArr
-                            .map( el => el.data.results );
-                        vm.writeCsv( dataArr, addressesArr );
-                    } )
-                    .catch( error => console.log( 'Something went wrong', error ) );
+                vm.resolvePromises( promises, addressesArr );
             }
         },
         fromZip( file ) {
@@ -164,14 +158,7 @@ export default {
                                 ) )
                     ) );
 
-                // TODO: refactor Promise.all and other repeated codes to separate functions for DRY
-                Promise.all( promises )
-                    .then( resolvedArr => {
-                        const dataArr = resolvedArr
-                            .map( el => el.data.results );
-                        vm.writeCsv( dataArr, zipsArr );
-                    } )
-                    .catch( error => console.log( 'Something went wrong', error ) );
+                vm.resolvePromises( promises, zipsArr );
             }
         },
 
@@ -192,16 +179,18 @@ export default {
                         lonLat[ 1 ],
                         vm.selectedGeoCodes.toString()
                     ) ) );
-
-                // TODO: refactor Promise.all and other repeated codes to separate functions for DRY
-                Promise.all( promises )
-                    .then( resolvedArr => {
-                        const dataArr = resolvedArr
-                            .map( el => el.data.results );
-                        vm.writeCsv( dataArr, lonLatsArr );
-                    } )
-                    .catch( error => console.log( 'Something went wrong', error ) );
+                vm.resolvePromises( promises, lonLatsArr );
             }
+        },
+        resolvePromises( promises, inputsArr ) {
+            const vm = this;
+            Promise.all( promises )
+                .then( resolvedArr => {
+                    const dataArr = resolvedArr
+                        .map( el => el.data.results );
+                    vm.writeCsv( dataArr, inputsArr );
+                } )
+                .catch( error => console.log( 'Something went wrong', error ) );
         },
         loadFile( file, fileLoadHandler ) {
             const reader = new FileReader();
