@@ -1,74 +1,66 @@
 <template lang="pug">
-  v-container(fluid)#landing-top.text-xs-center
-    v-layout.justify-center
-      v-flex(xs12 sm8 md5 lg4).pa-0
-        img(src="~/assets/img/citee-logo-white.svg").ma-3.dropshadow.opacity-6
-        h1.display-1.pa-3.white--text.elevation-12#text-bg Cities Innovating Tomorrow's Entrepreneurial Ecosystems
+div
 
-    v-layout(row wrap v-if="show").pa-0.justify-center
-      v-flex(xs12 sm5 md3 lg2).pa-3
-        v-card.py-3.elevation-24.grey.lighten-3.opacity-7
-          v-icon(x-large).blue-grey--text mdi-chart-bar
-          h3 Visualizations
-      v-flex(xs12 sm5 md3 lg2).pa-3
-        v-card.py-3.elevation-24.grey.lighten-3.opacity-7
-          v-icon(x-large).blue-grey--text mdi-map
-          h3 Case Studies
-      v-flex(xs12 sm5 md3 lg2).pa-3
-        v-card.py-3.elevation-24.grey.lighten-3.opacity-7
-          v-icon(x-large).blue-grey--text mdi-database
-          h3 Resources
-      v-flex(xs12 sm5 md3 lg2).pa-3
-        v-card.py-3.elevation-24.grey.lighten-3.opacity-7
-          v-icon(x-large).blue-grey--text mdi-book-open
-          h3 Blog
+    v-layout.justify-center.container
+        //- v-flex(xs12 sm8 md5 lg4).pa-0
+        //-   h1.display-1.pa-3.white--text.elevation-12#text-bg Cities Innovating Tomorrow's Entrepreneurial Ecosystems
 
+        div.fullscreen-video-wrap
+            //- video(src="~assets/video/usmap-dark-rays.mp4" autoplay loop)
+            video(src="~assets/video/abstract-network-loop.mp4" autoplay loop)
+            //- video(src="~assets/video/city-still-day.mp4" autoplay loop)
+            //- video(src="~assets/video/abstract-network-yellowish.mp4" autoplay loop)
+            //- video(src="~assets/video/abstract-network-blueish.mp4" autoplay loop)
+        div.header-overlay
+        div.header-content.elevation-10
+            img(src="~/assets/img/citee-logo-white.svg").ma-3.dropshadow.opacity-6
+            h1.display-1#text-bg.pa-3.white--text Cities Innovating Tomorrow's Entrepreneurial Ecosystems
 </template>
 
-<script>
-export default {
-    data() {
-        return {
-            show: false,
-        };
-    },
-    mounted() {
-        this.show = true;
-    },
-};
-</script>
+<style scoped>
+.container {
+    max-width: 960px;
+    padding-left: 1rem;
+    padding-right: 1rem;
+    margin: auto;
+    text-align: center;
+    height: 100vh;
+    display: flex;
+    align-items: center;
+}
 
-<style lang="scss" scoped>
-#landing-top {
-  background-size: cover;
-  background-position: 50% 50%;
-  background-attachment: scroll;
-  background-image: url('~/assets/img/landing-background.jpg');
-  // filter: grayscale(1);
-  // filter: blur(20x);
-  // filter: brightness(.8);
-  // filter: contrast(90%);
-  // filter: sepia(.4);
-  img {
+.fullscreen-video-wrap {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100vh;
+    overflow: hidden;
+}
+
+.fullscreen-video-wrap video {
+    min-height: 100%;
+    min-width: 100%;
+}
+
+.header-overlay {
+    height: 100vh;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    z-index: 1;
+    background: #232d4b;
+    opacity: 0.4;
+}
+
+.header-content {
+    z-index: 2;
+}
+#text-bg {
+    background-color: rgba(0, 18, 42, 0.6);
+}
+img {
     width: 300px;
   }
-  // text under logo
-  .display-2 {
-    font-weight: 800;
-    // letter-spacing: 0.3em;
-  }
-  // cards
-  h3 {
-    font-weight: 800;
-    text-transform: uppercase;
-  }
-  .dropshadow {
-    -webkit-filter: drop-shadow(0 7px 8px rgba(0, 0, 0, 0.1));
-    filter: drop-shadow(0 17px 8px rgba(0, 0, 0, 1));
-    /* Same syntax as box-shadow */
-  }
-  #text-bg {
-    background-color: rgba(0, 18, 42, 0.6);
-  }
-}
 </style>
