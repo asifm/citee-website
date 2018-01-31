@@ -2,13 +2,14 @@
 div.grey.lighten-2
     v-container
         v-toolbar.secondary.pl-3.white--text
-            h1 Convert Between Geographic Data
+            h1 Convert Between Types of Geographic Data (Beta)
         v-layout(row wrap)
             v-flex(lg4).pa-3
                 v-card(height="100%").brown.lighten-4
                     v-card-title.grey.lighten-2.elevation-3
                         h2 Step 1: Prepare Your Data
                     v-card-text.pa-5
+                        p This product is in beta stage, but you're encouraged to use it. Please report any bugs or errors to mehedia@darden.virginia.edu.
                         p Pariatur Lorem sunt non nisi cillum enim nisi ea.
                         p Tempor eiusmod aliqua cupidatat ipsum tempor esse id occaecat.
                         p commodo non dolore ea exercitation ullamco.
@@ -108,22 +109,12 @@ export default {
                 const addressesArr = csvParseRows( csvString )
                     .map( el => el[ 0 ] );
 
-                const promises = [];
-                addressesArr.forEach( address => {
-                    promises.push(
-                        getDetailForAddress( address )
-                            .then( response =>
-                                response.data.features[ 0 ].center )
-                            .then( lonLat =>
-                                getGeoLevelsForLonLat(
-                                    lonLat[ 0 ],
-                                    lonLat[ 1 ],
-                                    vm.selectedGeoCodes.toString()
-                                ) )
+                const [ promisesArr, inputObjsArr ] =
+                    vm.createDataPromises(
+                        addressesArr,
+                        getDetailForAddress,
                     );
-                } );
-
-                vm.resolvePromises( promises, addressesArr );
+                vm.resolvePromisesAndWriteData( promisesArr, inputObjsArr );
             }
         },
         fromZip( file ) {
@@ -144,21 +135,12 @@ export default {
                     return;
                 }
 
-                const promises = [];
-                zipsArr.forEach( zip =>
-                    promises.push(
-                        getDetailForZip( zip )
-                            .then( response =>
-                                response.data.features[ 0 ].center )
-                            .then( lonLat =>
-                                getGeoLevelsForLonLat(
-                                    lonLat[ 0 ],
-                                    lonLat[ 1 ],
-                                    vm.selectedGeoCodes.toString()
-                                ) )
-                    ) );
+                const [ promisesArr, inputObjsArr ] = vm.createDataPromises(
+                    zipsArr,
+                    getDetailForZip,
+                );
 
-                vm.resolvePromises( promises, zipsArr );
+                vm.resolvePromisesAndWriteData( promisesArr, inputObjsArr );
             }
         },
 
@@ -173,16 +155,57 @@ export default {
                 } );
 
                 const promises = [];
-                lonLatsArr.forEach( lonLat =>
+                const inputObjsArr = [];
+                lonLatsArr.forEach( lonLat => {
+                    inputObjsArr.push( {
+                        longitude_latitude: lonLat,
+                    } );
                     promises.push( getGeoLevelsForLonLat(
                         lonLat[ 0 ],
                         lonLat[ 1 ],
                         vm.selectedGeoCodes.toString()
-                    ) ) );
-                vm.resolvePromises( promises, lonLatsArr );
+                    ) );
+                } );
+
+                vm.resolvePromisesAndWriteData( promises, inputObjsArr );
             }
         },
-        resolvePromises( promises, inputsArr ) {
+        createDataPromises( inputArr, functionToGetDetail ) {
+            const vm = this;
+            const promisesArr = [];
+            const inputObjsArr = [];
+            inputArr.forEach( inputItem =>
+                promisesArr.push(
+                    functionToGetDetail( inputItem )
+                        .then( response => {
+                            const data = response.data
+                                .resourceSets[ 0 ].resources[ 0 ];
+                            const lonLat = data.point.coordinates;
+                            // create input object to later merge with output before writing
+                            inputObjsArr.push( {
+                                input: inputItem,
+                                formatted_address: data
+                                    .address.formattedAddress,
+                                longitude: lonLat[ 1 ],
+                                latitude: lonLat[ 0 ],
+                                confidence: data.confidence,
+                                entity_type: data.entityType,
+                            } );
+                            console.log( 'inputObjsArr: ', inputObjsArr );
+                            console.log( 'inputItem: ', inputItem );
+                            console.log( 'promisesArr: ', promisesArr );
+
+                            // Important: Bing returns lat first and lon second
+                            return getGeoLevelsForLonLat(
+                                lonLat[ 1 ],
+                                lonLat[ 0 ],
+                                vm.selectedGeoCodes.toString()
+                            );
+                        } )
+                ) );
+            return [ promisesArr, inputObjsArr ];
+        },
+        resolvePromisesAndWriteData( promises, inputsArr ) {
             const vm = this;
             Promise.all( promises )
                 .then( resolvedArr => {
@@ -197,30 +220,36 @@ export default {
             reader.readAsText( file );
             reader.onload = fileLoadHandler;
         },
-        writeCsv( dataArr, inputsArr ) {
-            const modDataArr = dataArr.reduce( ( arr, curArr, curArrIndex ) => {
-                arr.push( curArr.reduce( ( obj, innerEl ) => {
-                    obj.query = inputsArr[ curArrIndex ];
-                    // obj.resolvedQuery = 'resolved';
-                    const geoDesc =
-                    this.getGeoDescFromCode( innerEl.sumlevel, allGeoLevelsArr )
-                        .toLowerCase().replace( /\s/g, '_' );
-                    // Geoid except zip code, because it's already in numeric form
-                    if ( innerEl.sumlevel !== '860' ) {
-                        obj[ `geoid_${ geoDesc }` ] = innerEl.full_geoid.slice( 7 );
-                    }
-                    obj[ `${ geoDesc }` ] = innerEl.full_name;
-                    return obj;
-                }, {} ) );
-                return arr;
-            }, [] );
+        writeCsv( dataArr, inputObjsArr ) {
+            const modDataArr = dataArr.reduce(
+                ( accum, curVal, curValIndex ) => {
+                    accum.push( curVal.reduce( ( outputObj, innerEl ) => {
+                        // FIX: the indexes are not ordered the same in input and output objects
+                        const inputObj = inputObjsArr[ curValIndex ];
+
+                        // clean up column heads before writing
+                        const geoDesc = this.getGeoDescFromCode(
+                            innerEl.sumlevel, allGeoLevelsArr
+                        ).toLowerCase().replace( /\s/g, '_' );
+                        // Geoid — except zip code, because it's already in numeric form
+                        if ( innerEl.sumlevel !== '860' ) {
+                            outputObj[ `geoid_${ geoDesc }` ] = innerEl.full_geoid.slice( 7 );
+                        }
+                        outputObj[ `${ geoDesc }` ] = innerEl.full_name;
+                        // merge input and output objects for the current index
+                        return { ...inputObj, ...outputObj };
+                    }, {} ) );
+                    return accum;
+                }, []
+            );
+            // d3 function to convert array to csv-formatted string
             const geoDataText = csvFormat( modDataArr );
             const blob = new Blob( [ geoDataText ], {
                 type: 'text/plain;charset=utf-8',
             } );
             // Use date and time in file name
             const now = new Date();
-            const filename = `Results_${ now.toLocaleString( 'en', { month: 'short' } ) + 1 }-${ now.getDate() }-${ now.getFullYear() }-${ now.getHours() }-${ now.getMinutes() }-${ now.getSeconds() }.csv`;
+            const filename = `Output_${ now.toLocaleString( 'en', { month: 'short' } ) + 1 }-${ now.getDate() }-${ now.getFullYear() }-${ now.getHours() }-${ now.getMinutes() }-${ now.getSeconds() }.csv`;
             // TODO: ensure no memory leak from prior files
             fs.saveAs( blob, filename );
         },
