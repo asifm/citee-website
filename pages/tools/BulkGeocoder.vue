@@ -114,7 +114,8 @@ export default {
                         addressesArr,
                         getDetailForAddress,
                     );
-                vm.resolvePromisesAndWriteData( promisesArr, addressesArr, inputObjsArr );
+                vm.resolvePromisesAndWriteData( promisesArr,
+                    addressesArr, inputObjsArr );
             }
         },
         fromZip( file ) {
@@ -140,7 +141,8 @@ export default {
                     getDetailForZip,
                 );
 
-                vm.resolvePromisesAndWriteData( promisesArr, zipsArr, inputObjsArr );
+                vm.resolvePromisesAndWriteData( promisesArr,
+                    zipsArr, inputObjsArr );
             }
         },
 
@@ -167,7 +169,8 @@ export default {
                     ) );
                 } );
 
-                vm.resolvePromisesAndWriteData( promises, lonLatsArr, inputObjsArr );
+                vm.resolvePromisesAndWriteData( promises,
+                    lonLatsArr, inputObjsArr );
             }
         },
         createDataPromises( inputsArr, functionToGetDetail ) {
@@ -191,9 +194,6 @@ export default {
                                 confidence: data.confidence,
                                 entity_type: data.entityType,
                             } );
-                            // console.log( 'inputObjsArr: ', inputObjsArr );
-                            console.log( 'inputItem: ', inputItem );
-                            // console.log( 'promisesArr: ', promisesArr );
 
                             // Important: Bing returns lat first and lon second
                             return getGeoLevelsForLonLat(
@@ -224,12 +224,10 @@ export default {
             const modDataArr = dataArr.reduce(
                 ( accum, curVal, curValIndex ) => {
                     accum.push( curVal.reduce( ( outputObj, innerEl ) => {
-                        // FIX: the indexes are not ordered the same in input and output objects
+                        // Since input items are not ordered correctly, use filter to identify right input
                         const inputVal = inputsArr[ curValIndex ];
-                        console.log( 'inputObjsArr: ', inputObjsArr );
-                        const inputObj = inputObjsArr.filter( el => el.input === inputVal )[ 0 ];
-                        console.log( 'inputObj: ', inputObj );
-
+                        const inputObj = inputObjsArr.filter( el =>
+                            el.input === inputVal )[ 0 ];
                         // clean up column heads before writing
                         const geoDesc = this.getGeoDescFromCode(
                             innerEl.sumlevel, allGeoLevelsArr
