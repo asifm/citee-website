@@ -114,7 +114,7 @@ export default {
                         addressesArr,
                         getDetailForAddress,
                     );
-                vm.resolvePromisesAndWriteData( promisesArr, inputObjsArr );
+                vm.resolvePromisesAndWriteData( promisesArr, addressesArr, inputObjsArr );
             }
         },
         fromZip( file ) {
@@ -140,7 +140,7 @@ export default {
                     getDetailForZip,
                 );
 
-                vm.resolvePromisesAndWriteData( promisesArr, inputObjsArr );
+                vm.resolvePromisesAndWriteData( promisesArr, zipsArr, inputObjsArr );
             }
         },
 
@@ -158,7 +158,7 @@ export default {
                 const inputObjsArr = [];
                 lonLatsArr.forEach( lonLat => {
                     inputObjsArr.push( {
-                        longitude_latitude: lonLat,
+                        input: lonLat,
                     } );
                     promises.push( getGeoLevelsForLonLat(
                         lonLat[ 0 ],
@@ -167,14 +167,14 @@ export default {
                     ) );
                 } );
 
-                vm.resolvePromisesAndWriteData( promises, inputObjsArr );
+                vm.resolvePromisesAndWriteData( promises, lonLatsArr, inputObjsArr );
             }
         },
-        createDataPromises( inputArr, functionToGetDetail ) {
+        createDataPromises( inputsArr, functionToGetDetail ) {
             const vm = this;
             const promisesArr = [];
             const inputObjsArr = [];
-            inputArr.forEach( inputItem =>
+            inputsArr.forEach( inputItem =>
                 promisesArr.push(
                     functionToGetDetail( inputItem )
                         .then( response => {
@@ -191,9 +191,9 @@ export default {
                                 confidence: data.confidence,
                                 entity_type: data.entityType,
                             } );
-                            console.log( 'inputObjsArr: ', inputObjsArr );
+                            // console.log( 'inputObjsArr: ', inputObjsArr );
                             console.log( 'inputItem: ', inputItem );
-                            console.log( 'promisesArr: ', promisesArr );
+                            // console.log( 'promisesArr: ', promisesArr );
 
                             // Important: Bing returns lat first and lon second
                             return getGeoLevelsForLonLat(
@@ -205,13 +205,13 @@ export default {
                 ) );
             return [ promisesArr, inputObjsArr ];
         },
-        resolvePromisesAndWriteData( promises, inputsArr ) {
+        resolvePromisesAndWriteData( promises, inputsArr, inputObjsArr ) {
             const vm = this;
             Promise.all( promises )
                 .then( resolvedArr => {
                     const dataArr = resolvedArr
                         .map( el => el.data.results );
-                    vm.writeCsv( dataArr, inputsArr );
+                    vm.writeCsv( dataArr, inputsArr, inputObjsArr );
                 } )
                 .catch( error => console.log( 'Something went wrong', error ) );
         },
@@ -220,12 +220,15 @@ export default {
             reader.readAsText( file );
             reader.onload = fileLoadHandler;
         },
-        writeCsv( dataArr, inputObjsArr ) {
+        writeCsv( dataArr, inputsArr, inputObjsArr ) {
             const modDataArr = dataArr.reduce(
                 ( accum, curVal, curValIndex ) => {
                     accum.push( curVal.reduce( ( outputObj, innerEl ) => {
                         // FIX: the indexes are not ordered the same in input and output objects
-                        const inputObj = inputObjsArr[ curValIndex ];
+                        const inputVal = inputsArr[ curValIndex ];
+                        console.log( 'inputObjsArr: ', inputObjsArr );
+                        const inputObj = inputObjsArr.filter( el => el.input === inputVal )[ 0 ];
+                        console.log( 'inputObj: ', inputObj );
 
                         // clean up column heads before writing
                         const geoDesc = this.getGeoDescFromCode(
@@ -251,6 +254,7 @@ export default {
             const now = new Date();
             const filename = `Output_${ now.toLocaleString( 'en', { month: 'short' } ) + 1 }-${ now.getDate() }-${ now.getFullYear() }-${ now.getHours() }-${ now.getMinutes() }-${ now.getSeconds() }.csv`;
             // TODO: ensure no memory leak from prior files
+            // FIX: doesn't work when tried the same fileload function the  second time
             fs.saveAs( blob, filename );
         },
         getGeoDescFromCode( givenCode, arr ) {
