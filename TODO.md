@@ -111,3 +111,14 @@ attractions, distance from nearest large city etc.
   outlier metros
 * FIXME: place circles in a way that small is over large (for being able to
   hover). sort metros by circle variable before rendering
+* Regression or correlation
+
+# Implement topic selector for geo-hierarchical comparisons
+https://sourcegraph.com/github.com/censusreporter/censusreporter/-/blob/censusreporter/apps/census/utils.py
+TOPIC_FILTERS = {
+    'Demographics': {'topics': ['age', 'sex', 'race', 'seniors',]},
+    'Economics': {'topics': ['commute', 'employment', 'health insurance', 'income', 'poverty', 'public assistance',]},
+    'Families': {'topics': ['children', 'families', 'family type', 'fertility', 'grandparents', 'marital status', 'roommates',]},
+    'Housing': {'topics': ['costs and value', 'group quarters', 'mortgage', 'occupancy', 'physical characteristics', 'tenure',]},
+    'Social': {'topics': ['ancestry', 'citizenship', 'disability', 'education', 'language', 'migration', 'place of birth', 'veterans',]},
+}
