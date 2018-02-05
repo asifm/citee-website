@@ -47,9 +47,8 @@ module.exports = {
                 ignoreUrls: true,
                 ignoreTemplateLiterals: true,
                 ignoreRegExpLiterals: true,
-                // ignores if v- at start or period at end. 
-                // so usually ignores vue-template v- tag and p text
-                ignorePattern: '^\\s*v-|\\.$',
+                // ignores if v- and smoe html tags at start
+                ignorePattern: '^\\s*(v-|div(\\(|\.|\\s)|p(\\(|\.|\\s)|h2(\\(|\.|\\s))',
             },
         ],
 

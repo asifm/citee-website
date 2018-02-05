@@ -10,7 +10,7 @@ div.grey.lighten-3
                     v-card-title.brown.lighten-4.elevation-3
                         h2 <strong>Step 1</strong> Prepare Your Data
                     v-card-text.pa-5
-                        p TODO: Instructions for how to prepare the data before uploading
+                        p TODO: Instructions for how to prepare the data before uploading.
                         p.caption This app has been tested only on the latest versions of Chrome. It may or may not work on other browsers.
                         p.caption Although the app is in beta phase, you're encouraged to use it. Please report bugs and errors and send your suggestions to mehedia@darden.virginia.edu.
             v-flex(lg4).pa-3
@@ -63,7 +63,7 @@ div.grey.lighten-3
                                         .indigo.lighten-3.ml-0
                                     p Ad aliqua ex occaecat incididunt est reprehenderit dolor.
     v-card.pa-5.ma-5
-        p <strong>Developed by</strong> <br> Asif Mehedi, Batten Institute for Entrepreneurship and Innovation at the University of Virginia Darden School of Business. Contact: MehediA@darden.virginia.edu
+        p <strong>Developed by</strong> <br> Asif Mehedi, Batten Institute for Entrepreneurship and Innovation at the University of Virginia Darden School of Business. Contact: MehediA@darden.virginia.edu.
         p <strong>Acknowledgement</strong> <br> Data and APIs provided by the #[a(href="https://www.census.gov/") Census Bureau], the #[a(href="https://censusreporter.org/") Census Reporter], and #[a(href="https://www.bing.com/maps") Bing Maps].
         p <strong>Citation and Use</strong> <br> You are free to use this software as you see fit. We request that you cite your use appropriately. Sample citations:
         p APA (6th): Mehedi, A. (2018). CITee Geocoder (Version 1.0). Charlottesville: Cities Innovating Tomorrow's Entrepreneurial Ecosystems Project, Darden School of Business.
