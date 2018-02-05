@@ -1,6 +1,6 @@
 <template>
     <v-btn class="jbtn-file">
-        {{ title }}<input id="selectFile" type="file" @change="fileSelected">
+        {{ title }}<input type="file" @change="fileSelected" @click="nullifyEventTarget">
     </v-btn>
 </template>
 
@@ -15,6 +15,10 @@ export default {
         title: { type: String, default: 'Upload' },
     },
     methods: {
+        nullifyEventTarget( e ) {
+            // So that the same file can be selected multiple times
+            e.target.value = null;
+        },
         fileSelected( e ) {
             if ( this.selectedCallback ) {
                 if ( e.target.files[ 0 ] ) {

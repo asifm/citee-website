@@ -1,28 +1,26 @@
 <template lang="pug">
-div.grey.lighten-2
-    v-container
-        v-toolbar.secondary.pl-3.white--text
-            h1 Convert Between Types of Geographic Data (Beta)
+div.grey.lighten-3
+    div.text-sm-center.pa-3.elevation-3.page-header
+        h1 CITee Geocoder (Beta)
+        h2 Convert Locations to Census Legal and Statistical Entities
+    v-container.pa-5
         v-layout(row wrap)
             v-flex(lg4).pa-3
-                v-card(height="100%").brown.lighten-4
-                    v-card-title.grey.lighten-2.elevation-3
-                        h2 Step 1: Prepare Your Data
+                v-card(height="100%").elevation-5
+                    v-card-title.brown.lighten-4.elevation-3
+                        h2 <strong>Step 1</strong> Prepare Your Data
                     v-card-text.pa-5
-                        p This product is in beta stage, but you're encouraged to use it. Please report any bugs or errors to mehedia@darden.virginia.edu.
-                        p Pariatur Lorem sunt non nisi cillum enim nisi ea.
-                        p Tempor eiusmod aliqua cupidatat ipsum tempor esse id occaecat.
-                        p commodo non dolore ea exercitation ullamco.
-                        p Elit consectetur id aliqua culpa consectetur voluptate.
-                        p Elit adipisicing laborum excepteur aliquip labore officia Lorem consequat aliqua Lorem.
-                        p Id nulla officia mollit ullamco officia dolore Lorem ea et dolore ullamco veniam occaecat mollit.
+                        p TODO: Instructions for how to prepare the data before uploading
+                        p.caption This app has been tested only on the latest versions of Chrome. It may or may not work on other browsers.
+                        p.caption Although the app is in beta phase, you're encouraged to use it. Please report bugs and errors and send your suggestions to mehedia@darden.virginia.edu.
             v-flex(lg4).pa-3
-                v-card(height="100%").blue-grey.lighten-4
-                    v-card-title.grey.lighten-2.elevation-3
-                        h2 Step 2: Select Types of Geography
+                v-card(height="100%").elevation-5
+                    v-card-title.blue-grey.lighten-4.elevation-3
+                        h2 <strong>Step 2</strong> Select Types of Geographic Entities
                     v-card-text.pa-5
-                        p Aliqua enim id reprehenderit nisi deserunt fugiat. Incididunt adipisicing ex Lorem id et laboris aute elit labore aute anim do cupidatat. Consequat pariatur id laboris aute enim eu ad. Culpa aute exercitation qui nulla labore velit occaecat mollit anim esse enim ullamco. Velit pariatur proident adipisicing aliquip fugiat ipsum. Esse ex et labore ex irure consectetur sint ipsum est magna ullamco adipisicing eu.
-                        v-select(label="Select"
+                        p TODO: briefly about the options available
+                        v-select(
+                            label="Select"
                             :items="allGeoLevelsArr"
                             item-text="name"
                             item-value="code"
@@ -33,42 +31,43 @@ div.grey.lighten-2
                             dense
                             persistent-hint
                             chips
-                            hint="Choose the types of geographic data you need")
+                            append-icon="map"
+                            )
+                        br
 
+                        v-checkbox(label="Include geographic identification codes." v-model="includeGeoCodes").blue--text
             v-flex(lg4).pa-3
-                v-card(height="100%").grey.lighten-4
-                    v-card-title.grey.lighten-2.elevation-3
-                        h2 Step 3: Upload File
+                v-card(height="100%").elevation-5
+                    v-card-title.indigo.lighten-4.elevation-3
+                        h2 <strong>Step 3</strong> Upload File
                     v-card-text.pa-5
                         no-ssr
                             div
                                 div
+                                    v-progress-circular(:value="60")
                                     upload-button(
-                                        title="Upload Zip Codes"
+                                        title="Zip Codes"
                                         :selectedCallback="fromZip")
                                         .amber.lighten-1.ml-0
                                     p Qui do sit sunt quis qui officia tempor labore sunt ullamco minim nostrud.
                                 div
                                     upload-button(
-                                        title="Upload (Partial) Addresses"
+                                        title="Addresses / Landmarks"
                                         :selectedCallback="fromAddress")
                                         .light-green.lighten-1.ml-0
                                     p Minim magna dolore incididunt duis reprehenderit incididunt est ad nostrud pariatur magna esse.
                                 div
                                     upload-button(
-                                        title="Upload Longitude-Latitude Pairs"
+                                        title="Longitude-Latitude Pairs"
                                         :selectedCallback="fromLonLat")
                                         .indigo.lighten-3.ml-0
                                     p Ad aliqua ex occaecat incididunt est reprehenderit dolor.
-
-        v-card.pa-5.card--flat.grey.lighten-2
-            h4 Developed By
-            p Ad labore reprehenderit labore sunt exercitation dolor nostrud nisi pariatur ut est cupidatat.
-            h4 Acknowledgement
-            p Officia sit laborum aliqua ad minim officia consectetur aute culpa.
-            h4 Citation
-            p Reprehenderit commodo adipisicing consectetur eiusmod occaecat consequat ea ad non incididunt ea. Occaecat veniam commodo ullamco enim sint fugiat Lorem voluptate adipisicing Lorem. Ipsum irure ex non magna et occaecat.
-
+    v-card.pa-5.ma-5
+        p <strong>Developed by</strong> <br> Asif Mehedi, Batten Institute for Entrepreneurship and Innovation at the University of Virginia Darden School of Business. Contact: MehediA@darden.virginia.edu
+        p <strong>Acknowledgement</strong> <br> Data and APIs provided by the #[a(href="https://www.census.gov/") Census Bureau], the #[a(href="https://censusreporter.org/") Census Reporter], and #[a(href="https://www.bing.com/maps") Bing Maps].
+        p <strong>Citation and Use</strong> <br> You are free to use this software as you see fit. We request that you cite your use appropriately. Sample citations:
+        p APA (6th): Mehedi, A. (2018). CITee Geocoder (Version 1.0). Charlottesville: Cities Innovating Tomorrow's Entrepreneurial Ecosystems Project, Darden School of Business.
+        p Chicago: Mehedi, Asif. 2018. <em>Citee Geocoder</em> (version 1.0). Web. Charlottesville: Cities Innovating Tomorrow's Entrepreneurial Ecosystems Project, Darden School of Business.
 </template>
 
 <script>
@@ -90,8 +89,12 @@ export default {
     data() {
         return {
             textFile: null,
-            selectedGeoLevelsArr: [],
+            selectedGeoLevelsArr: [ {
+                code: '310',
+                name: 'Core-Based Statistical Area',
+            } ],
             allGeoLevelsArr,
+            includeGeoCodes: true,
         };
     },
     computed: {
@@ -131,8 +134,7 @@ export default {
                 );
                 if ( invalidZips.length > 0 ) {
                     // eslint-disable-next-line no-alert
-                    alert( `Invalid Zip codes: ${ invalidZips }
-                    Please correct or exclude, and then reupload file.` );
+                    alert( `Please correct or exclude the invalid Zip codes: ${ invalidZips }. Then reupload the file.` );
                     return;
                 }
 
@@ -216,11 +218,17 @@ export default {
                 .catch( error => console.log( 'Something went wrong', error ) );
         },
         loadFile( file, fileLoadHandler ) {
+            if ( this.selectedGeoCodes.length === 0 ) {
+                // eslint-disable-next-line no-alert
+                alert( 'You must select at least one geographic entity type.' );
+                return;
+            }
             const reader = new FileReader();
             reader.readAsText( file );
             reader.onload = fileLoadHandler;
         },
         writeCsv( dataArr, inputsArr, inputObjsArr ) {
+            const vm = this;
             const modDataArr = dataArr.reduce(
                 ( accum, curVal, curValIndex ) => {
                     accum.push( curVal.reduce( ( outputObj, innerEl ) => {
@@ -232,9 +240,11 @@ export default {
                         const geoDesc = this.getGeoDescFromCode(
                             innerEl.sumlevel, allGeoLevelsArr
                         ).toLowerCase().replace( /\s/g, '_' );
-                        // Geoid — except zip code, because it's already in numeric form
-                        if ( innerEl.sumlevel !== '860' ) {
-                            outputObj[ `geoid_${ geoDesc }` ] = innerEl.full_geoid.slice( 7 );
+                        // GeoCodes — except zip code, because it's already in numeric form
+                        if ( vm.includeGeoCodes ) {
+                            if ( innerEl.sumlevel !== '860' ) {
+                                outputObj[ `geoid_${ geoDesc }` ] = innerEl.full_geoid.slice( 7 );
+                            }
                         }
                         outputObj[ `${ geoDesc }` ] = innerEl.full_name;
                         // merge input and output objects for the current index
@@ -248,11 +258,10 @@ export default {
             const blob = new Blob( [ geoDataText ], {
                 type: 'text/plain;charset=utf-8',
             } );
+
             // Use date and time in file name
             const now = new Date();
-            const filename = `Output_${ now.toLocaleString( 'en', { month: 'short' } ) + 1 }-${ now.getDate() }-${ now.getFullYear() }-${ now.getHours() }-${ now.getMinutes() }-${ now.getSeconds() }.csv`;
-            // TODO: ensure no memory leak from prior files
-            // FIX: doesn't work when tried the same fileload function the  second time
+            const filename = `CITee-Geocoder_${ now.toLocaleString( 'en', { month: 'short' } ) }${ now.getDate() }-${ now.getFullYear() }__${ now.getHours() }h-${ now.getMinutes() }m-${ now.getSeconds() }s.csv`;
             fs.saveAs( blob, filename );
         },
         getGeoDescFromCode( givenCode, arr ) {
@@ -260,4 +269,16 @@ export default {
         },
     },
 };
+// TODO: add instructions, use cases, what problem it solves, sample inputs, (limit to 500 at a time)
+// TODO: visual output (map)
+// TODO: tips to ensure outputs are correct
+// TODO: video demo lists of all universities
+// TODO: progress bar; show the inputs being completed; finally announce file is downloaded
+
 </script>
+
+<style>
+.page-header {
+    background-color: #f2c811;
+}
+</style>
