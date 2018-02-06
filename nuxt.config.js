@@ -61,7 +61,7 @@ module.exports = {
             },
         ],
         script: [
-            { src: 'https://use.typekit.net/pbg0kfs.js' }, { innerHTML: 'try { Typekit.load({ async: true }); } catch (e) {}' },
+            // { src: 'https://use.typekit.net/pbg0kfs.js' }, { innerHTML: 'try { Typekit.load({ async: true }); } catch (e) {}' },
         ],
         // Needed if innerhtml for script contains quotations which shouldn't be escaped
         __dangerouslyDisableSanitizers: [ 'script' ],
@@ -70,17 +70,16 @@ module.exports = {
                 rel: 'icon',
                 type: 'image/x-icon',
                 href: '/favicon.ico',
-            },
-            {
+            }, {
                 rel: 'stylesheet',
                 type: 'text/css',
                 href: 'https://fonts.googleapis.com/css?family=Open+Sans:300,400,500,700|Libre+Franklin:300,500,700|Material+Icons',
             },
-            {
-                rel: 'stylesheet',
-                type: 'text/css',
-                href: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.2.0/leaflet.css',
-            },
+            // {
+            //     rel: 'stylesheet',
+            //     type: 'text/css',
+            //     href: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.2.0/leaflet.css',
+            // },
         ],
     },
     /*
@@ -116,7 +115,7 @@ module.exports = {
             'axios',
             'vuetify',
             'vue2-leaflet',
-            'vee-validate',
+            // 'vee-validate',
             'd3',
             'vue2-google-maps',
             'vue-axios',
