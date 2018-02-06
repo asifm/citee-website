@@ -55,11 +55,17 @@ div.grey.darken-2
                     v-card-text.pa-5
                         no-ssr
                             div
-                                p Make sure you have selected the right input and output types. Click below to upload your file.
+                                p Click below to upload your file.
                                 upload-button(
                                     title="Upload Your File"
                                     :selectedCallback="uploadCallback"
                                     )
+                                v-dialog(v-model="dialog" max-width="400px")
+                                    v-card.pa-5
+                                        v-card-text
+                                            p.body-2 {{ dialogText }}
+                                            v-card-actions
+                                                v-btn(@click.stop="dialog = false") Close
                                 br
                                 v-progress-linear(
                                     v-model="progressValue"
@@ -104,7 +110,6 @@ import { csvParseRows, csvFormat } from 'd3';
 import * as allGeoLevelsArr from '../../static/data/geo_levels_codes.json';
 import validZips from '../../static/data/valid-zips.json';
 
-// TODO: Refactor so no need for external uploadbutton component
 import UploadButton from '../../components/UploadButton.vue';
 import {
     getGeoLevelsForLonLat,
@@ -129,6 +134,8 @@ export default {
             progressFeedback: '',
             progressValue: 0,
             filename: '',
+            dialog: false,
+            dialogText: '',
         };
     },
     computed: {
@@ -138,7 +145,6 @@ export default {
     },
     methods: {
         uploadCallback( file ) {
-            this.progressFeedback = 'Getting data...';
             if ( this.inputType === 'zip' ) {
                 this.fromZip( file );
             } else if ( this.inputType === 'address' ) {
@@ -146,8 +152,8 @@ export default {
             } else if ( this.inputType === 'lon-lat' ) {
                 this.fromLonLat( file );
             } else {
-            // TODO: Replace alert with dialog
-                alert( 'You must select an input type first.' );
+                this.dialog = true;
+                this.dialogText = 'You must select an input type first.';
             }
         },
         fromAddress( file ) {
@@ -180,8 +186,8 @@ export default {
                     zip => !validZips.includes( zip )
                 );
                 if ( invalidZips.length > 0 ) {
-                    // eslint-disable-next-line no-alert
-                    alert( `Please correct or exclude the invalid Zip codes: ${ invalidZips }. Then reupload the file.` );
+                    vm.dialog = true;
+                    vm.dialogText = `Please correct or exclude the following invalid Zip codes: ${ invalidZips }.`;
                     return;
                 }
 
@@ -320,11 +326,10 @@ export default {
         },
     },
 };
-// TODO: add instructions, use cases, what problem it solves, sample inputs, (limit to 500 at a time)
+
 // TODO: visual output (map)
 // TODO: tips to ensure outputs are correct
 // TODO: video demo lists of all universities
-// TODO: progress bar; show the inputs being completed; finally announce file is downloaded
 
 </script>
 
