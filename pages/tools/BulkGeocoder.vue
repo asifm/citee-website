@@ -57,6 +57,7 @@ div.black
                         div
                             p Click below to upload your file.
                             upload-button(
+                                id="upload-button"
                                 title="Upload Your File"
                                 :selectedCallback="uploadCallback"
                                 )
@@ -150,7 +151,10 @@ export default {
     },
     methods: {
         uploadCallback( file ) {
+            // set messages to blank
             this.progressMessage = '';
+            this.filename = '';
+
             if ( file.size > 200000 ) {
                 this.dialog = true;
                 this.dialogText =
@@ -400,7 +404,6 @@ export default {
 };
 
 // TODO: Better, more straight-forward error-handling
-// TODO: visual output (map)
 // TODO: tips to ensure outputs are correct
 </script>
 
