@@ -1,8 +1,9 @@
-context( 'My first proper test', () => {
-    specify( 'Visits kitchen sink', () => {
-        // cy.visit( 'http://localhost:3000/tools/BulkGeocoder' );
-        cy.visit( '/' );
-        // cy.get( '#selectFile' ).click();
+context( 'Bulk Geocoder', () => {
+    specify( 'Uploads and reads data file', () => {
+        cy.visit( 'http://localhost:3000/tools/BulkGeocoder' );
+        cy.get();
+        cy.get( '#upload-button' ).click();
+        cy.fixture( '../fixtures/BulkGeocoder/zips.csv' );
         // cy.contains( 'type' ).click();
         // cy.url().should( 'include', '/commands/actions' );
         // cy.get( '.action-email' )
