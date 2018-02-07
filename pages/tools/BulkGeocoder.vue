@@ -1,5 +1,5 @@
 <template lang="pug">
-div.grey.darken-2
+div.black
     div.text-sm-center.pa-3.elevation-3.page-header
         h1 CITee Geocoder (Beta)
         h2 Convert US Locations to Census Legal and Statistical Entities
@@ -11,14 +11,14 @@ div.grey.darken-2
                     v-card-title.brown.lighten-4.elevation-3
                         h2 <strong>Step 1</strong> Prepare Your Data
                     v-card-text.pa-5
-                        p An input file can have only one type of geodata. If you need to convert different types of geodata, please organize them in multiple files.
-                        p The geodata types that can be converted are:
-                        h3 Zip Codes
-                        p Structure: one Zip code per line in a plain text file.
-                        h3 Addresses
-                        p Structure: one address per line in a plain text file. Unstructured and incomplete addresses are usually OK. Names of well-known institutions may also work.
-                        h3 Geographic coordinates
-                        p Structure: one longitude-latitude (in that order) pair per line in a plain text file. A comma should separate the longitude and latitude in each line.
+                        p Prepare your data in a <strong>plain text file</strong> (e.g. a csv or txt file).
+                        p.body-2.mb-0 For Zip Codes
+                        p One Zip code per line. (Invalid Zip codes will be skipped over.)
+                        p.body-2.mb-0 For addresses
+                        p One address per line. Unstructured and incomplete addresses are usually OK. Names of well-known institutions may also work.
+                        p.body-2.mb-0 For geographic coordinates
+                        p One longitude-latitude (in that order) pair per line. A comma should separate the longitude and latitude in each line.
+                        p.caption An input file can have only one type of geodata. If you need to convert different types of geodata, please organize them in multiple files.
             v-flex(lg6 xl4).pa-3
                 v-card(height="100%").elevation-5
                     v-card-title.blue-grey.lighten-4.elevation-3
@@ -149,9 +149,26 @@ export default {
         },
     },
     methods: {
-        // TODO: handle error - when a line contains blank. Skip over the blank line.
         uploadCallback( file ) {
-            // this.inputType = 'address'; //  for debugging
+            this.progressMessage = '';
+            if ( file.size > 200000 ) {
+                this.dialog = true;
+                this.dialogText =
+                    'The file is too big. The size limit is 200kB.';
+                return;
+            } else if ( file.size === 0 ) {
+                this.dialog = true;
+                this.dialogText =
+                    'You file has no data.';
+                return;
+            }
+            if ( file.name.match( /(xls|xlsx|doc|docx|pdf)$/ ) ) {
+                this.dialog = true;
+                this.dialogText =
+                    `Only plain text files are allowed. 
+                    If this is an Excel file, you can save it as CSV and try again.`;
+                return;
+            }
             if ( this.inputType === 'zip' ) {
                 this.fromZip( file );
             } else if ( this.inputType === 'address' ) {
@@ -207,14 +224,6 @@ export default {
                     .map( el => el[ 0 ] )
                     .filter( el => el !== '' && validZips.includes( el ) );
 
-                // const invalidZips = zipsArr.filter(
-                //     zip => !validZips.includes( zip )
-                // );
-                // if ( invalidZips.length > 0 ) {
-                //     vm.dialog = true;
-                //     vm.dialogText = `Please correct or exclude the following invalid Zip codes: ${ invalidZips }.`;
-                //     return;
-                // }
                 vm.createDataPromises( zipsArr, getDetailForZip )
                     .then( ( [ promisesArr, inputObjsArr ] ) => {
                         vm.resolvePromisesAndWriteData(
@@ -238,7 +247,6 @@ export default {
                     if ( +data[ 0 ] > -180 && +data[ 0 ] < 180
                         && +data[ 1 ] > -90 && +data[ 1 ] < 90
                         && data[ 0 ] !== '' && data[ 1 ] !== '' ) {
-                        console.log( 'yes valid', data );
                         lonLatsArr.push( data.map( el => el.trim() ) );
                     }
                 } );
@@ -312,10 +320,6 @@ export default {
             const vm = this;
             Promise.all( promises )
                 .then( resolvedArr => {
-                    console.log(
-                        'inside resolvePromisesAndWriteData; resolvedArr',
-                        resolvedArr
-                    );
                     const dataArr = resolvedArr.map( el => {
                         if ( el ) {
                             return el.data.results;
@@ -328,7 +332,6 @@ export default {
         },
         writeCsv( dataArr, inputsArr, inputObjsArr ) {
             try {
-                console.log( 'inside writeCsv' );
                 this.progressMessage = 'Writing data...';
                 const vm = this;
                 const modDataArr =
@@ -396,9 +399,9 @@ export default {
     },
 };
 
+// TODO: Better, more straight-forward error-handling
 // TODO: visual output (map)
 // TODO: tips to ensure outputs are correct
-// TODO: video demo lists of all universities
 </script>
 
 <style>

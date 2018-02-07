@@ -32,7 +32,6 @@ async function getDetailForZip( zip ) {
 export { getGeoLevelsForLonLat, getDetailForAddress, getDetailForZip };
 
 // mapbox
-
 // const mapboxToken = 'pk.eyJ1IjoiY2Vuc3VzcmVwb3J0ZXIiLCJhIjoiQV9hS01rQSJ9.wtsn0FwmAdRV7cckopFKkA';
 // const mapboxToken = 'pk.eyJ1IjoiYXNpZm0iLCJhIjoiNmJkZmNhNmUwZWI4YmMwMTM2Y2Y4NjQ4NjM0Nzg1MWEifQ.SntXBB_ZwOFBy5GbtmbeZg';
 
