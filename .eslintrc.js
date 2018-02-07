@@ -47,13 +47,13 @@ module.exports = {
                 ignoreUrls: true,
                 ignoreTemplateLiterals: true,
                 ignoreRegExpLiterals: true,
-                // ignores if v- and smoe html tags at start
+                // ignores if v- and some html tags at start
                 ignorePattern: '^\\s*(v-|div(\\(|\.|\\s)|p(\\(|\.|\\s)|h2(\\(|\.|\\s))',
             },
         ],
 
         // function
-        complexity: [ 'warn', 5 ],
+        // complexity: [ 'warn', 5 ],
         'no-param-reassign': [ 'error', { props: false } ],
         'max-depth': [ 'error', 4 ],
         'max-nested-callbacks': [ 'error', 3 ],
