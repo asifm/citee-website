@@ -91,7 +91,7 @@ module.exports = {
   */
     build: {
         extractCSS: true,
-        analyze: true,
+        // analyze: true,
         // experimental, turn off if doesn't work
         // dll: true,
         /*

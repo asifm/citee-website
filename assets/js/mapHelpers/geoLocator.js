@@ -12,14 +12,19 @@ const bingkey = 'Av5Xz1StJqYVG1xZzzxBeAHDrtuBi7DajvjV94sgxRdJAucbrhvpSPQTOB0dn1U
 async function getDetailForAddress( address ) {
     // URI-encode and trim query string before passing to URI
     const addressEncoded = encodeURI( address.trim() );
-    const endpoint = `https://dev.virtualearth.net/REST/v1/Locations?q=${ addressEncoded }&includeNeighborhood=1&maxResults=1&key=${ bingkey }`;
+    const endpoint = `https://dev.virtualearth.net/REST/v1/Locations?q=${ addressEncoded }&maxResults=1&key=${ bingkey }`;
     const response = await axios.get( endpoint );
-    return response;
+    if ( response.data.resourceSets[ 0 ].resources.length > 0 ) {
+        // console.log( 'Responose with data', response );
+        return response;
+    }
+    // console.error( 'Responose with NO data', response );
+    throw Error( 'No point found' );
 }
 
 async function getDetailForZip( zip ) {
     // Assume the provided zip is valid. Handle error downstream.
-    const endpoint = `https://dev.virtualearth.net/REST/v1/Locations?q=${ zip.trim() }&includeNeighborhood=1&maxResults=1&key=${ bingkey }`;
+    const endpoint = `https://dev.virtualearth.net/REST/v1/Locations?q=${ zip.trim() }&maxResults=1&key=${ bingkey }`;
     const response = await axios.get( endpoint );
     return response;
 }

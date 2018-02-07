@@ -53,26 +53,29 @@ div.grey.darken-2
                     v-card-title.indigo.lighten-4.elevation-3
                         h2 <strong>Step 3</strong> Upload File
                     v-card-text.pa-5
-                        no-ssr
-                            div
-                                p Click below to upload your file.
-                                upload-button(
-                                    title="Upload Your File"
-                                    :selectedCallback="uploadCallback"
-                                    )
-                                v-dialog(v-model="dialog" max-width="400px")
-                                    v-card.pa-5
-                                        v-card-text
-                                            p.body-2 {{ dialogText }}
-                                            v-card-actions
-                                                v-btn(@click.stop="dialog = false") Close
-                                br
-                                v-progress-linear(
-                                    v-model="progressValue"
-                                    color="accent"
-                                    )
-                                h4.green--text.darken-2 {{ progressFeedback }}
-                                p.blue--text {{ filename }}
+                        //- no-ssr
+                        div
+                            p Click below to upload your file.
+                            upload-button(
+                                title="Upload Your File"
+                                :selectedCallback="uploadCallback"
+                                )
+                            v-dialog(v-model="dialog" max-width="400px")
+                                v-card.pa-5
+                                    v-card-text
+                                        p.body-2 {{ dialogText }}
+                                        v-card-actions
+                                            v-btn(@click.stop="dialog = false") Close
+                            br
+                            v-progress-circular(
+                                v-show="showProgressCircle"
+                                :size="100"
+                                :width="5"
+                                indeterminate
+                                color="accent"
+                                )
+                            p.body-2.green--text.text--darken-3 {{ progressMessage }}
+                            p.blue--text {{ filename }}
     v-card.ma-5
         v-layout(row wrap).ma-5.pa-5
             v-flex(lg6 md12).px-3
@@ -89,11 +92,11 @@ div.grey.darken-2
             v-flex(lg6 md12).px-3
                 p.body-2 FAQ
                 p <em>What problems does it solve?</em>
-                p Researchers dealing with spatial analyses often need to identify different geographic entities that contain a given location. The location data are usually in the form of addresses, Zip codes, or geographic coordinates. The desired outputs may be different legal and statistical geographic entities, such as county, metropolitan statistical area (MSA), public use microdata area (PUMA), congressional district, etc.
+                p Researchers dealing with spatial analyses often need to identify different geographic entities that enclose a given location. The location data are usually in the form of addresses, Zip codes, or geographic coordinates. The desired outputs may be different legal and statistical geographic entities, such as county, metropolitan statistical area (MSA), public use microdata area (PUMA), congressional district, etc.
 
-                p This identification requires some effort, such as finding the right correspondence data (also known as crosswalks) and then performing a join operation between two datasets. This process may not yield satisfactory matches for a number of reasons. Many place names have variants, especially those involving abbreviated words. They may even be misspelled (common in survey data). The crosswalks data may not be complete.
+                p This identification requires some effort, e.g. finding the right correspondence data (also known as crosswalks) and then performing a join operation between two datasets. This process may not yield satisfactory matches for a number of reasons. Many place names have variants, especially those involving abbreviated words. They may even be misspelled (common in survey data). The crosswalks data may not be complete.
 
-                p Here, one simply uploads the location data and indicates the output types. The app (actually, the underlying processes — see acknowledgment section) does the rest. Converting hundreds of location data usually does not take more than a few seconds.
+                p Here, one simply uploads the location data and indicates the output types. The app (actually, the underlying processes — see acknowledgment section) does the rest.
                 p <em>What is CITee?</em>
                 p See here: #[a(href="http://citee.darden.virginia.edu/") http://citee.darden.virginia.edu/]
 
@@ -125,14 +128,16 @@ export default {
                 'address',
                 'lon-lat' ],
             textFile: null,
-            selectedGeoLevelsArr: [ {
-                code: '310',
-                name: 'Core-Based Statistical Area',
-            } ],
+            selectedGeoLevelsArr: [
+                {
+                    code: '310',
+                    name: 'Core-Based Statistical Area',
+                },
+            ],
             allGeoLevelsArr,
             includeGeoCodes: true,
-            progressFeedback: '',
-            progressValue: 0,
+            progressMessage: '',
+            showProgressCircle: false,
             filename: '',
             dialog: false,
             dialogText: '',
@@ -144,7 +149,9 @@ export default {
         },
     },
     methods: {
+        // TODO: handle error - when a line contains blank. Skip over the blank line.
         uploadCallback( file ) {
+            // this.inputType = 'address'; //  for debugging
             if ( this.inputType === 'zip' ) {
                 this.fromZip( file );
             } else if ( this.inputType === 'address' ) {
@@ -156,6 +163,17 @@ export default {
                 this.dialogText = 'You must select an input type first.';
             }
         },
+        loadFile( file, fileLoadHandler ) {
+            if ( this.selectedGeoCodes.length === 0 ) {
+                this.dialog = true;
+                this.dialogText =
+                    'You must select at least one output entity type.';
+                return;
+            }
+            const reader = new FileReader();
+            reader.readAsText( file );
+            reader.onload = fileLoadHandler;
+        },
         fromAddress( file ) {
             const vm = this;
             this.loadFile( file, loadedAddresses );
@@ -163,15 +181,19 @@ export default {
                 const csvString = evt.target.result;
                 // returns an array of arrays
                 const addressesArr = csvParseRows( csvString )
-                    .map( el => el[ 0 ] );
+                    .map( el => el.join( ',' ) )
+                    .filter( el1 => el1 !== '' );
 
-                const [ promisesArr, inputObjsArr ] =
-                    vm.createDataPromises(
+                vm.createDataPromises(
+                    addressesArr,
+                    getDetailForAddress
+                ).then( ( [ promisesArr, inputObjsArr ] ) => {
+                    vm.resolvePromisesAndWriteData(
+                        promisesArr,
                         addressesArr,
-                        getDetailForAddress,
+                        inputObjsArr
                     );
-                vm.resolvePromisesAndWriteData( promisesArr,
-                    addressesArr, inputObjsArr );
+                } );
             }
         },
         fromZip( file ) {
@@ -180,24 +202,27 @@ export default {
             function loadedZips( evt ) {
                 const csvString = evt.target.result;
                 // returns an array of arrays
-                const zipsArr = csvParseRows( csvString ).map( el => el[ 0 ] );
 
-                const invalidZips = zipsArr.filter(
-                    zip => !validZips.includes( zip )
-                );
-                if ( invalidZips.length > 0 ) {
-                    vm.dialog = true;
-                    vm.dialogText = `Please correct or exclude the following invalid Zip codes: ${ invalidZips }.`;
-                    return;
-                }
+                const zipsArr = csvParseRows( csvString )
+                    .map( el => el[ 0 ] )
+                    .filter( el => el !== '' && validZips.includes( el ) );
 
-                const [ promisesArr, inputObjsArr ] = vm.createDataPromises(
-                    zipsArr,
-                    getDetailForZip,
-                );
-
-                vm.resolvePromisesAndWriteData( promisesArr,
-                    zipsArr, inputObjsArr );
+                // const invalidZips = zipsArr.filter(
+                //     zip => !validZips.includes( zip )
+                // );
+                // if ( invalidZips.length > 0 ) {
+                //     vm.dialog = true;
+                //     vm.dialogText = `Please correct or exclude the following invalid Zip codes: ${ invalidZips }.`;
+                //     return;
+                // }
+                vm.createDataPromises( zipsArr, getDetailForZip )
+                    .then( ( [ promisesArr, inputObjsArr ] ) => {
+                        vm.resolvePromisesAndWriteData(
+                            promisesArr,
+                            zipsArr,
+                            inputObjsArr
+                        );
+                    } );
             }
         },
 
@@ -207,10 +232,16 @@ export default {
             function loadedLonLats( evt ) {
                 const csvString = evt.target.result;
                 const lonLatsArr = [];
+                // eslint-disable-next-line complexity
                 csvParseRows( csvString, data => {
-                    lonLatsArr.push( data.map( el => el.trim() ) );
+                    // Check input is valid
+                    if ( +data[ 0 ] > -180 && +data[ 0 ] < 180
+                        && +data[ 1 ] > -90 && +data[ 1 ] < 90
+                        && data[ 0 ] !== '' && data[ 1 ] !== '' ) {
+                        console.log( 'yes valid', data );
+                        lonLatsArr.push( data.map( el => el.trim() ) );
+                    }
                 } );
-
                 const promises = [];
                 const inputObjsArr = [];
 
@@ -218,33 +249,46 @@ export default {
                     inputObjsArr.push( {
                         input: lonLat,
                     } );
-                    promises.push( getGeoLevelsForLonLat(
-                        lonLat[ 0 ],
-                        lonLat[ 1 ],
-                        vm.selectedGeoCodes.toString()
-                    ) );
+                    promises.push(
+                        getGeoLevelsForLonLat(
+                            lonLat[ 0 ],
+                            lonLat[ 1 ],
+                            vm.selectedGeoCodes.toString()
+                        )
+                    );
                 } );
 
-                vm.resolvePromisesAndWriteData( promises,
-                    lonLatsArr, inputObjsArr );
+                vm.resolvePromisesAndWriteData(
+                    promises,
+                    lonLatsArr,
+                    inputObjsArr
+                );
             }
         },
-        createDataPromises( inputsArr, functionToGetDetail ) {
+        async createDataPromises( inputsArr, functionToGetDetail ) {
+            this.showProgressCircle = true;
+            function delay( ms ) {
+                return new Promise( ( resolve => {
+                    setTimeout( resolve, ms );
+                } ) );
+            }
             const vm = this;
             const promisesArr = [];
             const inputObjsArr = [];
-            inputsArr.forEach( inputItem =>
+            // eslint-disable-next-line no-restricted-syntax
+            for ( const inputItem of inputsArr ) {
+                vm.progressMessage = `Processing ${ inputItem }...`;
                 promisesArr.push(
                     functionToGetDetail( inputItem )
                         .then( response => {
-                            const data = response.data
-                                .resourceSets[ 0 ].resources[ 0 ];
+                            const data = response.data.resourceSets[ 0 ]
+                                .resources[ 0 ];
                             const lonLat = data.point.coordinates;
                             // create input object to later merge with output before writing
                             inputObjsArr.push( {
                                 input: inputItem,
-                                formatted_address: data
-                                    .address.formattedAddress,
+                                formatted_address:
+                                    data.address.formattedAddress,
                                 longitude: lonLat[ 1 ],
                                 latitude: lonLat[ 0 ],
                                 confidence: data.confidence,
@@ -257,72 +301,97 @@ export default {
                                 lonLat[ 0 ],
                                 vm.selectedGeoCodes.toString()
                             );
-                        } )
-                ) );
+                        } ).catch( error => console.log( 'there was an error', error ) )
+                );
+                // eslint-disable-next-line no-await-in-loop
+                await delay( 1000 );
+            }
             return [ promisesArr, inputObjsArr ];
         },
         resolvePromisesAndWriteData( promises, inputsArr, inputObjsArr ) {
             const vm = this;
             Promise.all( promises )
                 .then( resolvedArr => {
-                    const dataArr = resolvedArr
-                        .map( el => el.data.results );
+                    console.log(
+                        'inside resolvePromisesAndWriteData; resolvedArr',
+                        resolvedArr
+                    );
+                    const dataArr = resolvedArr.map( el => {
+                        if ( el ) {
+                            return el.data.results;
+                        }
+                        return [ 'Could not resolve input' ];
+                    } );
                     vm.writeCsv( dataArr, inputsArr, inputObjsArr );
                 } )
                 .catch( error => console.log( 'Something went wrong', error ) );
         },
-        loadFile( file, fileLoadHandler ) {
-            if ( this.selectedGeoCodes.length === 0 ) {
-                // eslint-disable-next-line no-alert
-                alert( 'You must select at least one geographic entity type.' );
-                return;
-            }
-            const reader = new FileReader();
-            reader.readAsText( file );
-            reader.onload = fileLoadHandler;
-        },
         writeCsv( dataArr, inputsArr, inputObjsArr ) {
-            this.progressFeedback = 'Writing data';
-            const vm = this;
-            const modDataArr = dataArr.reduce(
-                ( accum, curVal, curValIndex ) => {
-                    accum.push( curVal.reduce( ( outputObj, innerEl ) => {
+            try {
+                console.log( 'inside writeCsv' );
+                this.progressMessage = 'Writing data...';
+                const vm = this;
+                const modDataArr =
+                dataArr.reduce( ( accum, curVal, curValIndex ) => {
+                    accum.push(
+                        curVal.reduce( ( outputObj, innerEl ) => {
                         // Since input items are not ordered correctly, use filter to identify right input
-                        const inputVal = inputsArr[ curValIndex ];
-                        const inputObj = inputObjsArr.filter( el =>
-                            el.input === inputVal )[ 0 ];
-                        // clean up column heads before writing
-                        const geoDesc = this.getGeoDescFromCode(
-                            innerEl.sumlevel, allGeoLevelsArr
-                        ).toLowerCase().replace( /\s/g, '_' );
-                        // GeoCodes — except zip code, because it's already in numeric form
-                        if ( vm.includeGeoCodes ) {
-                            if ( innerEl.sumlevel !== '860' ) {
-                                outputObj[ `geoid_${ geoDesc }` ] = innerEl.full_geoid.slice( 7 );
+                            const inputVal = inputsArr[ curValIndex ];
+                            const inputObj = inputObjsArr.filter(
+                                el => el.input === inputVal
+                            )[ 0 ];
+                            // get and clean up column heads before writing
+                            const geoDesc = this.getGeoDescFromCode(
+                                innerEl.sumlevel,
+                                allGeoLevelsArr
+                            )
+                                .toLowerCase()
+                                .replace( /\s/g, '_' );
+                            try {
+                                // GeoCodes — except zip code, because it's already in numeric form
+                                if ( vm.includeGeoCodes ) {
+                                    if ( innerEl.sumlevel !== '860' ) {
+                                        outputObj[
+                                            `geoid_${ geoDesc }`
+                                        ] = innerEl.full_geoid.slice( 7 );
+                                    }
+                                }
+                                outputObj[ `${ geoDesc }` ] = innerEl.full_name;
+                            } catch ( err ) {
+                                console.error( 'outputobj', err );
                             }
-                        }
-                        outputObj[ `${ geoDesc }` ] = innerEl.full_name;
-                        // merge input and output objects for the current index
-                        return { ...inputObj, ...outputObj };
-                    }, {} ) );
+                            // merge input and output objects for the current index
+                            return { ...inputObj, ...outputObj };
+                        }, {} )
+                    );
                     return accum;
-                }, []
-            );
-            // d3 function to convert array to csv-formatted string
-            const geoDataText = csvFormat( modDataArr );
-            const blob = new Blob( [ geoDataText ], {
-                type: 'text/plain;charset=utf-8',
-            } );
+                }, [] );
+                // d3 function to convert array to csv-formatted string
+                const geoDataText = csvFormat( modDataArr );
+                const blob = new Blob( [ geoDataText ], {
+                    type: 'text/plain;charset=utf-8',
+                } );
 
-            // Use date and time in file name
-            const now = new Date();
-            this.filename = `CITee-Geocoder_${ now.toLocaleString( 'en', { month: 'short' } ) }${ now.getDate() }-${ now.getFullYear() }__${ now.getHours() }h-${ now.getMinutes() }m-${ now.getSeconds() }s.csv`;
-            fs.saveAs( blob, this.filename );
-            vm.progressValue = 100;
-            vm.progressFeedback = 'Task completed. Check data for accuracy. File saved as:';
+                // Use date and time in file name
+                const now = new Date();
+                this.filename = `CITee-Geocoder_${ now.toLocaleString( 'en', {
+                    month: 'short',
+                } ) }${ now.getDate() }-${ now.getFullYear() }__${ now.getHours() }h-${ now.getMinutes() }m-${ now.getSeconds() }s.csv`;
+                fs.saveAs( blob, this.filename );
+                vm.showProgressCircle = false;
+                vm.progressMessage =
+                'Task completed. Check data for accuracy. File saved as:';
+            } catch ( err ) {
+                console.error( err );
+            }
         },
         getGeoDescFromCode( givenCode, arr ) {
-            return arr.filter( el => el.code === givenCode )[ 0 ].name;
+            try {
+                return arr.filter( el => el.code === givenCode )[ 0 ].name;
+            } catch ( err ) {
+                console.log( 'No name found', err );
+                return 'status';
+            }
         },
     },
 };
@@ -330,7 +399,6 @@ export default {
 // TODO: visual output (map)
 // TODO: tips to ensure outputs are correct
 // TODO: video demo lists of all universities
-
 </script>
 
 <style>
