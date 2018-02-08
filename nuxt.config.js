@@ -36,7 +36,7 @@ module.exports = {
         },
         {
             src: './assets/css/vue2-animate.min.css',
-            lang: 'csss',
+            lang: 'css',
         },
         {
             src: './assets/font/mdi/css/materialdesignicons.min.css',
@@ -70,16 +70,17 @@ module.exports = {
                 rel: 'icon',
                 type: 'image/x-icon',
                 href: '/favicon.ico',
-            }, {
+            },
+            {
                 rel: 'stylesheet',
                 type: 'text/css',
                 href: 'https://fonts.googleapis.com/css?family=Open+Sans:300,400,500,700|Libre+Franklin:300,500,700|Material+Icons',
             },
-            // {
-            //     rel: 'stylesheet',
-            //     type: 'text/css',
-            //     href: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.2.0/leaflet.css',
-            // },
+            {
+                rel: 'stylesheet',
+                type: 'text/css',
+                href: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.2.0/leaflet.css',
+            },
         ],
     },
     /*
@@ -116,6 +117,7 @@ module.exports = {
             'vuetify',
             'vue2-leaflet',
             // 'vee-validate',
+            'leaflet',
             'd3',
             'vue2-google-maps',
             'vue-axios',
