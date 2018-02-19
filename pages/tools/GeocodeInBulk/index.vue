@@ -123,8 +123,8 @@ div.blue-grey.darken-1
 <script>
 import * as fs from 'file-saver';
 import { csvParseRows, csvFormat } from 'd3';
-import * as allGeoLevelsArr from '~/data/geoLevelsCodes.json';
-import validZips from '~/data/validZips.json';
+import * as allGeoLevelsArr from '~/assets/data/geoLevelsCodes.json';
+import validZips from '~/assets/data/validZips.json';
 
 import UploadButton from '~/components/UploadButton.vue';
 import {

@@ -78,8 +78,8 @@ v-container(fluid).grey.lighten-2
 // child component
 import mapbox from '~/components/Mapbox.vue';
 import listGeoData from '~/components/ListGeoData.vue';
-import geoMainArr from '~/data/geoLevelsCodes.json';
-import validZips from '~/data/validZips.json';
+import geoMainArr from '~/assets/data/geoLevelsCodes.json';
+import validZips from '~/assets/data/validZips.json';
 import {
     getGeoLevelsForLonLat,
     getDetailForAddress,
