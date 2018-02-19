@@ -7,7 +7,11 @@ module.exports = {
         { src: '~plugins/vue2-google-maps.js', ssr: false },
     ],
 
-    modules: [ '@nuxtjs/markdownit' ],
+    modules: [
+        '@nuxtjs/markdownit',
+        // '@nuxtjs/webpackmonitor',
+        // "@nuxtjs/webpackmonitor": "^0.1.0",
+    ],
 
     // markdownit options https://github.com/markdown-it/markdown-it
     markdownit: {
@@ -47,7 +51,7 @@ module.exports = {
   ** Headers of the page
   */
     head: {
-        title: 'CIT.ee | Darden',
+        title: 'CITee | Darden',
         meta: [
             { charset: 'utf-8' },
             {
@@ -56,7 +60,7 @@ module.exports = {
             },
             {
                 name: 'description',
-                content: `CIT.ee means "Cities Innovating Tomorrow's Entrepreneurial Ecosystems. 
+                content: `CITee means "Cities Innovating Tomorrow's Entrepreneurial Ecosystems." 
                 It's a Darden School of Business research project.`,
             },
         ],
@@ -64,7 +68,7 @@ module.exports = {
             // { src: 'https://use.typekit.net/pbg0kfs.js' }, { innerHTML: 'try { Typekit.load({ async: true }); } catch (e) {}' },
         ],
         // Needed if innerhtml for script contains quotations which shouldn't be escaped
-        __dangerouslyDisableSanitizers: [ 'script' ],
+        // __dangerouslyDisableSanitizers: [ 'script' ],
         link: [
             {
                 rel: 'icon',
@@ -74,12 +78,14 @@ module.exports = {
             {
                 rel: 'stylesheet',
                 type: 'text/css',
-                href: 'https://fonts.googleapis.com/css?family=Open+Sans:300,400,500,700|Libre+Franklin:300,500,700|Material+Icons',
+                href:
+                    'https://fonts.googleapis.com/css?family=Open+Sans:300,400,500,700|Libre+Franklin:300,500,700|Material+Icons',
             },
             {
                 rel: 'stylesheet',
                 type: 'text/css',
-                href: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.2.0/leaflet.css',
+                href:
+                    'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.2.0/leaflet.css',
             },
         ],
     },
@@ -88,30 +94,18 @@ module.exports = {
   */
     loading: { color: '#3B8070' },
     /*
+  ** Dev configuration
+  */
+    devtool: 'source-map',
+    /*
   ** Build configuration
   */
     build: {
+        devtool: 'source-map',
         extractCSS: true,
         // analyze: true,
         // experimental, turn off if doesn't work
         // dll: true,
-        /*
-    ** NO NEED to configure eslint here. It's already configured to run on save
-
-    ** Run ESLINT on save
-    */
-        // extend(config, ctx) {
-        //   if (ctx.isDev && ctx.isClient) {
-        //     config.module.rules.push({
-        //       enforce: 'pre',
-        //       test: /\.(js|vue)$/,
-        //       loader: 'eslint-loader',
-        //       exclude: /(node_modules)/,
-        //     });
-        //   }
-        // },
-        // add external packages here so that they're loaded only once
-        // Is it needed only for vue plugins, or all packages, or all packages and not vue plugins?
         vendor: [
             'axios',
             'vuetify',
