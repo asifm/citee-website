@@ -27,6 +27,16 @@
   opacity: 0.9;
 }
 
+
+  a {
+    text-decoration: none; 
+    border-bottom: 1px dashed rgba(80, 55, 173, 0.568);
+    color: rgb(86, 90, 138);
+    &:hover {
+      border-bottom: thick solid rgba(116, 97, 182, 0.842);
+    }
+}
+
 h1,
 h2,
 h3,
@@ -41,18 +51,19 @@ h6 {
 }
 
 p {
-  font-family: 'Open Sans', Georgia, 'Times New Roman', Times, serif;
-  font-size: 17px;
+  font-family: Open Sans;
+  font-size: 1.2rem;
+  line-height: 2.0rem;
 }
 
-button,
-input,
-textarea,
-select,
-option {
-  font-family: franklin-gothic-urw;
+// button,
+// input,
+// textarea,
+// select,
+// option {
+  // font-family: franklin-gothic-urw;
   // font-size: 0.7em !important;
-}
+// }
 
 table.table tbody td {
   font-size: 1.2em;

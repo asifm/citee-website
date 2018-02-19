@@ -131,26 +131,26 @@
   section: Imports
 ************************** */
 import { csv } from 'd3';
-import { numberify } from '../../assets/js/dataHelpers/numberify';
-import { varsMetaAllArr } from '../../assets/js/dataHelpers/dataExplorerMetaData';
-import { separatePosNeg } from '../../assets/js/dataHelpers/separatePosNeg';
-import * as miscFunc from '../../assets/js/dataHelpers/miscHelpers';
+import { numberify } from '~/assets/js/dataHelpers/numberify';
+import { varsMetaAllArr } from '~/assets/js/dataHelpers/dataExplorerMetaData';
+import { separatePosNeg } from '~/assets/js/dataHelpers/separatePosNeg';
+import * as miscFunc from '~/assets/js/dataHelpers/miscHelpers';
 
-import { drawSvg } from '../../assets/js/svgHelpers/drawSvg';
-import { createScales } from '../../assets/js/svgHelpers/createScales';
-import { setTicks } from '../../assets/js/svgHelpers/setTicks';
-import { drawAxes } from '../../assets/js/svgHelpers/drawAxes';
-import { drawGridlines } from '../../assets/js/svgHelpers/drawGridlines';
-import { drawCircles } from '../../assets/js/svgHelpers/drawCircles';
-import { createTooltips } from '../../assets/js/svgHelpers/createTooltips';
-import { createBrush } from '../../assets/js/svgHelpers/createBrush';
-import { getLatLonsForMap } from '../../assets/js/svgHelpers/getLatLonsForMap';
-import googleMap from '../../components/GoogleMap.vue';
+import { drawSvg } from '~/assets/js/svgHelpers/drawSvg';
+import { createScales } from '~/assets/js/svgHelpers/createScales';
+import { setTicks } from '~/assets/js/svgHelpers/setTicks';
+import { drawAxes } from '~/assets/js/svgHelpers/drawAxes';
+import { drawGridlines } from '~/assets/js/svgHelpers/drawGridlines';
+import { drawCircles } from '~/assets/js/svgHelpers/drawCircles';
+import { createTooltips } from '~/assets/js/svgHelpers/createTooltips';
+import { createBrush } from '~/assets/js/svgHelpers/createBrush';
+import { getLatLonsForMap } from '~/assets/js/svgHelpers/getLatLonsForMap';
+import googleMap from '~/components/GoogleMap.vue';
 
 /* +++++++++ import ends +++++++++ */
 
 // Choose only the vars marked with 'include'
-const varsMetaArr = varsMetaAllArr.filter( elem => elem.include );
+const varsMetaArr = varsMetaAllArr.filter(elem => elem.include);
 
 const defaultVars = {
     x: 'income_above_poverty_line',
@@ -241,58 +241,58 @@ export default {
                 align: 'left',
             },
             {
-                text: this.varsMetaArr.filter( elem =>
-                    elem.name === this.currentVars.x )[ 0 ].text,
+                text: this.varsMetaArr.find(elem =>
+                    elem.name === this.currentVars.x).text,
                 value: this.currentVars.x,
                 align: 'right',
             },
             {
-                text: this.varsMetaArr.filter( elem =>
-                    elem.name === this.currentVars.y )[ 0 ].text,
+                text: this.varsMetaArr.find(elem =>
+                    elem.name === this.currentVars.y).text,
                 value: this.currentVars.y,
                 align: 'right',
             },
             {
-                text: this.varsMetaArr.filter( elem =>
-                    elem.name === this.currentVars.radius )[ 0 ].text,
+                text: this.varsMetaArr.find(elem =>
+                    elem.name === this.currentVars.radius).text,
                 value: this.currentVars.radius,
                 align: 'right',
             },
             {
-                text: this.varsMetaArr.filter( elem =>
-                    elem.name === this.currentVars.color )[ 0 ].text,
+                text: this.varsMetaArr.find(elem =>
+                    elem.name === this.currentVars.color).text,
                 value: this.currentVars.color,
                 align: 'right',
             },
         ];
         const filepath = '/data/data_explorer_12_6_17.csv';
-        csv( filepath, data => {
-            this.allData = numberify( data, varsMetaArr );
-            this.allData.forEach( elem =>
-                ( elem.cbsaname15 =
-                miscFunc.shortenMetroName( elem.cbsaname15 ) ) );
+        csv(filepath, data => {
+            this.allData = numberify(data, varsMetaArr);
+            this.allData.forEach(elem =>
+                (elem.cbsaname15 =
+                miscFunc.shortenMetroName(elem.cbsaname15)));
             // Run renderSetup this first time only, on mount
             this.renderSetup();
             // Run renderScatter and renderMap on mount and
             // then every time a relevant change happens
             this.renderScatter();
             // this.renderMap();
-        } );
+        });
     },
     methods: {
         renderSetup() {
             [ scatterParams.svg, scatterParams.svgG ] =
-            drawSvg( scatterParams );
+            drawSvg(scatterParams);
         },
         renderScatter() {
             // console.log( 'inside render scatter' );
             // console.log( this.$refs.metroSelector.$el );
 
             // Remove all elements from parent svgG
-            scatterParams.svgG.selectAll( '*' ).remove();
+            scatterParams.svgG.selectAll('*').remove();
 
             [ this.dataToGraph, this.dataToNotGraph ] =
-                separatePosNeg( this.allData, this.currentVars );
+                separatePosNeg(this.allData, this.currentVars);
             [
                 scatterParams.xScale,
                 scatterParams.yScale,
@@ -303,8 +303,8 @@ export default {
                 this.currentVars
             );
 
-            this.metrosArr = this.dataToGraph.map( elem => elem.cbsaname15 );
-            this.statesArr = this.dataToGraph.map( elem => elem.state_name );
+            this.metrosArr = this.dataToGraph.map(elem => elem.cbsaname15);
+            this.statesArr = this.dataToGraph.map(elem => elem.state_name);
 
             // this.selectedMetrosArr = this.metrosArr;
             // this.selectedStatesArr = this.statesArr;
@@ -315,15 +315,15 @@ export default {
                 this.currentVars
             );
 
-            setTicks( scatterParams );
+            setTicks(scatterParams);
 
-            drawGridlines( scatterParams );
+            drawGridlines(scatterParams);
 
             // Sorts in-place; smaller circles will be on top of bigger
-            this.dataToGraph.sort( ( a, b ) =>
-                b[ this.currentVars.radius ] - a[ this.currentVars.radius ] );
+            this.dataToGraph.sort((a, b) =>
+                b[ this.currentVars.radius ] - a[ this.currentVars.radius ]);
 
-            const brushGenerator = createBrush( scatterParams );
+            const brushGenerator = createBrush(scatterParams);
 
             scatterParams.circles = drawCircles(
                 scatterParams,
@@ -343,11 +343,11 @@ export default {
             getLatLonsForMap(
                 brushGenerator, scatterParams, latLons => {
                     vm.markers = [];
-                    latLons.forEach( latLon => {
-                        Object.assign( latLon, { icon: goldStar } );
+                    latLons.forEach(latLon => {
+                        Object.assign(latLon, { icon: goldStar });
                         // {path: google.maps.SymbolPath.CIRCLE, scale: 10} })
-                        vm.markers.push( latLon );
-                    } );
+                        vm.markers.push(latLon);
+                    });
                 }
             );
 

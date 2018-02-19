@@ -1,0 +1,17 @@
+export const selectedVariables = [
+    'Median age',
+    'Aggregate annual income',
+    'Labor force participation',
+    'Self-employed in own incorporated business',
+    'Income above poverty line',
+    'Per capita annual income',
+    'Broadband access',
+    'Population',
+    'Annual growth rate (2001-15)',
+    'Annual growth rate (2010-15)',
+    'Inequality: GINI coefficient',
+    'Number of Fortune 1000 companies per 1M population',
+    'Number of Inc 5000 companies per 1M population',
+    'Number of patents since 2000 per 10K population',
+    'Number of restaurants per 10K population',
+];

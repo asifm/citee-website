@@ -8,26 +8,26 @@ import * as _ from 'lodash';
  * @return {Object[]} data array with numbers as numbers, not strings
  */
 export function numberify(data, varsMetaArr) {
-  let type;
-  const vars = Object.keys(data[0]);
-  const VarsMetaArrNames = varsMetaArr.map(elem => elem.name);
+    let type;
+    const vars = Object.keys(data[ 0 ]);
+    const VarsMetaArrNames = varsMetaArr.map(elem => elem.name);
 
-  // deep clone data so that original data remains untouched
-  const clonedData = _.cloneDeep(data);
-  // Loop through each element of the data array
-  const numberifiedData = clonedData.map(elemData =>
+    // deep clone data so that original data remains untouched
+    const clonedData = _.cloneDeep(data);
+    // Loop through each element of the data array
+    const numberifiedData = clonedData.map(elemData =>
     // Loop through each variable
-    vars.reduce((resultObj, currentVar) => {
-      if (VarsMetaArrNames.includes(currentVar)) {
-        type = varsMetaArr.filter(elem => elem.name === currentVar)[0].type;
-      } else {
-        type = 'unknown';
-      }
+        vars.reduce((resultObj, currentVar) => {
+            if (VarsMetaArrNames.includes(currentVar)) {
+                [ type ] = varsMetaArr.find(elem => elem.name === currentVar);
+            } else {
+                type = 'unknown';
+            }
 
-      resultObj[currentVar] =
-        type === 'number' ? +elemData[currentVar] : elemData[currentVar];
+            resultObj[ currentVar ] =
+        type === 'number' ? +elemData[ currentVar ] : elemData[ currentVar ];
 
-      return resultObj;
-    }, {}));
-  return numberifiedData;
+            return resultObj;
+        }, {}));
+    return numberifiedData;
 }

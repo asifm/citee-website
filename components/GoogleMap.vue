@@ -1,7 +1,7 @@
 <template lang="pug">
   div
     gmap-map(
-        style="height:450px; width:850px;"
+        :style="'height:' + heightVal + '; width:' + widthVal + ';'"
         :center="centerVal"
         :zoom="zoomVal"
         :mapTypeId="mapTypeIdVal",
@@ -19,6 +19,14 @@
 <script>
 export default {
     props: {
+        heightVal: {
+            type: String,
+            default: '450px',
+        },
+        widthVal: {
+            type: String,
+            default: '850px',
+        },
         markersVal: {
             type: Array,
             default() {
@@ -44,7 +52,9 @@ export default {
         },
     },
     data() {
-        return {};
+        return {
+            heightValue: 300,
+        };
     },
 };
 </script>

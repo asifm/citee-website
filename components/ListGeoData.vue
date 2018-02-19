@@ -1,8 +1,8 @@
 <template lang="pug">
 v-card(hover).mr-2.mb-2.pa-2
-  v-list(two-line dark dense v-for="elem in geoData.slice(beginIndex, endIndex)" :key="elem.code" )
+  v-list(two-line dark dense v-for="elem in geoData.slice(beginIndex, endIndex)" :key="elem.code" ).black
     v-divider
-    v-list-tile(:class="elem.value ? 'grey darken-3' : 'grey darken-1'")
+    v-list-tile(:class="elem.value ? 'blue-grey darken-3' : 'blue-grey darken-1'")
       v-tooltip(top)
         v-list-tile-content(slot="activator")
           v-list-tile-sub-title.mb-0 {{ elem.name }} &nbsp;&nbsp;&nbsp;

@@ -1,14 +1,14 @@
 <template lang="pug">
   v-app
     //- top bar
-    v-toolbar.elevation-3
+    v-toolbar
       img(src="~/assets/img/darden-logo.png")#darden-logo
       v-spacer
       img(src="~/assets/img/citee-logo-02.svg" height="50px")
     //-page content
     nuxt
     //- Footer
-    v-container(fluid).secondary.footer-about.pa-5
+    v-container(fluid).secondary.footer-about.pa-3.pt-5
       v-layout(row wrap).grey--text.text--lighten-3.justify-center
         v-flex(sm5 md4).pb-5
           h3.white--text.pb-2 Darden School of Business

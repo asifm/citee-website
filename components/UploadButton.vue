@@ -15,16 +15,16 @@ export default {
         title: { type: String, default: 'Upload' },
     },
     methods: {
-        nullifyEventTarget( e ) {
+        nullifyEventTarget(e) {
             // So that the same file can be selected multiple times
             e.target.value = null;
         },
-        fileSelected( e ) {
-            if ( this.selectedCallback ) {
-                if ( e.target.files[ 0 ] ) {
-                    this.selectedCallback( e.target.files[ 0 ] );
+        fileSelected(e) {
+            if (this.selectedCallback) {
+                if (e.target.files[ 0 ]) {
+                    this.selectedCallback(e.target.files[ 0 ]);
                 } else {
-                    this.selectedCallback( null );
+                    this.selectedCallback(null);
                 }
             }
         },
@@ -54,22 +54,3 @@ export default {
     display: block;
 }
 </style>
-
-//   Core-Based Statistical Area
-//   Metropolitan Division
-//   Combined Statistical Area
-//   County
-//   County Subdivision
-//   Place
-//   Region
-//   Division
-//   State
-//   Census Tract
-//   Block Group
-//   ZIP Code Tabulation Area
-//   Congressional District (111th)
-//   State Legislative District (Upper)
-//   State Legislative District (Lower)
-//   School District (Elementary)
-//   School District (Secondary)
-//   School District (Unified)
